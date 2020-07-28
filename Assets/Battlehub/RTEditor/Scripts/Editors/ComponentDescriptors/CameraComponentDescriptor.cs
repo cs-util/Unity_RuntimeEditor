@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Battlehub.RTEditor
 {
+    [BuiltInDescriptor]
     public class CameraComponentDescriptor : ComponentDescriptorBase<Camera>
     {
         public enum Projection

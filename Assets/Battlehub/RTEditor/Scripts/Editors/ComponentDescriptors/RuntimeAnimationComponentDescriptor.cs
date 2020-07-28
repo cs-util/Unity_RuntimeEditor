@@ -4,6 +4,7 @@ using Battlehub.Utils;
 
 namespace Battlehub.RTEditor
 {
+    [BuiltInDescriptor]
     public class RuntimeAnimationComponentDescriptor : ComponentDescriptorBase<RuntimeAnimation>
     {
         public override PropertyDescriptor[] GetProperties(ComponentEditor editor, object converter)

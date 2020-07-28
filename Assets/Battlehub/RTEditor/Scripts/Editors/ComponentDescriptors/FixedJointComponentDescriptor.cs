@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Battlehub.RTEditor
 {
+    [BuiltInDescriptor]
     public class FixedJointComponentDescriptor : ComponentDescriptorBase<FixedJoint>
     {
         public override PropertyDescriptor[] GetProperties(ComponentEditor editor, object converter)

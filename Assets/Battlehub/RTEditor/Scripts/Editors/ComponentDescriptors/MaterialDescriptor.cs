@@ -90,6 +90,8 @@ namespace Battlehub.RTEditor
         }
     }
 
+
+    [BuiltInDescriptor]
     public class MaterialDescriptor : IMaterialDescriptor
     {
         public string ShaderName

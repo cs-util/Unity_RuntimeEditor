@@ -93,9 +93,11 @@ namespace Battlehub.RTTerrain
             if(m_terrainComponentEditor != null)
             {
                 IEditorsMap editorsMap = IOC.Resolve<IEditorsMap>();
-                editorsMap.AddMapping(typeof(Terrain), m_terrainComponentEditor.gameObject, true, false);
-
-                appearance.RegisterPrefab(m_terrainComponentEditor.gameObject);
+                if(!editorsMap.HasMapping(typeof(Terrain)))
+                {
+                    editorsMap.AddMapping(typeof(Terrain), m_terrainComponentEditor.gameObject, true, false);
+                    appearance.RegisterPrefab(m_terrainComponentEditor.gameObject);
+                }
             }
 
             foreach(GameObject prefab in m_prefabs)

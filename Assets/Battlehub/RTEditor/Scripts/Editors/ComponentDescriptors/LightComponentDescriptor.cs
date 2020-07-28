@@ -9,6 +9,7 @@ using System.Linq;
 
 namespace Battlehub.RTEditor
 {
+    [BuiltInDescriptor]
     public class LightComponentDescriptor : ComponentDescriptorBase<Light, LightGizmo>
     {
         private LightType GetLightType(ComponentEditor editor, out bool? hasMixedValues)

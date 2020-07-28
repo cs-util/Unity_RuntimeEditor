@@ -5,6 +5,7 @@ using Battlehub.RTCommon;
 
 namespace Battlehub.RTEditor
 {
+    [BuiltInDescriptor]
     public class RectTransformComponentDescriptor : ComponentDescriptorBase<RectTransform>
     {
         public override object CreateConverter(ComponentEditor editor)

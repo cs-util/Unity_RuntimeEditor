@@ -7,6 +7,7 @@ using Battlehub.RTCommon;
 
 namespace Battlehub.RTEditor
 {
+    [BuiltInDescriptor]
     public class BoxColliderComponentDescriptor : ComponentDescriptorBase<BoxCollider, BoxColliderGizmo>
     {
         public override PropertyDescriptor[] GetProperties(ComponentEditor editor, object converter)

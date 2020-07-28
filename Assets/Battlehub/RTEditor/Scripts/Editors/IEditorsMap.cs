@@ -15,9 +15,11 @@ namespace Battlehub.RTEditor
 
         void RegisterEditor(ComponentEditor editor);
         void RegisterEditor(PropertyEditor editor);
+        bool HasMapping(Type type);
         void AddMapping(Type type, Type editorType, bool enabled, bool isPropertyEditor);
         void AddMapping(Type type, GameObject editor, bool enabled, bool isPropertyEditor);
         void RemoveMapping(Type type);
+        
 
         bool IsObjectEditorEnabled(Type type);
         bool IsPropertyEditorEnabled(Type type, bool strict = false);

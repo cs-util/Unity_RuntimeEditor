@@ -1,8 +1,12 @@
 using Battlehub.RTCommon;
+using Battlehub.RTEditor;
 using Battlehub.UIControls.MenuControl;
+using System;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 
-namespace Battlehub.RTEditor
+namespace Battlehub.RTNavigation
 {
     [MenuDefinition]
     public class NavigationInit : EditorExtension
@@ -21,6 +25,25 @@ namespace Battlehub.RTEditor
             Sprite icon = Resources.Load<Sprite>("RTN_Header");
             bool isDialog = false;
             RegisterWindow(wm, "NavigationView", "ID_RTNavigation_WM_Header_Navigation", icon, m_prefab, isDialog);
+
+            IEditorsMap editorsMap = IOC.Resolve<IEditorsMap>();
+            TryToAddEditorMapping(editorsMap, typeof(NavMeshObstacle));
+            TryToAddEditorMapping(editorsMap, typeof(NavMeshSurface));
+            TryToAddEditorMapping(editorsMap, typeof(NavMeshModifier));
+            TryToAddEditorMapping(editorsMap, typeof(NavMeshModifierVolume));
+            TryToAddEditorMapping(editorsMap, typeof(NavMeshLink));
+            TryToAddEditorMapping(editorsMap, typeof(NavMeshAgent));
+            
+        }
+
+        private void TryToAddEditorMapping(IEditorsMap editorsMap, Type type)
+        {
+            if(editorsMap.HasMapping(type))
+            {
+                return;
+            }
+
+            editorsMap.AddMapping(type, typeof(ComponentEditor), true, false);
         }
 
         private void RegisterWindow(IWindowManager wm, string typeName, string header, Sprite icon, GameObject prefab, bool isDialog)

@@ -75,17 +75,26 @@ namespace Battlehub.RTEditor
                 IComponentDescriptor descriptor = (IComponentDescriptor)Activator.CreateInstance(t);
                 if (descriptor == null)
                 {
-                    Debug.LogWarningFormat("Unable to instantiate selector of type " + t.FullName);
+                    Debug.LogWarningFormat("Unable to instantiate descriptor of type " + t.FullName);
                     continue;
                 }
                 if (descriptor.ComponentType == null)
                 {
-                    Debug.LogWarningFormat("ComponentType is null. Selector Type {0}", t.FullName);
+                    Debug.LogWarningFormat("ComponentType is null. Descriptor Type {0}", t.FullName);
                     continue;
                 }
                 if (m_componentDescriptors.ContainsKey(descriptor.ComponentType))
                 {
-                    Debug.LogWarningFormat("Duplicate selector for {0} found. Type name {1}. Using {2} instead", descriptor.ComponentType.FullName, descriptor.GetType().FullName, m_componentDescriptors[descriptor.ComponentType].GetType().FullName);
+                    IComponentDescriptor alreadyAddedDescriptor = m_componentDescriptors[descriptor.ComponentType];
+                    if(IsBulitIn(alreadyAddedDescriptor.GetType()))
+                    {
+                        //Overwrite built-in component descriptor
+                        m_componentDescriptors[descriptor.ComponentType] = descriptor;
+                    }
+                    else if(!IsBulitIn(descriptor.GetType()))
+                    {
+                        Debug.LogWarningFormat("Duplicate descriptor for {0} found. Type name {1}. Using {2} instead", descriptor.ComponentType.FullName, descriptor.GetType().FullName, m_componentDescriptors[descriptor.ComponentType].GetType().FullName);
+                    }
                 }
                 else
                 {
@@ -94,6 +103,11 @@ namespace Battlehub.RTEditor
             }
 
             LoadMap();
+        }
+
+        private bool IsBulitIn(Type type)
+        {
+            return type.GetCustomAttribute<BuiltInDescriptorAttribute>(false) != null;
         }
 
         private void Start()
@@ -147,48 +161,44 @@ namespace Battlehub.RTEditor
         {
             m_map = new Dictionary<Type, EditorDescriptor>
             {
-                { typeof(UnityEngine.GameObject), new EditorDescriptor(0, true, false) },
-                { typeof(System.Object), new EditorDescriptor(1, true, true) },
+                { typeof(GameObject), new EditorDescriptor(0, true, false) },
+                { typeof(object), new EditorDescriptor(1, true, true) },
                 { typeof(UnityEngine.Object), new EditorDescriptor(2, true, true) },
-                { typeof(System.Boolean), new EditorDescriptor(3, true, true) },
-                { typeof(System.Enum), new EditorDescriptor(4, true, true) },
-                { typeof(System.Collections.Generic.List<>), new EditorDescriptor(5, true, true) },
-                { typeof(System.Array), new EditorDescriptor(6, true, true) },
-                { typeof(System.String), new EditorDescriptor(7, true, true) },
-                { typeof(System.Int32), new EditorDescriptor(8, true, true) },
-                { typeof(System.Single), new EditorDescriptor(9, true, true) },
+                { typeof(bool), new EditorDescriptor(3, true, true) },
+                { typeof(Enum), new EditorDescriptor(4, true, true) },
+                { typeof(List<>), new EditorDescriptor(5, true, true) },
+                { typeof(Array), new EditorDescriptor(6, true, true) },
+                { typeof(string), new EditorDescriptor(7, true, true) },
+                { typeof(int), new EditorDescriptor(8, true, true) },
+                { typeof(float), new EditorDescriptor(9, true, true) },
                 { typeof(Range), new EditorDescriptor(10, true, true) },
-                { typeof(UnityEngine.Vector2), new EditorDescriptor(11, true, true) },
-                { typeof(UnityEngine.Vector3), new EditorDescriptor(12, true, true) },
-                { typeof(UnityEngine.Vector4), new EditorDescriptor(13, true, true) },
-                { typeof(UnityEngine.Quaternion), new EditorDescriptor(14, true, true) },
-                { typeof(UnityEngine.Color), new EditorDescriptor(15, true, true) },
-                { typeof(UnityEngine.Bounds), new EditorDescriptor(16, true, true) },
+                { typeof(Vector2), new EditorDescriptor(11, true, true) },
+                { typeof(Vector3), new EditorDescriptor(12, true, true) },
+                { typeof(Vector4), new EditorDescriptor(13, true, true) },
+                { typeof(Quaternion), new EditorDescriptor(14, true, true) },
+                { typeof(Color), new EditorDescriptor(15, true, true) },
+                { typeof(Bounds), new EditorDescriptor(16, true, true) },
                 { typeof(RangeInt), new EditorDescriptor(17, true, true) },
                 { typeof(RangeOptions), new EditorDescriptor(18, true, true) },
                 { typeof(HeaderText), new EditorDescriptor(19, true, true) },
-                { typeof(System.Reflection.MethodInfo), new EditorDescriptor(20, true, true) },
-                { typeof(UnityEngine.Component), new EditorDescriptor(21, true, false) },
-                { typeof(UnityEngine.BoxCollider), new EditorDescriptor(22, true, false) },
-                { typeof(UnityEngine.Camera), new EditorDescriptor(21, true, false) },
-                { typeof(UnityEngine.CapsuleCollider), new EditorDescriptor(22, true, false) },
-                { typeof(UnityEngine.FixedJoint), new EditorDescriptor(21, true, false) },
-                { typeof(UnityEngine.HingeJoint), new EditorDescriptor(21, true, false) },
-                { typeof(UnityEngine.Light), new EditorDescriptor(21, true, false) },
-                { typeof(UnityEngine.MeshCollider), new EditorDescriptor(21, true, false) },
-                { typeof(UnityEngine.MeshFilter), new EditorDescriptor(21, true, false) },
-                { typeof(UnityEngine.MeshRenderer), new EditorDescriptor(21, true, false) },
-                { typeof(UnityEngine.MonoBehaviour), new EditorDescriptor(21, false, false) },
-                { typeof(UnityEngine.Rigidbody), new EditorDescriptor(21, true, false) },
-                { typeof(UnityEngine.SkinnedMeshRenderer), new EditorDescriptor(21, true, false) },
-                { typeof(UnityEngine.Skybox), new EditorDescriptor(21, true, false) },
-                { typeof(UnityEngine.SphereCollider), new EditorDescriptor(22, true, false) },
-                { typeof(UnityEngine.SpringJoint), new EditorDescriptor(21, true, false) },
-                { typeof(UnityEngine.Transform), new EditorDescriptor(23, true, false) },
-                //{ typeof(Cubeman.CubemanCharacter), new EditorDescriptor(21, true, false) },
-                //{ typeof(Cubeman.CubemanUserControl), new EditorDescriptor(21, true, false) },
-                //{ typeof(Cubeman.GameCameraFollow), new EditorDescriptor(21, true, false) },
-                //{ typeof(Cubeman.GameCharacter), new EditorDescriptor(21, true, false) },
+                { typeof(MethodInfo), new EditorDescriptor(20, true, true) },
+                { typeof(Component), new EditorDescriptor(21, true, false) },
+                { typeof(BoxCollider), new EditorDescriptor(22, true, false) },
+                { typeof(Camera), new EditorDescriptor(21, true, false) },
+                { typeof(CapsuleCollider), new EditorDescriptor(22, true, false) },
+                { typeof(FixedJoint), new EditorDescriptor(21, true, false) },
+                { typeof(HingeJoint), new EditorDescriptor(21, true, false) },
+                { typeof(Light), new EditorDescriptor(21, true, false) },
+                { typeof(MeshCollider), new EditorDescriptor(21, true, false) },
+                { typeof(MeshFilter), new EditorDescriptor(21, true, false) },
+                { typeof(MeshRenderer), new EditorDescriptor(21, true, false) },
+                { typeof(MonoBehaviour), new EditorDescriptor(21, false, false) },
+                { typeof(Rigidbody), new EditorDescriptor(21, true, false) },
+                { typeof(SkinnedMeshRenderer), new EditorDescriptor(21, true, false) },
+                { typeof(Skybox), new EditorDescriptor(21, true, false) },
+                { typeof(SphereCollider), new EditorDescriptor(22, true, false) },
+                { typeof(SpringJoint), new EditorDescriptor(21, true, false) },
+                { typeof(Transform), new EditorDescriptor(23, true, false) },
                 { typeof(RuntimeAnimation), new EditorDescriptor(21, true, false) },
                 { typeof(AudioSource), new EditorDescriptor(21, true, false) },
                 { typeof(AudioListener), new EditorDescriptor(21, true, false) },
@@ -245,6 +255,11 @@ namespace Battlehub.RTEditor
         {
             Array.Resize(ref m_editors, m_editors.Length + 1);
             m_editors[m_editors.Length - 1] = editor.gameObject;
+        }
+
+        public bool HasMapping(Type type)
+        {
+            return m_map.ContainsKey(type);
         }
 
         public void AddMapping(Type type, Type editorType, bool enabled, bool isPropertyEditor)

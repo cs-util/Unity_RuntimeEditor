@@ -1,7 +1,6 @@
-﻿//#define SIMPLIFIED_MESHRENDERER
+﻿#define SIMPLIFIED_MESHRENDERER
 using UnityEngine;
 using System.Reflection;
-using System;
 using Battlehub.Utils;
 using System.Collections.Generic;
 using Battlehub.RTGizmos;
@@ -9,18 +8,25 @@ using Battlehub.RTCommon;
 
 namespace Battlehub.RTEditor
 {
+    [BuiltInDescriptor]
 #if SIMPLIFIED_MESHRENDERER
     public class SkinnedMeshRendererComponentDescriptor : ComponentDescriptorBase<SkinnedMeshRenderer, SkinnedMeshRendererGizmo>
     {
         public override PropertyDescriptor[] GetProperties(ComponentEditor editor, object converter)
         {
+            ILocalization lc = IOC.Resolve<ILocalization>();
+            MemberInfo castShadowsInfo = Strong.PropertyInfo((SkinnedMeshRenderer x) => x.shadowCastingMode, "shadowCastingMode");
+            MemberInfo receiveShadowsInfo = Strong.PropertyInfo((SkinnedMeshRenderer x) => x.receiveShadows, "receiveShadows");
             MemberInfo materialsInfo = Strong.PropertyInfo((SkinnedMeshRenderer x) => x.sharedMaterials, "sharedMaterials");
             List<PropertyDescriptor> descriptors = new List<PropertyDescriptor>();
-            descriptors.Add(new PropertyDescriptor("Materials", editor.Component, materialsInfo, materialsInfo));
+            descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTEditor_CD_SkinnedMeshRenderer_CastShadows", "Cast Shadows"), editor.Components, castShadowsInfo));
+            descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTEditor_CD_SkinnedMeshRenderer_ReceiveShadows", "Receive Shadows"), editor.Components, receiveShadowsInfo, "m_ReceiveShadows"));
+            descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTEditor_CD_SkinnedMeshRenderer_Materials", "Materials"), editor.Components, materialsInfo, materialsInfo));
             return descriptors.ToArray();
         }
     }
 #else
+
     public class SkinnedMeshRendererComponentDescriptor : ComponentDescriptorBase<SkinnedMeshRenderer, SkinnedMeshRendererGizmo>
     {
         public override PropertyDescriptor[] GetProperties(ComponentEditor editor, object converter)

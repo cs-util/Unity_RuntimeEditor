@@ -1,6 +1,7 @@
 ﻿using Battlehub.RTCommon;
 using Battlehub.Utils;
 using System;
+using System.Linq;
 using UnityEngine;
 namespace Battlehub.RTHandles
 {
@@ -516,7 +517,11 @@ namespace Battlehub.RTHandles
 
             m_autoFocusTransform = Selection.activeTransform;
 
-            Bounds bounds = CalculateBounds(Selection.activeTransform);
+            Bounds bounds = CalculateBounds(Selection.gameObjects.Select(go => go.transform).ToArray());
+            if(bounds.extents == Vector3.zero)
+            {
+                bounds.extents = Vector3.one * 0.5f;
+            }
             float objSize = Mathf.Max(bounds.extents.y, bounds.extents.x, bounds.extents.z) * 2.0f;
 
             Focus(bounds.center, objSize);
@@ -850,49 +855,81 @@ namespace Battlehub.RTHandles
             }
         }
 
-        private Bounds CalculateBounds(Transform t)
+        private Bounds CalculateBounds(Transform[] transforms)
         {
-            Renderer renderer = t.GetComponentInChildren<Renderer>();
-            if (renderer)
+            CalculateBoundsResult result = new CalculateBoundsResult();
+            for(int i = 0; i < transforms.Length; ++i)
             {
-                Bounds bounds = renderer.bounds;
-                if (bounds.size == Vector3.zero && bounds.center != renderer.transform.position)
-                {
-                    bounds = TransformBounds(renderer.transform.localToWorldMatrix, bounds);
-                }
-                CalculateBounds(t, ref bounds);
-                if (bounds.extents == Vector3.zero)
-                {
-                    bounds.extents = new Vector3(0.5f, 0.5f, 0.5f);
-                }
-                return bounds;
+                Transform t = transforms[i];
+                CalculateBounds(t, result);
             }
 
-            return new Bounds(t.position, new Vector3(0.5f, 0.5f, 0.5f));
+            if(result.Initialized)
+            {
+                return result.Bounds;
+            }
+
+            Vector3 center = CenterOfVectors(transforms.Select(t => t.position).ToArray());
+            return new Bounds(center, Vector3.zero);
         }
 
-        private void CalculateBounds(Transform t, ref Bounds totalBounds)
+        public Vector3 CenterOfVectors(Vector3[] vectors)
         {
-            foreach (Transform child in t)
+            Vector3 sum = Vector3.zero;
+            if (vectors == null || vectors.Length == 0)
             {
-                Renderer renderer = child.GetComponent<Renderer>();
-                if (renderer)
-                {
-                    if(renderer is ParticleSystemRenderer)
-                    {
-                        continue; //Skip ParticleSystemRenderer rebderer
-                    }
+                return sum;
+            }
 
-                    Bounds bounds = renderer.bounds;
-                    if (bounds.size == Vector3.zero && bounds.center != renderer.transform.position)
-                    {
-                        bounds = TransformBounds(renderer.transform.localToWorldMatrix, bounds);
-                    }
-                    totalBounds.Encapsulate(bounds.min);
-                    totalBounds.Encapsulate(bounds.max);
-                }
+            foreach (Vector3 vec in vectors)
+            {
+                sum += vec;
+            }
+            return sum / vectors.Length;
+        }
 
-                CalculateBounds(child, ref totalBounds);
+        private class CalculateBoundsResult
+        {
+            public Bounds Bounds;
+            public bool Initialized;
+        }
+
+        private void CalculateBounds(Transform t, CalculateBoundsResult result)
+        {
+            Renderer renderer = t.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                CalculateBounds(renderer, result);
+            }
+
+            foreach (Transform child in t)
+            {    
+                CalculateBounds(child, result);
+            }
+        }
+
+        private static void CalculateBounds(Renderer renderer, CalculateBoundsResult result)
+        {
+            if (renderer is ParticleSystemRenderer)
+            {
+                return; //Skip ParticleSystemRenderer renderer
+            }
+
+            Bounds bounds = renderer.bounds;
+            if (bounds.size == Vector3.zero && bounds.center != renderer.transform.position)
+            {
+                bounds = TransformBounds(renderer.transform.localToWorldMatrix, bounds);
+            }
+
+            if (!result.Initialized)
+            {
+                result.Bounds = bounds;
+                result.Initialized = true;
+            }
+            else
+            {
+                result.Bounds.Encapsulate(bounds.min);
+                result.Bounds.Encapsulate(bounds.max);
             }
         }
 

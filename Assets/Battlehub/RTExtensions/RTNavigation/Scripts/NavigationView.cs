@@ -1,6 +1,6 @@
 using Battlehub.RTCommon;
 
-namespace Battlehub.RTEditor
+namespace Battlehub.RTNavigation
 {
     public class  NavigationView  : RuntimeWindow
     {

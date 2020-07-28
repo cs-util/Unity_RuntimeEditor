@@ -52,6 +52,10 @@ namespace Battlehub.RTEditor
         PropertyDescriptor[] GetProperties(ComponentEditor editor, object converter);
     }
 
+    public class BuiltInDescriptorAttribute : Attribute
+    {
+    }
+
     public abstract class ComponentDescriptorBase<TComponent> : IComponentDescriptor
     {
         public virtual HeaderDescriptor GetHeaderDescriptor(IRTE editor)

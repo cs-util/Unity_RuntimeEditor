@@ -5,6 +5,7 @@ using Battlehub.RTCommon;
 
 namespace Battlehub.RTEditor
 {
+    [BuiltInDescriptor]
     public class AudioSourceComponentDescriptor : ComponentDescriptorBase<AudioSource>
     {
         public override PropertyDescriptor[] GetProperties(ComponentEditor editor, object converter)

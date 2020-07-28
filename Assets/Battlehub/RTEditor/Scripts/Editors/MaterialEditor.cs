@@ -74,13 +74,13 @@ namespace Battlehub.RTEditor
 
     public class MaterialEditor : MonoBehaviour
     {
-        public readonly static Dictionary<string, IMaterialDescriptor> PropertyDescriptors;
+        public readonly static Dictionary<string, IMaterialDescriptor> MaterialDescriptors;
         static MaterialEditor()
         {
             var type = typeof(IMaterialDescriptor);
             var types = Reflection.GetAssignableFromTypes(type);
 
-            PropertyDescriptors = new Dictionary<string, IMaterialDescriptor>();
+            MaterialDescriptors = new Dictionary<string, IMaterialDescriptor>();
             foreach (Type t in types)
             {
                 IMaterialDescriptor descriptor = (IMaterialDescriptor)Activator.CreateInstance(t);
@@ -94,17 +94,31 @@ namespace Battlehub.RTEditor
                     Debug.LogWarningFormat("ComponentType is null. ShaderName is null {0}", t.FullName);
                     continue;
                 }
-                if (PropertyDescriptors.ContainsKey(descriptor.ShaderName))
+                if (MaterialDescriptors.ContainsKey(descriptor.ShaderName))
                 {
-                    Debug.LogWarningFormat("Duplicate component descriptor for {0} found. Type name {1}. Using {2} instead", descriptor.ShaderName, descriptor.GetType().FullName, PropertyDescriptors[descriptor.ShaderName].GetType().FullName);
+                    IMaterialDescriptor alreadyAddedMaterialDescriptor = MaterialDescriptors[descriptor.ShaderName];
+                    if (IsBulitIn(alreadyAddedMaterialDescriptor.GetType()))
+                    {
+                        //Overwrite built-in material descriptor
+                        MaterialDescriptors[descriptor.ShaderName] = descriptor;
+                    }
+                    else if(!IsBulitIn(descriptor.GetType()))
+                    {
+                        Debug.LogWarningFormat("Duplicate component descriptor for {0} found. Type name {1}. Using {2} instead", descriptor.ShaderName, descriptor.GetType().FullName, MaterialDescriptors[descriptor.ShaderName].GetType().FullName);
+                    }                    
                 }
                 else
                 {
-                    PropertyDescriptors.Add(descriptor.ShaderName, descriptor);
+                    MaterialDescriptors.Add(descriptor.ShaderName, descriptor);
                 }
             }
         }
-        
+
+        private static bool IsBulitIn(Type type)
+        {
+            return type.GetCustomAttribute<BuiltInDescriptorAttribute>(false) != null;
+        }
+
         [SerializeField]
         private RangeEditor RangeEditor = null;
         [SerializeField]
@@ -261,7 +275,7 @@ namespace Battlehub.RTEditor
             }
 
             IMaterialDescriptor selector;
-            if(!PropertyDescriptors.TryGetValue(Material.shader.name, out selector))
+            if(!MaterialDescriptors.TryGetValue(Material.shader.name, out selector))
             {
                 selector = new MaterialDescriptor();
             }

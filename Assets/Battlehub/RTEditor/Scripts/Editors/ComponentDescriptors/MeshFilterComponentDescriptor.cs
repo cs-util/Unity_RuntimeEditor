@@ -5,6 +5,7 @@ using Battlehub.RTCommon;
 
 namespace Battlehub.RTEditor
 {
+    [BuiltInDescriptor]
     public class MeshFilterComponentDescriptor : ComponentDescriptorBase<MeshFilter>
     {
         public override PropertyDescriptor[] GetProperties(ComponentEditor editor, object converter)

@@ -8,6 +8,7 @@ using Battlehub.RTCommon;
 
 namespace Battlehub.RTEditor
 {
+    [BuiltInDescriptor]
 #if SIMPLIFIED_MESHRENDERER
 
     public class MeshRendererComponentDescriptor : ComponentDescriptorBase<MeshRenderer>

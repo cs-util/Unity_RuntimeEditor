@@ -63,12 +63,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Battlehub\ThirdParty\NavMeshComponents\Editor\NavMeshAssetManager.cs" />
-    <Compile Include="Assets\Battlehub\ThirdParty\NavMeshComponents\Editor\NavMeshComponentsGUIUtility.cs" />
-    <Compile Include="Assets\Battlehub\ThirdParty\NavMeshComponents\Editor\NavMeshLinkEditor.cs" />
-    <Compile Include="Assets\Battlehub\ThirdParty\NavMeshComponents\Editor\NavMeshModifierEditor.cs" />
-    <Compile Include="Assets\Battlehub\ThirdParty\NavMeshComponents\Editor\NavMeshModifierVolumeEditor.cs" />
-    <Compile Include="Assets\Battlehub\ThirdParty\NavMeshComponents\Editor\NavMeshSurfaceEditor.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\NavMeshComponents\Editor\NavMeshAssetManager.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\NavMeshComponents\Editor\NavMeshComponentsGUIUtility.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\NavMeshComponents\Editor\NavMeshLinkEditor.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\NavMeshComponents\Editor\NavMeshModifierEditor.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\NavMeshComponents\Editor\NavMeshModifierVolumeEditor.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\NavMeshComponents\Editor\NavMeshSurfaceEditor.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Development/UnityEditors/2019.3.15f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

@@ -63,10 +63,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Battlehub\ThirdParty\NavMeshComponents\Scripts\NavMeshLink.cs" />
-    <Compile Include="Assets\Battlehub\ThirdParty\NavMeshComponents\Scripts\NavMeshModifier.cs" />
-    <Compile Include="Assets\Battlehub\ThirdParty\NavMeshComponents\Scripts\NavMeshModifierVolume.cs" />
-    <Compile Include="Assets\Battlehub\ThirdParty\NavMeshComponents\Scripts\NavMeshSurface.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\NavMeshComponents\Scripts\NavMeshLink.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\NavMeshComponents\Scripts\NavMeshModifier.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\NavMeshComponents\Scripts\NavMeshModifierVolume.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\NavMeshComponents\Scripts\NavMeshSurface.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Development/UnityEditors/2019.3.15f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

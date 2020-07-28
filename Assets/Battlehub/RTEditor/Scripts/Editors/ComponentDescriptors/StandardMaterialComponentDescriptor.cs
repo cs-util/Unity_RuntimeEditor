@@ -164,6 +164,7 @@ namespace Battlehub.RTEditor
         }
     }
 
+    [BuiltInDescriptor]
     public class StandardMaterialDescriptor : IMaterialDescriptor
     {
         const string _Mode = "_Mode";

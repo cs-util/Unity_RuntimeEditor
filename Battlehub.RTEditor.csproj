@@ -352,6 +352,12 @@
     <Compile Include="Assets\Battlehub\RTExtensions\RTMeasurement\Scripts\MeasureToolText.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTMeasurement\Scripts\MeasurementTools.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTMeasurement\Scripts\MeasurementToolsUI.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\Editors\ComponentDescriptors\NavMeshAgentComponentDescriptor.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\Editors\ComponentDescriptors\NavMeshLinkComponentDescriptor.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\Editors\ComponentDescriptors\NavMeshModifierComponentDescriptor.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\Editors\ComponentDescriptors\NavMeshModifierVolumeComponentDescriptor.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\Editors\ComponentDescriptors\NavMeshObstacleComponentDescriptor.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\Editors\ComponentDescriptors\NavMeshSurfaceComponentDescriptor.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\NavigationInit.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\NavigationView.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTTerrain\RTSL\Mappings\Editor\RegisterTemplates.cs" />
@@ -1223,6 +1229,10 @@
     <ProjectReference Include="HSVPicker.csproj">
       <Project>{1A6BDCE9-844A-4360-193F-D1C75E711320}</Project>
       <Name>HSVPicker</Name>
+    </ProjectReference>
+    <ProjectReference Include="NavMeshComponents.csproj">
+      <Project>{A382EFB9-50D6-62BF-7E52-8AEFF345B4A8}</Project>
+      <Name>NavMeshComponents</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

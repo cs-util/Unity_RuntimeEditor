@@ -6,6 +6,7 @@ using Battlehub.RTCommon;
 
 namespace Battlehub.RTEditor
 {
+    [BuiltInDescriptor]
     public class CapsuleColliderPropertyConverter 
     {
         public enum CapsuleColliderDirection

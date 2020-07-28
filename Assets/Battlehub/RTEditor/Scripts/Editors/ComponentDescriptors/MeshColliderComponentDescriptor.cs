@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace Battlehub.RTEditor
 {
+    [BuiltInDescriptor]
     public class MeshColliderComponentDescriptor : ComponentDescriptorBase<MeshCollider>
     {
         private bool GetIsConvex(ComponentEditor editor, out bool? hasMixedValues)

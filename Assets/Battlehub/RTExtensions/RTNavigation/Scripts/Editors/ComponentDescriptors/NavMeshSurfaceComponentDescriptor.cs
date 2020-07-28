@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using Battlehub.RTEditor;
+using UnityEngine.AI;
 
-namespace Battlehub.RTEditor
+namespace Battlehub.RTNavigation
 {
     [BuiltInDescriptor]
-    public class AudioListenerComponentDescriptor : ComponentDescriptorBase<AudioListener>
+    public class NavMeshSurfaceComponentDescriptor : ComponentDescriptorBase<NavMeshSurface>
     {
         public override PropertyDescriptor[] GetProperties(ComponentEditor editor, object converter)
         {

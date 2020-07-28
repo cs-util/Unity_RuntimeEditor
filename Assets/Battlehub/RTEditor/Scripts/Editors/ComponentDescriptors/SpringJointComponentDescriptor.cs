@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Battlehub.RTEditor
 {
+    [BuiltInDescriptor]
     public class SpringJointComponentDescriptor : ComponentDescriptorBase<SpringJoint>
     {
         public override PropertyDescriptor[] GetProperties(ComponentEditor editor, object converter)
