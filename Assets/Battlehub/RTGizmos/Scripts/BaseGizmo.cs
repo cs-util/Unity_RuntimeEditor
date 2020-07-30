@@ -284,13 +284,13 @@ namespace Battlehub.RTGizmos
         {
             if(SceneCamera == null )
             {
-                Destroy(gameObject);
+                Destroy(this);
                 return;
             }
 
             if (!m_isDragging)
             {
-                if (m_rteCamera != null && m_refreshOnCameraChanged)
+                if (m_rteCamera != null && m_rteCamera.Camera != null && m_refreshOnCameraChanged)
                 {
                     Camera camera = m_rteCamera.Camera;
                     if (m_prevCamPosition != camera.transform.position || m_prevCamRotation != camera.transform.rotation || m_prevOrthographic != camera.orthographic)
@@ -325,7 +325,7 @@ namespace Battlehub.RTGizmos
                 Destroy(gizmoInput);
             }
 
-            if (Window.Editor.Tools.ActiveTool == this)
+            if (Window != null && Window.Editor != null && Window.Editor.Tools.ActiveTool == this)
             {
                 Window.Editor.Tools.ActiveTool = null;
             }

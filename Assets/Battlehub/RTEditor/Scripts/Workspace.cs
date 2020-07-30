@@ -8,8 +8,6 @@ using UnityEngine;
 using System.Linq;
 using Battlehub.Utils;
 using System.Collections;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 namespace Battlehub.RTEditor
 {
@@ -252,6 +250,8 @@ namespace Battlehub.RTEditor
             try
             {
                 m_lockUpdateLayout = true;
+
+                bool hasChildren = rootRegion.HasChildren;
                 ClearRegion(rootRegion);
                 foreach (Transform child in DockPanel.Free)
                 {
@@ -259,6 +259,25 @@ namespace Battlehub.RTEditor
                     ClearRegion(region);
                 }
 
+                m_editor.StartCoroutine(CoSetLayout(hasChildren, buildLayoutCallback, activateWindowOfType));
+            }
+            catch
+            {
+                m_lockUpdateLayout = false;
+            }
+        }
+
+        private IEnumerator CoSetLayout(bool waitForEndOfFrame, Func<IWindowManager, LayoutInfo> buildLayoutCallback, string activateWindowOfType = null)
+        {
+            if(waitForEndOfFrame)
+            {
+                //Wait for OnDestroy of destroyed windows 
+                yield return new WaitForEndOfFrame();
+            }
+            
+            try
+            {
+                m_lockUpdateLayout = true;                
                 LayoutInfo layout = buildLayoutCallback(m_windowManager);
                 if (layout.Content != null || layout.Child0 != null && layout.Child1 != null)
                 {
@@ -274,7 +293,7 @@ namespace Battlehub.RTEditor
             {
                 m_lockUpdateLayout = false;
             }
-       
+
             RuntimeWindow[] windows = Windows;
             if (windows != null)
             {
@@ -293,15 +312,6 @@ namespace Battlehub.RTEditor
 
         private void ClearRegion(Region rootRegion)
         {
-            Region[] regions = rootRegion.GetComponentsInChildren<Region>(true);
-            for (int i = 0; i < regions.Length; ++i)
-            {
-                Region region = regions[i];
-                foreach (Transform content in region.ContentPanel)
-                {
-                    OnContentDestroyed(content);
-                }
-            }
             rootRegion.CloseAllTabs();
         }
 
@@ -1131,7 +1141,7 @@ namespace Battlehub.RTEditor
             }
 
             ForceLayoutUpdate();
-            if(m_coForceUpdateLayout == null)
+            if(m_coForceUpdateLayout == null && !m_lockUpdateLayout)
             {
                 m_coForceUpdateLayout = CoForceUpdateLayout();
                 StartCoroutine(m_coForceUpdateLayout);

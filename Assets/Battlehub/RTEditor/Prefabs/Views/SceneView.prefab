@@ -44,12 +44,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_window: {fileID: 0}
-  HightlightOnHover: 1
-  EnableUndo: 1
-  HitTester: {fileID: 0}
-  Appearance: {fileID: 0}
-  Model: {fileID: 4363, guid: d3fd87b8a132d624f846fd97fbb89c85, type: 3}
-  m_targets: []
   BeforeDrag:
     m_PersistentCalls:
       m_Calls: []
@@ -59,6 +53,12 @@ MonoBehaviour:
   Drop:
     m_PersistentCalls:
       m_Calls: []
+  HightlightOnHover: 1
+  EnableUndo: 1
+  HitTester: {fileID: 0}
+  Appearance: {fileID: 0}
+  Model: {fileID: 4363, guid: d3fd87b8a132d624f846fd97fbb89c85, type: 3}
+  m_targets: []
   AbsoluteGrid: 0
   GridSize: 0.1
   MinScale: {x: -3.4028235e+38, y: -3.4028235e+38, z: -3.4028235e+38}
@@ -131,6 +131,7 @@ MonoBehaviour:
   FreeMoveSensitivity: 0.25
   FreeRotateSensitivity: 7.5
   SwapLRMB: 0
+  m_beginRotateImmediately: 1
   m_beginFreeMoveImmediately: 1
 --- !u!114 &114970690636574616
 MonoBehaviour:
@@ -172,7 +173,6 @@ MonoBehaviour:
   m_canPan: 1
   m_canZoom: 1
   m_changeOrthographicSizeOnly: 0
-  m_canFocusTerrain: 0
   m_canRotate: 1
   m_canFreeMove: 1
   m_orbitDistance: 5
@@ -239,12 +239,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_window: {fileID: 0}
-  HightlightOnHover: 1
-  EnableUndo: 1
-  HitTester: {fileID: 0}
-  Appearance: {fileID: 0}
-  Model: {fileID: 114767379241590584, guid: adb919ab9b79d7f4baf715f244ee94c7, type: 3}
-  m_targets: []
   BeforeDrag:
     m_PersistentCalls:
       m_Calls: []
@@ -254,6 +248,12 @@ MonoBehaviour:
   Drop:
     m_PersistentCalls:
       m_Calls: []
+  HightlightOnHover: 1
+  EnableUndo: 1
+  HitTester: {fileID: 0}
+  Appearance: {fileID: 0}
+  Model: {fileID: 114767379241590584, guid: adb919ab9b79d7f4baf715f244ee94c7, type: 3}
+  m_targets: []
   GridSize: 1
 --- !u!1 &1310129391672340
 GameObject:
@@ -275,7 +275,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &224154404041186762
 RectTransform:
   m_ObjectHideFlags: 0
@@ -333,11 +333,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_dragDropTargetGO: {fileID: 0}
-  m_renderTextureUsage: 0
-  m_activateOnAnyKey: 0
   m_canActivate: 1
+  m_activateOnAnyKey: 0
   m_windowType: 2
   m_background: {fileID: 0}
+  m_renderTextureUsage: 0
   m_camera: {fileID: 4784833976956820791}
   m_pointer: {fileID: 0}
 --- !u!222 &5252423299992472042
@@ -614,12 +614,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_window: {fileID: 0}
-  HightlightOnHover: 1
-  EnableUndo: 1
-  HitTester: {fileID: 0}
-  Appearance: {fileID: 0}
-  Model: {fileID: 114798909188857192, guid: e853e678f4be9c249a551a35b3366492, type: 3}
-  m_targets: []
   BeforeDrag:
     m_PersistentCalls:
       m_Calls: []
@@ -629,6 +623,12 @@ MonoBehaviour:
   Drop:
     m_PersistentCalls:
       m_Calls: []
+  HightlightOnHover: 1
+  EnableUndo: 1
+  HitTester: {fileID: 0}
+  Appearance: {fileID: 0}
+  Model: {fileID: 114798909188857192, guid: e853e678f4be9c249a551a35b3366492, type: 3}
+  m_targets: []
   GridSize: 15
   XSpeed: 1
   YSpeed: 1

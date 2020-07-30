@@ -290,7 +290,7 @@ namespace Battlehub.RTEditor
         protected override void ResetCullingMask(Camera camera)
         {
             CameraLayerSettings settings = Editor.CameraLayerSettings;
-            camera.cullingMask &= settings.RaycastMask;
+            camera.cullingMask |= ~settings.RaycastMask;
         }
     }
 

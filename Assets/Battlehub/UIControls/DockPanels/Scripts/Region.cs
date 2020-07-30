@@ -305,6 +305,8 @@ namespace Battlehub.UIControls.DockPanels
         [SerializeField]
         private bool m_forceRebuildLayoutImmediate = true;
 
+        private bool m_isDestroyed = false;
+
         protected virtual void Awake()
         {
             if (m_root == null)
@@ -352,6 +354,8 @@ namespace Battlehub.UIControls.DockPanels
 
         protected virtual void OnDestroy()
         {
+            m_isDestroyed = true;
+
             if (transform.parent != null)
             {
                 Region parent = transform.parent.GetComponentInParent<Region>();
@@ -486,7 +490,7 @@ namespace Battlehub.UIControls.DockPanels
                     LayoutInfo tab = layout.TabGroup[i];
                     if (tab.Tab == null)
                     {
-                        //For backward compatbility
+                        //For backward compatibility
                         tab.Tab = CreateTab(tab.Icon, tab.Header, tab.CanDrag, tab.CanClose);
                     }
                     region.Add(tab.Tab, tab.Content, false, RegionSplitType.None, 0.3f);
@@ -532,7 +536,7 @@ namespace Battlehub.UIControls.DockPanels
             {
                 if (layout.Tab == null)
                 {
-                    //For backward compatbility
+                    //For backward compatibility
                     layout.Tab = CreateTab(layout.Icon, layout.Header, layout.CanDrag, layout.CanClose);
                 }
                 region.Add(layout.Tab, layout.Content, false, RegionSplitType.None, 0.3f);
@@ -935,63 +939,6 @@ namespace Battlehub.UIControls.DockPanels
         {
             RemoveAt(index, true);
         }
-
-        /*
-        private void RemoveAt(int index, bool destroy)
-        {
-            if (index < 0 || m_tabPanel.transform.childCount <= index)
-            {
-                return;
-            }
-
-            if (destroy && m_tabPanel.transform.childCount == 1 && this != m_root.RootRegion)
-            {
-                Destroy(gameObject);
-
-                Transform content = m_contentPanel.transform.GetChild(0);
-                if (TabClosed != null)
-                {
-                    TabClosed(this, content);
-                }
-            }
-            else
-            {
-                Tab tab = m_tabPanel.transform.GetChild(index).GetComponent<Tab>();
-                if (index == ActiveTabIndex)
-                {
-                    if (m_tabPanel.transform.childCount > 1)
-                    {
-                        Tab nextTab;
-                        if (index < m_tabPanel.transform.childCount - 1)
-                        {
-                            nextTab = m_tabPanel.transform.GetChild(index + 1).GetComponent<Tab>();
-                        }
-                        else
-                        {
-                            nextTab = m_tabPanel.transform.GetChild(index - 1).GetComponent<Tab>();
-                        }
-                        nextTab.IsOn = true;
-                    }
-                }
-
-                tab.OnClosing();
-                Unsubscribe(tab, this);
-
-                Transform content = m_contentPanel.transform.GetChild(index);
-                if (TabClosed != null)
-                {
-                    TabClosed(this, content);
-                }
-                DestroyImmediate(tab.gameObject);
-                Destroy(content.gameObject);
-            }
-
-            UpdateResizers();
-            UpdateVisualState();
-
-            m_root.CursorHelper.ResetCursor(this);
-        }
-        */
       
         private void RemoveAt(int index, bool destroyRegionIfPossible)
         {
@@ -1029,7 +976,7 @@ namespace Battlehub.UIControls.DockPanels
             {
                 Destroy(gameObject);
             }
-            else
+            //else
             {
                 Destroy(tab.gameObject);
                 Destroy(content.gameObject);
@@ -1099,11 +1046,17 @@ namespace Battlehub.UIControls.DockPanels
                 {
                     if (childRegion.m_contentPanel.childCount == 0)
                     {
-                        childRegion.MoveChildrenToParentRegion(this);
+                        if(!childRegion.m_isDestroyed)
+                        {
+                            childRegion.MoveChildrenToParentRegion(this);
+                        }
                     }
                     else
                     {
-                        childRegion.MoveContentsToRegion(this);
+                        if (!childRegion.m_isDestroyed)
+                        {
+                            childRegion.MoveContentsToRegion(this);
+                        }
 
                         HorizontalOrVerticalLayoutGroup layoutGroup = m_childrenPanel.GetComponent<HorizontalOrVerticalLayoutGroup>();
                         if (layoutGroup != null)
