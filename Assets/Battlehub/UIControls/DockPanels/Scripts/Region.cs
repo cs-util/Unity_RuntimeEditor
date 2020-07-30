@@ -429,7 +429,9 @@ namespace Battlehub.UIControls.DockPanels
         {
             m_closing = true;
 
-            Tab[] tabs = GetComponentsInChildren<Tab>();
+            // Pass "true" to make sure to also cleanup "hidden" tabs in case the "IsHeaderVisible" option was set to false.
+            // Fix for issue https://github.com/Battlehub0x/Unity_RuntimeEditor/issues/9, see details there.
+            Tab[] tabs = GetComponentsInChildren<Tab>(true);
             for (int i = 0; i < tabs.Length; i++)
             {
                 Tab tab = tabs[i];
