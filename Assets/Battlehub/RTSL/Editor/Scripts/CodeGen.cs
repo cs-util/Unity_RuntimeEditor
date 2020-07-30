@@ -549,17 +549,60 @@ namespace Battlehub.RTSL
             {
                 argTypeName = PrepareMappedTypeName(TypeName(type));
             }
-            else if (!m_primitiveNames.TryGetValue(type, out argTypeName))
+            else
             {
-                argTypeName = "Persistent" + PreparePersistentTypeName(TypeName(type));
+                bool isGenericList = IsGenericList(type);
+                if (isGenericList || IsHashSet(type))
+                {
+                    Type argType = type.GetGenericArguments()[0];
+                    string genericArgTypeName;
+                    if (!m_primitiveNames.TryGetValue(argType, out genericArgTypeName))
+                    {
+                        genericArgTypeName = "NotImplemented";
+                        //"Persistent" + PreparePersistentTypeName(TypeName(argType));
+                    }
+
+                    if (isGenericList)
+                    {
+                        argTypeName = string.Format("List<{0}>", genericArgTypeName);
+                    }
+                    else
+                    {
+                        argTypeName = string.Format("HashSet<{0}>", genericArgTypeName);
+                    }
+                }
+                else if (!m_primitiveNames.TryGetValue(type, out argTypeName))
+                {
+                    argTypeName = "Persistent" + PreparePersistentTypeName(TypeName(type));
+                }
             }
-           
+
             return argTypeName;
         }
 
         private string DictionaryMappedArgTypeName(Type type)
         {
-            if (!m_primitiveNames.TryGetValue(type, out string argTypeName))
+            string argTypeName;
+            bool isGenericList = IsGenericList(type);
+            if (isGenericList || IsHashSet(type))
+            {
+                Type argType = type.GetGenericArguments()[0];
+                string genericArgTypeName;
+                if (!m_primitiveNames.TryGetValue(argType, out genericArgTypeName))
+                {
+                    genericArgTypeName = "NotImplemented";
+                }
+
+                if (isGenericList)
+                {
+                    argTypeName = string.Format("List<{0}>", genericArgTypeName);
+                }
+                else
+                {
+                    argTypeName = string.Format("HashSet<{0}>", genericArgTypeName);
+                }
+            }
+            else if (!m_primitiveNames.TryGetValue(type, out argTypeName))
             {
                 argTypeName = PrepareMappedTypeName(TypeName(type));
             }

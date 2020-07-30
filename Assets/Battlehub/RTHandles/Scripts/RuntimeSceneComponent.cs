@@ -869,11 +869,11 @@ namespace Battlehub.RTHandles
                 return result.Bounds;
             }
 
-            Vector3 center = CenterOfVectors(transforms.Select(t => t.position).ToArray());
+            Vector3 center = CenterPoint(transforms.Select(t => t.position).ToArray());
             return new Bounds(center, Vector3.zero);
         }
 
-        public Vector3 CenterOfVectors(Vector3[] vectors)
+        public Vector3 CenterPoint(Vector3[] vectors)
         {
             Vector3 sum = Vector3.zero;
             if (vectors == null || vectors.Length == 0)
@@ -912,7 +912,7 @@ namespace Battlehub.RTHandles
         {
             if (renderer is ParticleSystemRenderer)
             {
-                return; //Skip ParticleSystemRenderer renderer
+                return; 
             }
 
             Bounds bounds = renderer.bounds;

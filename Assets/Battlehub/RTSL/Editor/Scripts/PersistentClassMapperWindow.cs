@@ -542,6 +542,11 @@ namespace Battlehub.RTSL
         private void ForEachEnabledProperty(int typeIndex, Action<int> callback, Action<Type> missingCallback)
         {
             ClassMappingInfo mappingInfo = m_mappings[typeIndex];
+            if(mappingInfo == null || mappingInfo.PropertyMappings == null)
+            {
+                Debug.LogWarning("mappingInfo == null || mappingInfo.PropertyMappings == null : " + (mappingInfo == null) + " " + (mappingInfo.PropertyMappings == null));
+                return;
+            }
             for (int propIndex = 0; propIndex < mappingInfo.PropertyMappings.Length; ++propIndex)
             {
                 if (mappingInfo.IsPropertySelected[propIndex])
