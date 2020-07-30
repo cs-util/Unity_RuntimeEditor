@@ -927,7 +927,6 @@ namespace Battlehub.UIControls.DockPanels
                 if (this == m_root.RootRegion)
                 {
                     CanResize = true;
-                    IsHeaderVisible = true;
                 }
             }
 
