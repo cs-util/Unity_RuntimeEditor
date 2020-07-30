@@ -128,9 +128,12 @@ namespace Battlehub.RTBuilder
         protected virtual void ResetCullingMask(RuntimeWindow window)
         {
             CameraLayerSettings settings = m_editor.CameraLayerSettings;
-            window.Camera.cullingMask = ~((1 << m_editor.CameraLayerSettings.ExtraLayer) | ((1 << settings.MaxGraphicsLayers) - 1) << settings.RuntimeGraphicsLayer);
-            window.Camera.clearFlags = CameraClearFlags.Skybox;
-
+            if (window.Camera != null)
+            {
+                window.Camera.cullingMask = ~((1 << m_editor.CameraLayerSettings.ExtraLayer) | ((1 << settings.MaxGraphicsLayers) - 1) << settings.RuntimeGraphicsLayer);
+                window.Camera.clearFlags = CameraClearFlags.Skybox;
+            }
+            
             if (m_sceneComponent != null && m_sceneComponent.SceneGizmo != null)
             {
                 m_sceneComponent.SceneGizmo.TextColor = Color.white;
