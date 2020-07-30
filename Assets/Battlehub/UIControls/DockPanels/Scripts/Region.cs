@@ -869,6 +869,13 @@ namespace Battlehub.UIControls.DockPanels
                 return null;
             }
 
+            // Fix for issue https://github.com/Battlehub0x/Unity_RuntimeEditor/issues/7, see details there.
+            // One of the tabs got destroyed already, but cleanup of the window is still ongoing
+            if(content.parent.childCount != region.m_tabPanel.transform.childCount) {
+                // Always take the previous tab (assumes new window(s) are appended so destroyed window(s) sit(s) at the beginning)
+                index-=1;
+            }
+
             return region.m_tabPanel.transform.GetChild(index).GetComponent<Tab>();
         }
 
