@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Battlehub.RTCommon;
 using UnityEngine.Rendering;
+using System;
 
 namespace Battlehub.RTGizmos
 {
@@ -22,7 +23,7 @@ namespace Battlehub.RTGizmos
         {
             get { return m_handleProperties; }
         }
-        
+
         private MaterialPropertyBlock m_selectionProperties;
         protected MaterialPropertyBlock SelectionProperties
         {
@@ -35,7 +36,10 @@ namespace Battlehub.RTGizmos
         /// Key which activates Unit Snapping
         /// </summary>
         public KeyCode UnitSnapKey = KeyCode.LeftControl;
-        public Camera SceneCamera;
+        protected Camera SceneCamera
+        {
+            get { return Window != null ? Window.Camera : Camera.main; }
+        }
 
         /// <summary>
         /// Screen space selection margin in pixels
@@ -99,39 +103,55 @@ namespace Battlehub.RTGizmos
         private Matrix4x4 m_handlesTransform;
         private Matrix4x4 m_handlesInverseTransform;
 
-        public override RuntimeWindow Window
-        {
-            get { return m_window; }
-            set
-            {
-                m_window = value;
-                m_editor = IOC.Resolve<IRTE>();
-            }
-        }
-
         private IRTECamera m_rteCamera;
         protected IRTECamera RTECamera
         {
             get { return m_rteCamera; }
         }
 
-        private void Start()
+        protected override void Awake()
         {
+            base.Awake();
+
+            m_handlesPositions = GizmoUtility.GetHandlesPositions();
+            m_handlesNormals = GizmoUtility.GetHandlesNormals();
+
+            m_lineProperties = new MaterialPropertyBlock();
+            m_handleProperties = new MaterialPropertyBlock();
+            m_selectionProperties = new MaterialPropertyBlock();
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            BaseGizmoInput gizmoInput = GetComponent<BaseGizmoInput>();
+            if (gizmoInput)
+            {
+                Destroy(gizmoInput);
+            }
+
+            if (Window != null && Window.Editor != null && Window.Editor.Tools.ActiveTool == this)
+            {
+                Window.Editor.Tools.ActiveTool = null;
+            }
+
+            if (m_rteCamera != null)
+            {
+                m_rteCamera.CommandBufferRefresh -= OnCommandBufferRefresh;
+                m_rteCamera.RefreshCommandBuffer();
+            }
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+        
             BaseGizmoInput input = GetComponent<BaseGizmoInput>();
             if (input == null || input.Gizmo != this)
             {
                 input = gameObject.AddComponent<BaseGizmoInput>();
                 input.Gizmo = this;
-            }
-
-            if (SceneCamera == null)
-            {
-                SceneCamera = Window.Camera;
-            }
-
-            if (SceneCamera == null)
-            {
-                SceneCamera = Camera.main;
             }
 
             if(Target == null)
@@ -183,22 +203,24 @@ namespace Battlehub.RTGizmos
                 m_rteCamera.CommandBufferRefresh += OnCommandBufferRefresh;
                 m_rteCamera.RefreshCommandBuffer();
             }
-
+#pragma warning disable CS0612
             StartOverride();
+#pragma warning restore CS0612
         }
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             if (m_rteCamera != null)
             {
                 m_rteCamera.CommandBufferRefresh += OnCommandBufferRefresh;
                 m_rteCamera.RefreshCommandBuffer();
             }
-
+#pragma warning disable CS0612
             OnEnableOverride();
+#pragma warning restore CS0612
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             if (m_rteCamera != null)
             {
@@ -206,10 +228,12 @@ namespace Battlehub.RTGizmos
                 m_rteCamera.RefreshCommandBuffer();
             }
 
+#pragma warning disable CS0612
             OnDisableOverride();
+#pragma warning restore CS0612
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             if (m_isDragging)
             {
@@ -277,10 +301,12 @@ namespace Battlehub.RTGizmos
                 }
             }
 
+#pragma warning disable CS0612
             UpdateOverride();
+#pragma warning restore CS0612
         }
 
-        private void LateUpdate()
+        protected virtual void LateUpdate()
         {
             if(SceneCamera == null )
             {
@@ -305,77 +331,16 @@ namespace Battlehub.RTGizmos
             }
         }
 
-        protected override void AwakeOverride()
-        {
-            base.AwakeOverride();
-            m_handlesPositions = GizmoUtility.GetHandlesPositions();
-            m_handlesNormals = GizmoUtility.GetHandlesNormals();
+    
 
-            m_lineProperties = new MaterialPropertyBlock();
-            m_handleProperties = new MaterialPropertyBlock();
-            m_selectionProperties = new MaterialPropertyBlock();            
-        }
-
-        protected override void OnDestroyOverride()
-        {
-            base.OnDestroyOverride();
-            BaseGizmoInput gizmoInput = GetComponent<BaseGizmoInput>();
-            if (gizmoInput)
-            {
-                Destroy(gizmoInput);
-            }
-
-            if (Window != null && Window.Editor != null && Window.Editor.Tools.ActiveTool == this)
-            {
-                Window.Editor.Tools.ActiveTool = null;
-            }
-
-            if (m_rteCamera != null)
-            {
-                m_rteCamera.CommandBufferRefresh -= OnCommandBufferRefresh;
-                m_rteCamera.RefreshCommandBuffer();
-            }
-        }
-
-        protected virtual void StartOverride()
+        protected virtual void BeginRecord()
         {
 
         }
 
-        protected virtual void OnEnableOverride()
+        protected virtual void EndRecord()
         {
 
-        }
-
-        protected virtual void OnDisableOverride()
-        {
-
-        }
-
-        protected virtual void UpdateOverride()
-        {
-          
-        }
-
-        protected virtual void BeginRecordOverride()
-        {
-
-        }
-
-        protected virtual void EndRecordOverride()
-        {
-
-        }
-
-        protected override void OnActiveWindowChanged(RuntimeWindow deactivatedWindow)
-        {
-            if (Editor.ActiveWindow != null && Editor.ActiveWindow.WindowType == RuntimeWindowType.Scene)
-            {
-                Window = Editor.ActiveWindow;
-                SceneCamera = Window.Camera;
-            }
-
-            base.OnActiveWindowChanged(deactivatedWindow);
         }
 
         protected virtual bool OnBeginDrag(int index)
@@ -390,6 +355,14 @@ namespace Battlehub.RTGizmos
 
         protected virtual void OnDrop()
         {
+            BaseGizmo[] gizmos = FindObjectsOfType<BaseGizmo>();
+            foreach(BaseGizmo gizmo in gizmos)
+            {
+                if(gizmo.m_rteCamera != null)
+                {
+                    gizmo.m_rteCamera.RefreshCommandBuffer();
+                }
+            }
 
         }
 
@@ -510,7 +483,11 @@ namespace Battlehub.RTGizmos
                 }
                 if (EnableUndo)
                 {
+                    BeginRecord();
+
+#pragma warning disable CS0612
                     BeginRecordOverride();
+#pragma warning restore CS0612
                 }
             }
         }
@@ -525,7 +502,12 @@ namespace Battlehub.RTGizmos
                 {
                     Window.Editor.Undo.BeginRecord();
                 }
+                EndRecord();
+
+#pragma warning disable CS0612
                 EndRecordOverride();
+#pragma warning restore CS0612
+
                 if (!isRecording)
                 {
                     Window.Editor.Undo.EndRecord();
@@ -534,6 +516,43 @@ namespace Battlehub.RTGizmos
                 Window.Editor.Tools.ActiveTool = null;
                 m_rteCamera.RefreshCommandBuffer();
             }
+        }
+
+
+        [Obsolete]
+        protected virtual void StartOverride()
+        {
+
+        }
+
+        [Obsolete]
+        protected virtual void OnEnableOverride()
+        {
+
+        }
+
+        [Obsolete]
+        protected virtual void OnDisableOverride()
+        {
+
+        }
+
+        [Obsolete]
+        protected virtual void UpdateOverride()
+        {
+
+        }
+
+        [Obsolete]
+        protected virtual void BeginRecordOverride()
+        {
+
+        }
+
+        [Obsolete]
+        protected virtual void EndRecordOverride()
+        {
+
         }
 
     }

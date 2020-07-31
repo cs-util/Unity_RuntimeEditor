@@ -40,9 +40,10 @@ namespace Battlehub.RTGizmos
             get { return m_coneHandesNormals; }
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
+            base.Awake();
+        
             m_coneHandlesPositions = GizmoUtility.GetConeHandlesPositions();
             m_coneHandesNormals = GizmoUtility.GetConeHandlesNormals();
         }

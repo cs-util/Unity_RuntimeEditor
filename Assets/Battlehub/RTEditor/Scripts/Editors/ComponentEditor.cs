@@ -7,6 +7,7 @@ using Battlehub.RTCommon;
 using Battlehub.RTSL.Interface;
 using TMPro;
 using System.Collections.Generic;
+using Battlehub.RTGizmos;
 
 namespace Battlehub.RTEditor
 {
@@ -163,7 +164,7 @@ namespace Battlehub.RTEditor
             set { m_components = value; }
         }
 
-        protected override void UpdateOverride()
+        protected override void Update()
         {
         }
     }
@@ -362,7 +363,7 @@ namespace Battlehub.RTEditor
         private IProject m_project;
         private IEditorsMap m_editorsMap;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             m_editor = IOC.Resolve<IRTE>();
             if(m_editor.Object != null)
@@ -371,11 +372,14 @@ namespace Battlehub.RTEditor
             }
             m_project = IOC.Resolve<IProject>();
             m_editorsMap = IOC.Resolve<IEditorsMap>();
+            
 
+#pragma warning disable CS0612
             AwakeOverride();
+#pragma warning restore CS0612
         }
 
-        private void Start()
+        protected virtual void Start()
         {
             if (Components == null || Components.Length == 0)
             {
@@ -401,17 +405,24 @@ namespace Battlehub.RTEditor
             m_editor.Object.ReloadComponentEditor += OnReloadComponentEditor;
             m_editor.Undo.UndoCompleted += OnUndoCompleted;
             m_editor.Undo.RedoCompleted += OnRedoCompleted;
-            
+            m_editor.WindowRegistered += OnWindowRegistered;
+            m_editor.WindowUnregistered += OnWindowUnregistered;
+
+#pragma warning disable CS0612
             StartOverride();
+#pragma warning restore CS0612
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             if(m_editor != null)
             {
                 m_editor.Undo.UndoCompleted -= OnUndoCompleted;
                 m_editor.Undo.RedoCompleted -= OnRedoCompleted;
-                if(m_editor.Object != null)
+                m_editor.WindowRegistered -= OnWindowRegistered;
+                m_editor.WindowUnregistered -= OnWindowUnregistered;
+
+                if (m_editor.Object != null)
                 {
                     m_editor.Object.ReloadComponentEditor -= OnReloadComponentEditor;
                 }
@@ -439,34 +450,22 @@ namespace Battlehub.RTEditor
                     Destroy(m_gizmos[i]);
                 }
                 m_gizmos = null;
-            }            
-
+            }
+#pragma warning disable CS0612
             OnDestroyOverride();
+#pragma warning restore CS0612
         }
 
-        private void Update()
+        protected virtual void Update()
         {
-            UpdateOverride();
-        }
-
-        protected virtual void AwakeOverride()
-        {
-        }
-
-        protected virtual void StartOverride()
-        {
-        }
-
-        protected virtual void OnDestroyOverride()
-        {
-        }
-
-        protected virtual void UpdateOverride()
-        {
-            if(Components == null || Components.Length == 0 || Components[0] == null)
+            if (Components == null || Components.Length == 0 || Components[0] == null)
             {
                 Destroy(gameObject);
             }
+
+#pragma warning disable CS0612
+            UpdateOverride();
+#pragma warning restore CS0612
         }
 
         protected IComponentDescriptor GetComponentDescriptor()
@@ -679,23 +678,77 @@ namespace Battlehub.RTEditor
             }
         }
 
+
+        protected virtual void OnWindowRegistered(RuntimeWindow window)
+        {
+            if (window.WindowType == RuntimeWindowType.Scene)
+            {
+                List<Component> gizmos = m_gizmos != null ? m_gizmos.ToList() : new List<Component>();
+                TryCreateGizmos(GetComponentDescriptor(), gizmos, window);
+                if(gizmos.Count > 0)
+                {
+                    m_gizmos = gizmos.ToArray();
+                }
+            }
+        }
+
+        protected virtual void OnWindowUnregistered(RuntimeWindow window)
+        {
+            if (window.WindowType == RuntimeWindowType.Scene && m_gizmos != null)
+            {
+                List<Component> gizmos = m_gizmos.ToList();
+
+                for(int i = gizmos.Count - 1; i >= 0; i--)
+                {
+                    RTEComponent rteComponent = gizmos[i] as RTEComponent;
+                    if(rteComponent != null && rteComponent.Window == window)
+                    {
+                        DestroyImmediate(rteComponent);
+                        gizmos.RemoveAt(i);
+                    }
+                }
+                
+                m_gizmos = gizmos.ToArray();
+            }
+        }
+
         protected virtual void TryCreateGizmos(IComponentDescriptor componentDescriptor)
         {
             if (componentDescriptor != null && componentDescriptor.GizmoType != null && IsComponentEnabled)
             {
-                m_gizmos = new Component[Components.Length];
-                for(int i = 0; i < m_gizmos.Length; ++i)
+                List<Component> gizmos = new List<Component>();
+                RuntimeWindow[] windows = m_editor.Windows;
+                for(int i = 0; i < windows.Length; ++i)
                 {
-                    Component component = Components[i];
-                    if(component != null)
+                    RuntimeWindow window = windows[i];
+                    if(window.WindowType == RuntimeWindowType.Scene)
                     {
-                        Component gizmo = component.GetComponent(componentDescriptor.GizmoType);
-                        if (gizmo == null)
+                        TryCreateGizmos(componentDescriptor, gizmos, window);
+                    }
+                }
+
+                m_gizmos = gizmos.ToArray();
+            }
+        }
+
+        protected virtual void TryCreateGizmos(IComponentDescriptor componentDescriptor, List<Component> gizmos, RuntimeWindow window)
+        {
+            if (componentDescriptor != null && componentDescriptor.GizmoType != null && IsComponentEnabled)
+            {
+                for (int j = 0; j < Components.Length; ++j)
+                {
+                    Component component = Components[j];
+                    if (component != null)
+                    {
+                        Component gizmo = component.gameObject.AddComponent(componentDescriptor.GizmoType);
+                        if (gizmo is RTEComponent)
                         {
-                            gizmo = component.gameObject.AddComponent(componentDescriptor.GizmoType);
+                            RTEComponent baseGizmo = (RTEComponent)gizmo;
+                            baseGizmo.Window = window;
                         }
+
                         gizmo.SendMessageUpwards("Reset", SendMessageOptions.DontRequireReceiver);
-                        m_gizmos[i] = gizmo;
+                        gizmos.Add(gizmo);
                     }
                 }
             }
@@ -902,6 +955,27 @@ namespace Battlehub.RTEditor
             }
            
             Editor.Undo.EndRecord();
+        }
+
+        [Obsolete]
+        protected virtual void AwakeOverride()
+        {
+        }
+
+        [Obsolete]
+        protected virtual void StartOverride()
+        {
+        }
+
+        [Obsolete]
+        protected virtual void OnDestroyOverride()
+        {
+        }
+
+        [Obsolete]
+        protected virtual void UpdateOverride()
+        {
+
         }
     }
 

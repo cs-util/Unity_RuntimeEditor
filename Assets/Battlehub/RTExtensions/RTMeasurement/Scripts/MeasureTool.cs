@@ -40,10 +40,10 @@ namespace Battlehub.RTMeasurement
 
         private IRTECamera m_rteCamera;
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
-
+            base.Awake();
+        
             if (m_renderer == null)
             {
                 m_renderer = gameObject.AddComponent<LineStripRenderer>();

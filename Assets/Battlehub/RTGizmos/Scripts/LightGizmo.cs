@@ -1,19 +1,21 @@
 ﻿
+using Battlehub.RTCommon;
 using UnityEngine;
 
 namespace Battlehub.RTGizmos
 {
     [DefaultExecutionOrder(-55)]
-    public class LightGizmo : MonoBehaviour
+    public class LightGizmo : RTEComponent
     {
         private Light m_light;
         private LightType m_lightType;
 
         [SerializeField, HideInInspector]
-        private Component m_gizmo;
+        private RTEComponent m_gizmo;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();        
             m_light = GetComponent<Light>();
             if(m_light == null)
             {
@@ -26,8 +28,19 @@ namespace Battlehub.RTGizmos
             }
         }
 
-        private void OnDestroy()
+        protected override void Start()
         {
+            base.Start();
+            if(m_gizmo != null)
+            {
+                m_gizmo.Window = Window;
+            }
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        
             if (m_gizmo != null)
             {
                 Destroy(m_gizmo);
@@ -65,8 +78,6 @@ namespace Battlehub.RTGizmos
                 {
                     m_gizmo = gameObject.AddComponent<PointLightGizmo>();
                 }
-
-                
             }
             else if(m_lightType == LightType.Spot)
             {
@@ -82,6 +93,8 @@ namespace Battlehub.RTGizmos
                     m_gizmo = gameObject.AddComponent<DirectionalLightGizmo>();
                 }
             }
+
+            m_gizmo.Window = Window;
         }
     }
 

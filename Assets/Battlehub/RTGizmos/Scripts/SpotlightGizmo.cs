@@ -43,7 +43,7 @@ namespace Battlehub.RTGizmos
             }
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
             if (m_light == null)
             {
@@ -60,19 +60,19 @@ namespace Battlehub.RTGizmos
                 Debug.LogWarning("m_light.Type != LightType.Spot");
             }
 
-            base.AwakeOverride();
+            base.Awake();
         }
 
-        protected override void BeginRecordOverride()
+        protected override void BeginRecord()
         {
-            base.BeginRecordOverride();
+            base.BeginRecord();
             Window.Editor.Undo.BeginRecordValue(m_light, Strong.PropertyInfo((Light x) => x.range, "range"));
             Window.Editor.Undo.BeginRecordValue(m_light, Strong.PropertyInfo((Light x) => x.spotAngle, "spotAngle"));
         }
 
-        protected override void EndRecordOverride()
+        protected override void EndRecord()
         {
-            base.EndRecordOverride();
+            base.EndRecord();
             Window.Editor.Undo.EndRecordValue(m_light, Strong.PropertyInfo((Light x) => x.range, "range"));
             Window.Editor.Undo.EndRecordValue(m_light, Strong.PropertyInfo((Light x) => x.spotAngle, "spotAngle"));
         }

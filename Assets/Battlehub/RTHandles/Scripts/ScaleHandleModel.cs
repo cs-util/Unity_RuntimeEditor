@@ -57,9 +57,9 @@ namespace Battlehub.RTHandles
         private BoxCollider m_xyzCollider;
         private Collider[] m_colliders;
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
+            base.Awake();
         
             m_b1x = m_armature.GetChild(0);
             m_b1y = m_armature.GetChild(1);

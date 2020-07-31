@@ -49,8 +49,8 @@ namespace Battlehub.RTGizmos
             }
         }
 
-     
-        protected override void AwakeOverride()
+
+        protected override void Awake()
         {
             if (m_collider == null)
             {
@@ -62,19 +62,19 @@ namespace Battlehub.RTGizmos
                 Debug.LogError("Set Collider");
             }
 
-            base.AwakeOverride();
+            base.Awake();
         }
 
-        protected override void BeginRecordOverride()
+        protected override void BeginRecord()
         {
-            base.BeginRecordOverride();
+            base.BeginRecord();
             Window.Editor.Undo.BeginRecordValue(m_collider, Strong.PropertyInfo((SphereCollider x) => x.center, "center"));
             Window.Editor.Undo.BeginRecordValue(m_collider, Strong.PropertyInfo((SphereCollider x) => x.radius, "radius"));
         }
 
-        protected override void EndRecordOverride()
+        protected override void EndRecord()
         {
-            base.EndRecordOverride();
+            base.EndRecord();
             Window.Editor.Undo.EndRecordValue(m_collider, Strong.PropertyInfo((SphereCollider x) => x.center, "center"));
             Window.Editor.Undo.EndRecordValue(m_collider, Strong.PropertyInfo((SphereCollider x) => x.radius, "radius"));
         }

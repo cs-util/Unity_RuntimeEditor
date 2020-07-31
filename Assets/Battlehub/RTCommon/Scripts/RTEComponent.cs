@@ -1,17 +1,18 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Battlehub.RTCommon
 {
     public class RTEComponent : MonoBehaviour
     {
-        protected IRTE m_editor;
+        private IRTE m_editor;
         public IRTE Editor
         {
             get { return m_editor; }
         }
 
         [SerializeField]
-        protected RuntimeWindow m_window;
+        private RuntimeWindow m_window;
         public virtual RuntimeWindow Window
         {
             get { return m_window; }
@@ -19,10 +20,11 @@ namespace Battlehub.RTCommon
             {
                 if(m_window != value)
                 {
-                    if (m_awaked)
+                    if (m_isStarted)
                     {
                         throw new System.NotSupportedException("window change is not supported");
                     }
+
                     m_editor = IOC.Resolve<IRTE>();
                     m_window = value;
                 }
@@ -34,12 +36,12 @@ namespace Battlehub.RTCommon
             get { return Window == m_editor.ActiveWindow; }
         }
 
-        private bool m_awaked;
-        protected bool IsAwaked
+        private bool m_isStarted;
+        protected bool IsStarted
         {
-            get { return m_awaked; }
+            get { return m_isStarted; }
         }
-        
+
         protected virtual void Awake()
         {
             m_editor = IOC.Resolve<IRTE>();
@@ -54,10 +56,13 @@ namespace Battlehub.RTCommon
                     return;
                 }
             }
-
+#pragma warning disable CS0618
             AwakeOverride();
-            m_awaked = true;
+#pragma warning restore CS0618
+        }
 
+        protected virtual void Start()
+        {
             if (IsWindowActive)
             {
                 OnWindowActivating();
@@ -65,6 +70,7 @@ namespace Battlehub.RTCommon
             }
             m_editor.ActiveWindowChanging += OnActiveWindowChanging;
             m_editor.ActiveWindowChanged += OnActiveWindowChanged;
+            m_isStarted = true;
         }
 
         protected virtual RuntimeWindow GetDefaultWindow()
@@ -72,10 +78,7 @@ namespace Battlehub.RTCommon
            return m_editor.GetWindow(RuntimeWindowType.Scene);
         }
 
-        protected virtual void AwakeOverride()
-        {
 
-        }
 
         protected virtual void OnDestroy()
         {
@@ -84,13 +87,10 @@ namespace Battlehub.RTCommon
                 m_editor.ActiveWindowChanging -= OnActiveWindowChanging;
                 m_editor.ActiveWindowChanged -= OnActiveWindowChanged;
             }
+
+#pragma warning disable CS0618
             OnDestroyOverride();
-            m_editor = null;
-        }
-
-        protected virtual void OnDestroyOverride()
-        {
-
+#pragma warning restore CS0618
         }
 
         protected virtual void OnActiveWindowChanging(RuntimeWindow activatedWindow)
@@ -136,6 +136,20 @@ namespace Battlehub.RTCommon
         {
 
         }
+
+
+        [Obsolete("Override Awake method instead")]
+        protected virtual void AwakeOverride()
+        {
+
+        }
+
+        [Obsolete("Override OnDestroy method instead")]
+        protected virtual void OnDestroyOverride()
+        {
+
+        }
+
     }
 }
 

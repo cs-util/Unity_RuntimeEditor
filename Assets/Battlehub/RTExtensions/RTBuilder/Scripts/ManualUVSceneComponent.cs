@@ -27,11 +27,11 @@ namespace Battlehub.RTBuilder
 
         private IProBuilderTool m_tool;
         private IManualUVEditor m_uvEditor;
-        
-        protected override void AwakeOverride()
-        {
-            base.AwakeOverride();
 
+        protected override void Awake()
+        {
+            base.Awake();
+        
             m_tool = IOC.Resolve<IProBuilderTool>();
             m_uvEditor = IOC.Resolve<IManualUVEditor>();
 
@@ -39,10 +39,10 @@ namespace Battlehub.RTBuilder
             m_uvRenderersRoot.transform.SetParent(transform, false);
         }
 
-        protected override void OnDestroyOverride()
+        protected override void OnDestroy()
         {
-            base.OnDestroyOverride();
-
+            base.OnDestroy();
+        
             for (int i = 0; i < m_uvRenderers.Count; ++i)
             {
                 Destroy(m_uvRenderers[i]);
@@ -113,8 +113,10 @@ namespace Battlehub.RTBuilder
             }
         }
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
+        
             m_plane = new Plane(Vector3.forward, 0);
 
             m_graphicsLayer = Window.IOCContainer.Resolve<IRTEGraphicsLayer>();

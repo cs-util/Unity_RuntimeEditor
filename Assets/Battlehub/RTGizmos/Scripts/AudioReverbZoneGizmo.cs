@@ -53,7 +53,7 @@ namespace Battlehub.RTGizmos
             }
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
             if (m_source == null)
             {
@@ -76,19 +76,19 @@ namespace Battlehub.RTGizmos
                 gizmo.m_max = !m_max;
             }
 
-            base.AwakeOverride();
+            base.Awake();
         }
 
-        protected override void BeginRecordOverride()
+        protected override void BeginRecord()
         {
-            base.BeginRecordOverride();
+            base.BeginRecord();
             Window.Editor.Undo.BeginRecordValue(m_source, Strong.PropertyInfo((AudioReverbZone x) => x.minDistance, "minDistance"));
             Window.Editor.Undo.BeginRecordValue(m_source, Strong.PropertyInfo((AudioReverbZone x) => x.maxDistance, "maxDistance"));
         }
 
-        protected override void EndRecordOverride()
+        protected override void EndRecord()
         {
-            base.EndRecordOverride();
+            base.EndRecord();
             Window.Editor.Undo.EndRecordValue(m_source, Strong.PropertyInfo((AudioReverbZone x) => x.minDistance, "minDistance"));
             Window.Editor.Undo.EndRecordValue(m_source, Strong.PropertyInfo((AudioReverbZone x) => x.maxDistance, "maxDistance"));
         }

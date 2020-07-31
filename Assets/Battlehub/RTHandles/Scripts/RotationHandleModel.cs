@@ -54,7 +54,6 @@ namespace Battlehub.RTHandles
         [SerializeField]
         private Mesh m_ssMesh = null;
 
-        //private SphereCollider m_graphicsBlockingCollider;
         private MeshCollider m_xCollider;
         private MeshCollider m_yCollider;
         private MeshCollider m_zCollider;
@@ -62,13 +61,12 @@ namespace Battlehub.RTHandles
         private MeshCollider m_outerCollider;
         private Collider[] m_colliders;
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
-
+            base.Awake();
+        
             m_xyzMesh = m_xyz.sharedMesh;
 
-            
             if(Editor.IsVR)
             {
                 Destroy(m_innerCircle.gameObject);

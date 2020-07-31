@@ -88,7 +88,7 @@ namespace Battlehub.RTGizmos
             GizmoUtility.DrawWireCapsule(camera.CommandBuffer, Direction, GetHeight(), Radius, Target.TransformPoint(Center), Target.rotation, new Vector3(hs, hs, hs), LineProperties);
             if (IsDragging)
             {
-                GizmoUtility.DrawSelection(camera.CommandBuffer, HandlesTransform.MultiplyPoint(Center + HandlesPositions[DragIndex]), Target.rotation, Target.lossyScale, SelectionProperties);
+                GizmoUtility.DrawSelection(camera.CommandBuffer, HandlesTransform.MultiplyPoint(HandlesPositions[DragIndex]), Target.rotation, Target.lossyScale, SelectionProperties);
             }
         }
 

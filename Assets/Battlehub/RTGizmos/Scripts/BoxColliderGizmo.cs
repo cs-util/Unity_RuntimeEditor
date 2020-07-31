@@ -29,8 +29,10 @@ namespace Battlehub.RTGizmos
             }
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
+            base.Awake();
+        
             if(m_collider == null)
             {
                 m_collider = GetComponent<BoxCollider>();
@@ -40,20 +42,18 @@ namespace Battlehub.RTGizmos
             {
                 Debug.LogError("Set Collider");
             }
-            
-            base.AwakeOverride();
         }
 
-        protected override void BeginRecordOverride()
+        protected override void BeginRecord()
         {
-            base.BeginRecordOverride();
+            base.BeginRecord();
             Window.Editor.Undo.BeginRecordValue(m_collider, Strong.PropertyInfo((BoxCollider x) => x.center, "center"));
             Window.Editor.Undo.BeginRecordValue(m_collider, Strong.PropertyInfo((BoxCollider x) => x.size, "size"));
         }
 
-        protected override void EndRecordOverride()
+        protected override void EndRecord()
         {
-            base.EndRecordOverride();
+            base.EndRecord();
             Window.Editor.Undo.EndRecordValue(m_collider, Strong.PropertyInfo((BoxCollider x) => x.center, "center"));
             Window.Editor.Undo.EndRecordValue(m_collider, Strong.PropertyInfo((BoxCollider x) => x.size, "size"));
         }

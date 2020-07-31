@@ -1,4 +1,5 @@
 ﻿using Battlehub.RTCommon;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,16 +17,16 @@ namespace Battlehub.RTEditor
 
         private RuntimeTool m_lastTool;
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
+            base.Awake();
             m_lastTool = Editor.Tools.Current;
             Editor.Tools.ToolChanged += OnToolChanged;
         }
 
-        protected override void OnDestroyOverride()
+        protected override void OnDestroy()
         {
-            base.OnDestroyOverride();
+            base.OnDestroy();
             if (m_editColliderButton != null)
             {
                 m_editColliderButton.onValueChanged.RemoveListener(OnEditCollider);
@@ -103,6 +104,14 @@ namespace Battlehub.RTEditor
             {
                 base.TryCreateGizmos(componentDescriptor);
             }   
+        }
+
+        protected override void TryCreateGizmos(IComponentDescriptor componentDescriptor, List<Component> gizmos, RuntimeWindow window)
+        {
+            if(m_isEditing)
+            {
+                base.TryCreateGizmos(componentDescriptor, gizmos, window);
+            }
         }
 
         protected override void DestroyGizmos()

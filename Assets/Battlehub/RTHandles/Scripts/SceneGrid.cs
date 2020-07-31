@@ -55,9 +55,9 @@ namespace Battlehub.RTHandles
             set { m_alpha = Mathf.Clamp01(value); }
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
+            base.Awake();
             RuntimeHandlesComponent.InitializeIfRequired(ref Appearance);
         }
 
@@ -80,9 +80,9 @@ namespace Battlehub.RTHandles
             Destroy(m_rteCamera);
         }
 
-        protected override void OnDestroyOverride()
+        protected override void OnDestroy()
         {
-            base.OnDestroyOverride();
+            base.OnDestroy();
             Cleanup();
         }
 

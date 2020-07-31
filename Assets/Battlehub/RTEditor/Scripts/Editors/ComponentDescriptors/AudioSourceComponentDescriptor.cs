@@ -2,11 +2,12 @@
 using Battlehub.Utils;
 using System.Reflection;
 using Battlehub.RTCommon;
+using Battlehub.RTGizmos;
 
 namespace Battlehub.RTEditor
 {
     [BuiltInDescriptor]
-    public class AudioSourceComponentDescriptor : ComponentDescriptorBase<AudioSource>
+    public class AudioSourceComponentDescriptor : ComponentDescriptorBase<AudioSource, AudioSourceGizmo>
     {
         public override PropertyDescriptor[] GetProperties(ComponentEditor editor, object converter)
         {

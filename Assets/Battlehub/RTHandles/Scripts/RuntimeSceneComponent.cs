@@ -294,9 +294,9 @@ namespace Battlehub.RTHandles
             }
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
+            base.Awake();
 
             Window.IOCContainer.RegisterFallback<IRuntimeSceneComponent>(this);
 
@@ -354,9 +354,9 @@ namespace Battlehub.RTHandles
             m_orbitDistance = (Pivot - m_targetPosition).magnitude;
         }
 
-        protected override void OnDestroyOverride()
+        protected override void OnDestroy()
         {
-            base.OnDestroyOverride();
+            base.OnDestroy();
 
             Window.IOCContainer.UnregisterFallback<IRuntimeSceneComponent>(this);
 

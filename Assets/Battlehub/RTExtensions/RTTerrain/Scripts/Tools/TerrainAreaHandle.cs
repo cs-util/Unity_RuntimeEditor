@@ -605,7 +605,7 @@ namespace Battlehub.RTTerrain
             m_oldHeights = null;
             m_oldResizerPositions = null;
 
-            m_editor.Undo.CreateRecord(record =>
+            Editor.Undo.CreateRecord(record =>
             {
                 if(terrain.terrainData != null)
                 {

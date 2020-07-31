@@ -150,11 +150,11 @@ namespace Battlehub.RTHandles
         private RTECamera m_rteGizmoCamera;
         private IRenderPipelineCameraUtility m_cameraUtility;
         private bool m_disableCamera;
-        
-        protected override void AwakeOverride()
-        {
-            base.AwakeOverride();
 
+        protected override void Awake()
+        {
+            base.Awake();
+        
             RuntimeHandlesComponent.InitializeIfRequired(ref Appearance);
 
             if (Pivot == null)
@@ -248,7 +248,7 @@ namespace Battlehub.RTHandles
             }
         }
 
-        protected virtual void Start()
+        protected override void Start()
         {
             if(IsOrthographic != Window.Camera.orthographic)
             {
@@ -256,10 +256,10 @@ namespace Battlehub.RTHandles
             }
         }
 
-        protected override void OnDestroyOverride()
+        protected override void OnDestroy()
         {
-            base.OnDestroyOverride();
-        
+            base.OnDestroy();
+                
             if (BtnProjection != null)
             {
                 BtnProjection.onClick.RemoveListener(OnBtnModeClick);

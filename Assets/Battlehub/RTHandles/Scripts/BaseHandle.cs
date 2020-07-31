@@ -387,7 +387,7 @@ namespace Battlehub.RTHandles
                     transform.position = m_activeTargets[0].position;
                 }
 
-                if(IsAwaked && Model != null)
+                if(IsStarted && Model != null)
                 {
                     SyncModelTransform();
                 }
@@ -506,10 +506,10 @@ namespace Battlehub.RTHandles
             return target.position;
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
-
+            base.Awake();
+        
             m_allHandles.Add(this);
 
             RuntimeHandlesComponent.InitializeIfRequired(ref Appearance);
@@ -566,7 +566,7 @@ namespace Battlehub.RTHandles
             }
         }
 
-        protected virtual void Start()
+        protected override void Start()
         {
             m_input = GetComponent<BaseHandleInput>();
             if (m_input == null || m_input.Handle != this)
@@ -711,10 +711,10 @@ namespace Battlehub.RTHandles
             
         }
 
-        protected override void OnDestroyOverride()
+        protected override void OnDestroy()
         {
-            base.OnDestroyOverride();
-
+            base.OnDestroy();
+        
             m_allHandles.Remove(this);
 
             if (m_input != null && m_input.Handle == this)
@@ -754,7 +754,7 @@ namespace Battlehub.RTHandles
             if(Model != null && !Model.gameObject.IsPrefab())
             {
                 Model.transform.SetParent(transform.parent, true);
-                if (IsAwaked)
+                if (IsStarted)
                 {
                     SyncModelTransform();
                 }

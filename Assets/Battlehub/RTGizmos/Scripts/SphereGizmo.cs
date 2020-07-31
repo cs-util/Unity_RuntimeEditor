@@ -37,9 +37,9 @@ namespace Battlehub.RTGizmos
             }
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
+            base.Awake();
             RefreshOnCameraChanged = true;
         }
 

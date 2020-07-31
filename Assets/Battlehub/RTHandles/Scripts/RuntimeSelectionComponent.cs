@@ -647,10 +647,10 @@ namespace Battlehub.RTHandles
             }
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
-
+            base.Awake();
+        
             Window.IOCContainer.RegisterFallback<IScenePivot>(this);
             Window.IOCContainer.RegisterFallback<IRuntimeSelectionComponent>(this);
 
@@ -789,8 +789,10 @@ namespace Battlehub.RTHandles
             OnRuntimeEditorSelectionChanged(null);
         }
 
-        protected virtual void Start()
+        protected override void Start()
         {
+            base.Start();
+        
             if (GetComponent<RuntimeSelectionInputBase>() == null)
             {
                 gameObject.AddComponent<RuntimeSelectionInput>();
@@ -819,16 +821,12 @@ namespace Battlehub.RTHandles
                 m_rectTool.gameObject.SetActive(true);
                 m_rectTool.gameObject.SetActive(false);
             }
-
-            //RuntimeTool tool = Editor.Tools.Current;
-            //Editor.Tools.Current = RuntimeTool.None;
-            //Editor.Tools.Current = tool;
         }
 
-        protected override void OnDestroyOverride()
+        protected override void OnDestroy()
         {
-            base.OnDestroyOverride();
-
+            base.OnDestroy();
+        
             Window.IOCContainer.UnregisterFallback<IScenePivot>(this);
             Window.IOCContainer.UnregisterFallback<IRuntimeSelectionComponent>(this);
 
@@ -843,27 +841,6 @@ namespace Battlehub.RTHandles
                 Editor.Tools.ToolChanged -= OnRuntimeToolChanged;
                 Editor.Selection.SelectionChanged -= OnRuntimeEditorSelectionChanged;
             }
-
-            /*
-            GameObject[] selectedObjects = Editor.Selection.gameObjects;
-            if (selectedObjects != null)
-            {
-                for (int i = 0; i < selectedObjects.Length; ++i)
-                {
-                    GameObject go = selectedObjects[i];
-                    if (go != null)
-                    {
-                        SelectionGizmo[] selectionGizmo = go.GetComponents<SelectionGizmo>();
-                        for (int g = 0; g < selectionGizmo.Length; ++g)
-                        {
-                            if (selectionGizmo[g] != null && selectionGizmo[g].Window == Window)
-                            {
-                                Destroy(selectionGizmo[g]);
-                            }
-                        }
-                    }
-                }
-            }*/
 
             if (m_positionHandle != null)
             {

@@ -146,10 +146,9 @@ namespace Battlehub.RTHandles
             get { return m_canvas; }
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
-
+            base.Awake();
             Window.IOCContainer.RegisterFallback<IBoxSelection>(this);
             if (m_canvas == null)
             {
@@ -208,16 +207,18 @@ namespace Battlehub.RTHandles
             m_image.raycastTarget = false;
         }
 
-        protected virtual void Start()
+        protected override void Start()
         {
-            m_windowRectTransform = (RectTransform)m_window.transform;
+            base.Start();
+        
+            m_windowRectTransform = (RectTransform)Window.transform;
             Canvas windowCanvas = m_windowRectTransform.GetComponentInParent<Canvas>();
             m_windowCanvasCamera = windowCanvas.renderMode != RenderMode.ScreenSpaceOverlay ? windowCanvas.worldCamera : null;
         }
 
-        protected override void OnDestroyOverride()
+        protected override void OnDestroy()
         {
-            base.OnDestroyOverride();
+            base.OnDestroy();
             Window.IOCContainer.UnregisterFallback<IBoxSelection>(this);
             if (Editor != null && Editor.Tools != null && Editor.Tools.ActiveTool == this)
             {
@@ -585,7 +586,7 @@ namespace Battlehub.RTHandles
             }
             else
             {
-                screenPoint = m_window.Editor.Input.GetPointerXY(0);
+                screenPoint = Window.Editor.Input.GetPointerXY(0);
                 Rect rect = m_windowRectTransform.rect;
 
                 Vector2 min = RectTransformUtility.WorldToScreenPoint(m_windowCanvasCamera, m_windowRectTransform.TransformPoint(rect.min)) + ScreenSpaceMargin;

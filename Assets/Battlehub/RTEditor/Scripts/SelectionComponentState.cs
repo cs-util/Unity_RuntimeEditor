@@ -100,21 +100,19 @@ namespace Battlehub.RTEditor
             IsRectToolEnabled(setter, value);
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
-        
-            m_component = m_window.IOCContainer.Resolve<IRuntimeSelectionComponent>();
+            base.Awake();        
+            m_component = Window.IOCContainer.Resolve<IRuntimeSelectionComponent>();
             Window.IOCContainer.RegisterFallback<ISelectionComponentState>(this);
         }
 
-        protected override void OnDestroyOverride()
+        protected override void OnDestroy()
         {
-            base.OnDestroyOverride();
-        
-            if(m_window != null)
+            base.OnDestroy();
+            if(Window != null)
             {
-                m_window.IOCContainer.UnregisterFallback<ISelectionComponentState>(this);
+                Window.IOCContainer.UnregisterFallback<ISelectionComponentState>(this);
             }
         }
     }

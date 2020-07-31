@@ -10,13 +10,13 @@ namespace Battlehub.RTGizmos
         {
             get
             {
-                return Target.localToWorldMatrix;
+                return Target != null ? Target.localToWorldMatrix : Matrix4x4.identity;
             }
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
+            base.Awake();
             RefreshOnCameraChanged = true;
         }
  

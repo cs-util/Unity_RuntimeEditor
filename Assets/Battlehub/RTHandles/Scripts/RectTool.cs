@@ -209,9 +209,10 @@ namespace Battlehub.RTHandles
             UpdateFontSize();
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
+            base.Awake();
+        
             GameObject lines = new GameObject("Lines");
             lines.transform.SetParent(transform);
             lines.layer = Editor.CameraLayerSettings.RuntimeGraphicsLayer + Window.Index;

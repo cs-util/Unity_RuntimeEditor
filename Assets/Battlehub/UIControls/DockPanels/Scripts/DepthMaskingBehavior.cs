@@ -186,7 +186,11 @@ namespace Battlehub.UIControls.DockPanels
 
         private void OnRegionDepthChanged(Region region, int depth)
         {
-            DepthMask depthMask = m_regionToDepthMask[region];
+            DepthMask depthMask = null;
+            if(!m_regionToDepthMask.TryGetValue(region, out depthMask))
+            {
+                return;
+            }
             if (depth == 0)
             {
                 depthMask.Graphic.enabled = false;
@@ -197,7 +201,6 @@ namespace Battlehub.UIControls.DockPanels
             }
 
             depthMask.Depth = depth;
-
             ApplyDepth(region, depthMask);
         }
 

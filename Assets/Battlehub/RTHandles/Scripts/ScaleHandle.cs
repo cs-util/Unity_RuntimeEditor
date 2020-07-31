@@ -40,9 +40,9 @@ namespace Battlehub.RTHandles
             get { return SizeOfGrid; }
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
+            base.Awake();
         
             m_scale = Vector3.one;
             m_roundedScale = m_scale;

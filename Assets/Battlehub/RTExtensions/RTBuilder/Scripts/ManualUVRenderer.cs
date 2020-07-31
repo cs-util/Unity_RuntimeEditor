@@ -138,10 +138,10 @@ namespace Battlehub.RTBuilder
             }
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
-
+            base.Awake();
+        
             string vertShader = PBBuiltinMaterials.geometryShadersSupported ?
                 PBBuiltinMaterials.pointShader :
                 PBBuiltinMaterials.dotShader;

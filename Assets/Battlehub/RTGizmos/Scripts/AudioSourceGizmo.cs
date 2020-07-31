@@ -14,6 +14,8 @@ namespace Battlehub.RTGizmos
         [HideInInspector]
         private bool m_max = true;
 
+        private AudioSourceGizmo m_gizmo;
+
         protected override Vector3 Center
         {
             get { return Vector3.zero; }
@@ -54,8 +56,10 @@ namespace Battlehub.RTGizmos
             }
         }
 
-        protected override void AwakeOverride()
+        protected override void Start()
         {
+            base.Start();
+
             if (m_source == null)
             {
                 m_source = GetComponent<AudioSource>();
@@ -66,31 +70,37 @@ namespace Battlehub.RTGizmos
                 Debug.LogError("Set AudioSource");
             }
 
-
-            if(gameObject.GetComponents<AudioSourceGizmo>().Count( a => a.m_source == m_source) == 1)
+            if(m_max)
             {
-                AudioSourceGizmo gizmo = gameObject.AddComponent<AudioSourceGizmo>();
-                gizmo.LineColor = LineColor;
-                gizmo.HandlesColor = HandlesColor;
-                gizmo.SelectionColor = SelectionColor;
-                gizmo.SelectionMargin = SelectionMargin;
-                gizmo.EnableUndo = EnableUndo;
-                gizmo.m_max = !m_max;
+                m_gizmo = gameObject.AddComponent<AudioSourceGizmo>();
+                m_gizmo.LineColor = LineColor;
+                m_gizmo.HandlesColor = HandlesColor;
+                m_gizmo.SelectionColor = SelectionColor;
+                m_gizmo.SelectionMargin = SelectionMargin;
+                m_gizmo.EnableUndo = EnableUndo;
+                m_gizmo.m_max = !m_max;
+                m_gizmo.Window = Window;
             }
 
-            base.AwakeOverride();
+            RTECamera.RefreshCommandBuffer();
         }
 
-        protected override void BeginRecordOverride()
+        protected override void OnDestroy()
         {
-            base.BeginRecordOverride();
+            base.OnDestroy();
+            Destroy(m_gizmo);
+        }
+
+        protected override void BeginRecord()
+        {
+            base.BeginRecord();
             Window.Editor.Undo.BeginRecordValue(m_source, Strong.PropertyInfo((AudioSource x) => x.minDistance, "minDistance"));
             Window.Editor.Undo.BeginRecordValue(m_source, Strong.PropertyInfo((AudioSource x) => x.maxDistance, "maxDistance"));
         }
 
-        protected override void EndRecordOverride()
+        protected override void EndRecord()
         {
-            base.EndRecordOverride();
+            base.EndRecord();
             Window.Editor.Undo.EndRecordValue(m_source, Strong.PropertyInfo((AudioSource x) => x.minDistance, "minDistance"));
             Window.Editor.Undo.EndRecordValue(m_source, Strong.PropertyInfo((AudioSource x) => x.maxDistance, "maxDistance"));
         }

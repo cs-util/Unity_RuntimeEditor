@@ -133,9 +133,9 @@ namespace Battlehub.RTHandles
             }
         }
 
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
-            base.AwakeOverride();
+            base.Awake();
         
             m_defaultArmaturesScale = new Vector3[m_armatures.Length];
             m_defaultB3XScale = new Vector3[m_armatures.Length];

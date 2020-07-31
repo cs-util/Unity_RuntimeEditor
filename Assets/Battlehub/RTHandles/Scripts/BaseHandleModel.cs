@@ -55,17 +55,13 @@ namespace Battlehub.RTHandles
 
         protected RuntimeHandleAxis m_selectedAxis = RuntimeHandleAxis.None;
         protected LockObject m_lockObj = new LockObject();
-        
-        protected override void AwakeOverride()
+
+        protected override void Awake()
         {
-            base.AwakeOverride();
+            base.Awake();
             SetLayer(transform, Window.Editor.CameraLayerSettings.RuntimeGraphicsLayer + Window.Index);
         }
     
-        protected virtual void Start()
-        {
-
-        }
 
         protected virtual void OnEnable()
         {

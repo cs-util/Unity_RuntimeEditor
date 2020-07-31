@@ -29,8 +29,7 @@ namespace Battlehub.RTGizmos
             }
         }
 
-
-        protected override void AwakeOverride()
+        protected override void Awake()
         {
             if (m_skinnedMeshRenderer == null)
             {
@@ -46,19 +45,18 @@ namespace Battlehub.RTGizmos
                 Target = m_skinnedMeshRenderer.rootBone;
             }
 
-            base.AwakeOverride();
-
+            base.Awake();
         }
 
-        protected override void BeginRecordOverride()
+        protected override void BeginRecord()
         {
-            base.BeginRecordOverride();
+            base.BeginRecord();
             Window.Editor.Undo.BeginRecordValue(m_skinnedMeshRenderer, Strong.PropertyInfo((SkinnedMeshRenderer x) => x.localBounds, "localBounds"));
         }
 
-        protected override void EndRecordOverride()
+        protected override void EndRecord()
         {
-            base.EndRecordOverride();
+            base.EndRecord();
             Window.Editor.Undo.EndRecordValue(m_skinnedMeshRenderer, Strong.PropertyInfo((SkinnedMeshRenderer x) => x.localBounds, "localBounds"));
         }
 

@@ -275,6 +275,7 @@ namespace Battlehub.RTCommon
         {
             m_editor.Object.Awaked += OnAwaked;
             m_editor.Object.Destroyed += OnDestroyed;
+            m_editor.Object.ComponentAdded += OnComponentAdded;
         }
 
         private void Unsubscribe()
@@ -283,6 +284,7 @@ namespace Battlehub.RTCommon
             {
                 m_editor.Object.Awaked -= OnAwaked;
                 m_editor.Object.Destroyed -= OnDestroyed;
+                m_editor.Object.ComponentAdded -= OnComponentAdded;
             }
         }
 
@@ -296,6 +298,16 @@ namespace Battlehub.RTCommon
                     GreateGizmo(obj.gameObject, m_types[i]);
                 }
             }
+            m_meshesCache.Refresh();
+        }
+
+        private void OnComponentAdded(ExposeToEditor obj, Component component)
+        {
+            if (Array.IndexOf(m_types, component.GetType()) >= 0)
+            {
+                GreateGizmo(obj.gameObject, component.GetType());
+            }
+
             m_meshesCache.Refresh();
         }
 
