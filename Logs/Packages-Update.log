@@ -1,0 +1,9 @@
+
+=== Fri Jul 31 13:10:13 2020
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.ide.vscode from version 1.2.0 to 1.2.1
+  com.unity.xr.management from version 3.2.12 to 3.2.13
