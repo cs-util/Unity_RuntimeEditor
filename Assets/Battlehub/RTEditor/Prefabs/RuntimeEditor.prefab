@@ -2845,7 +2845,7 @@ RectTransform:
   - {fileID: 4350177821589181146}
   - {fileID: 436286296837115800}
   m_Father: {fileID: 6389508947412869166}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -3953,6 +3953,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 5849259614124329400}
+  - {fileID: 5849259613100401303}
   m_Father: {fileID: 5849259614496068638}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4280,6 +4281,7 @@ MonoBehaviour:
       rgba: 654311423
   m_handleScale: 1
   m_selectionMargin: 1
+  m_selectionMarginPixels: 10
   m_invertZAxis: 0
   m_positionHandleArrowOnly: 0
   m_sceneGizmoScale: 1
@@ -4331,7 +4333,7 @@ RectTransform:
   - {fileID: 220647733537699799}
   - {fileID: 233234370}
   m_Father: {fileID: 6389508947412869166}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -4434,14 +4436,14 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5849259613100401296}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.9998512}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5822276258859557960}
   - {fileID: 5964698429461579628}
   - {fileID: 1638548488}
-  m_Father: {fileID: 6389508947412869166}
-  m_RootOrder: 0
+  m_Father: {fileID: 5849259612615065804}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -5434,7 +5436,7 @@ RectTransform:
   m_Children:
   - {fileID: 5849259614191065368}
   m_Father: {fileID: 6389508947412869166}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -6499,7 +6501,6 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 5849259613100401303}
   - {fileID: 1777419699227269926}
   - {fileID: 5849259612951747679}
   - {fileID: 5849259614334939581}
