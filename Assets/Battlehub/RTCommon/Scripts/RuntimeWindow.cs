@@ -96,7 +96,7 @@ namespace Battlehub.RTCommon
         }
 
         private int m_depth;
-        public int Depth
+        public virtual int Depth
         {
             get { return m_depth; }
             set { m_depth = value; }

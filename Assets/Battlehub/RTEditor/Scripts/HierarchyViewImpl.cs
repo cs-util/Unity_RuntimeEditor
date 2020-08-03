@@ -37,7 +37,6 @@ namespace Battlehub.RTEditor
             get { return m_rootGameObjects; }
         }
 
- 
         private IProject m_project;
         protected IProject Project
         {
@@ -50,12 +49,13 @@ namespace Battlehub.RTEditor
             get { return m_editor; }
         }
 
-        private RuntimeWindow m_window;
+        private HierarchyView m_hierarchyView;
         protected RuntimeWindow Window
         {
-            get { return m_window; }
+            get { return m_hierarchyView; }
         }
 
+      
         private TMP_InputField m_filterInput;
         protected TMP_InputField FilterInput
         {
@@ -75,7 +75,6 @@ namespace Battlehub.RTEditor
         private float m_applyFilterTime;
         private string m_filter = string.Empty;
 
-        private HierarchyView m_hierarchyView;
         private ILocalization m_localization;
         private IRuntimeSelectionComponent m_selectionComponent;
         
@@ -126,12 +125,10 @@ namespace Battlehub.RTEditor
             m_treeView.PointerEnter += OnTreeViewPointerEnter;
             m_treeView.PointerExit += OnTreeViewPointerExit;
 
-            m_window = GetComponent<RuntimeWindow>();
-
-            m_window.DragEnterEvent += OnDragEnter;
-            m_window.DragLeaveEvent += OnDragLeave;
-            m_window.DragEvent += OnDrag;
-            m_window.DropEvent += OnDrop;
+            m_hierarchyView.DragEnterEvent += OnDragEnter;
+            m_hierarchyView.DragLeaveEvent += OnDragLeave;
+            m_hierarchyView.DragEvent += OnDrag;
+            m_hierarchyView.DropEvent += OnDrop;
         }
 
         protected virtual void OnEnable()
@@ -185,12 +182,12 @@ namespace Battlehub.RTEditor
                 m_treeView.PointerExit -= OnTreeViewPointerExit;
             }
 
-            if (m_window != null)
+            if (m_hierarchyView != null)
             {
-                m_window.DragEnterEvent -= OnDragEnter;
-                m_window.DragLeaveEvent -= OnDragLeave;
-                m_window.DragEvent -= OnDrag;
-                m_window.DropEvent -= OnDrop;
+                m_hierarchyView.DragEnterEvent -= OnDragEnter;
+                m_hierarchyView.DragLeaveEvent -= OnDragLeave;
+                m_hierarchyView.DragEvent -= OnDrag;
+                m_hierarchyView.DropEvent -= OnDrop;
             }
         }
 
@@ -584,7 +581,7 @@ namespace Battlehub.RTEditor
 
         protected virtual void OnItemBeginDrag(object sender, ItemArgs e)
         {
-            Editor.DragDrop.RaiseBeginDrag(m_window, e.Items, e.PointerEventData);
+            Editor.DragDrop.RaiseBeginDrag(m_hierarchyView, e.Items, e.PointerEventData);
         }
 
         protected virtual void OnItemDrag(object sender, ItemArgs e)

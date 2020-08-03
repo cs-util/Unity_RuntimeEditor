@@ -116,8 +116,11 @@
     <Compile Include="Assets\Battlehub\RTEditor\Demo\ExampleScripts\LayoutOverrideExample.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Demo\ExampleScripts\OverrideSelectionBehaviourExample.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Demo\ExampleScripts\PreventFolderRemovalExample.cs" />
+    <Compile Include="Assets\Battlehub\RTEditor\Demo\ExampleScripts\ProjectFolderViewOverrideExample.cs" />
+    <Compile Include="Assets\Battlehub\RTEditor\Demo\ExampleScripts\ProjectTreeViewOverrideExample.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Demo\ExampleScripts\RaiseMouseOverExample.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Demo\ExampleScripts\RegisterHierarchyViewOverrideExample.cs" />
+    <Compile Include="Assets\Battlehub\RTEditor\Demo\ExampleScripts\RegisterProjectViewOverrideExample.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Demo\ExampleScripts\SceneParametersOverrideExample.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Demo\ExampleScripts\SelectDisplayFieldsBehaviour.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Demo\ExampleScripts\SelectDisplayFieldsDescriptor.cs" />
@@ -249,9 +252,12 @@
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\Input\SceneViewInput.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\InspectorView.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\ProjectFolderView.cs" />
+    <Compile Include="Assets\Battlehub\RTEditor\Scripts\ProjectFolderViewImpl.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\ProjectItemView.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\ProjectTreeView.cs" />
+    <Compile Include="Assets\Battlehub\RTEditor\Scripts\ProjectTreeViewImpl.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\ProjectView.cs" />
+    <Compile Include="Assets\Battlehub\RTEditor\Scripts\ProjectViewImpl.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\RTEAppearance.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\RTEDeps.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\RuntimeConsole.cs" />
