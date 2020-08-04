@@ -868,13 +868,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_dragDropTargetGO: {fileID: 0}
-  m_renderTextureUsage: 0
-  m_activateOnAnyKey: 0
   m_canActivate: 1
+  m_activateOnAnyKey: 0
   m_windowType: 53
   m_background: {fileID: 0}
-  m_camera: {fileID: 0}
-  m_pointer: {fileID: 0}
   TreeViewPrefab: {fileID: 0}
   m_txtNoItemsToImport: {fileID: 3113491818329067869}
 --- !u!1 &1433318839536556

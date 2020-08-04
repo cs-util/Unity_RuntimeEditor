@@ -78,9 +78,9 @@ namespace Battlehub.RTGizmos
             get { return m_isDragging; }
         }
 
-        protected abstract Matrix4x4 HandlesTransform
+        protected virtual Matrix4x4 HandlesTransform
         {
-            get;
+            get { return Matrix4x4.identity; }
         }
 
         protected virtual Matrix4x4 HandlesTransformInverse
@@ -107,6 +107,16 @@ namespace Battlehub.RTGizmos
         protected IRTECamera RTECamera
         {
             get { return m_rteCamera; }
+        }
+
+        protected virtual CameraEvent CameraEvent
+        {
+            get { return CameraEvent.AfterImageEffectsOpaque; }
+        }
+
+        protected virtual bool ForceCreateCamera
+        {
+            get { return false; }
         }
 
         protected override void Awake()
@@ -170,7 +180,7 @@ namespace Battlehub.RTGizmos
             }
 
             IRTEGraphicsLayer graphicsLayer = Window.IOCContainer.Resolve<IRTEGraphicsLayer>();
-            if (graphicsLayer != null)
+            if (graphicsLayer != null && !ForceCreateCamera)
             {
                 m_rteCamera = graphicsLayer.Camera;
             }
@@ -180,13 +190,13 @@ namespace Battlehub.RTGizmos
                 IRTEGraphics graphics = IOC.Resolve<IRTEGraphics>();
                 if(graphics != null)
                 {
-                    m_rteCamera = graphics.GetOrCreateCamera(SceneCamera, CameraEvent.AfterImageEffectsOpaque);
+                    m_rteCamera = graphics.GetOrCreateCamera(SceneCamera, CameraEvent);
                 }
                 
                 if(m_rteCamera == null)
                 {
                     m_rteCamera = SceneCamera.gameObject.AddComponent<RTECamera>();
-                    m_rteCamera.Event = CameraEvent.AfterImageEffectsOpaque;
+                    m_rteCamera.Event = CameraEvent;
                 }
             }
 

@@ -364,6 +364,8 @@
     <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\Editors\ComponentDescriptors\NavMeshModifierVolumeComponentDescriptor.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\Editors\ComponentDescriptors\NavMeshObstacleComponentDescriptor.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\Editors\ComponentDescriptors\NavMeshSurfaceComponentDescriptor.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\Gizmos\NavMeshSurfaceGizmo.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\NavMeshDebugController.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\NavigationInit.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\NavigationView.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTTerrain\RTSL\Mappings\Editor\RegisterTemplates.cs" />
@@ -623,6 +625,7 @@
     <None Include="Assets\Battlehub\RTHandles\Outline\Resources\UnityOutline.cginc" />
     <None Include="Assets\Battlehub\RTExtensions\RTTerrain\Resources\RTTerrain.StringResources.en-US.xml" />
     <None Include="Assets\Battlehub\Tools\Battlehub.Tools.asmref" />
+    <None Include="Assets\Battlehub\RTExtensions\RTNavigation\Resources\UnlitColor.shader" />
     <None Include="Assets\Battlehub\RTCommon\Resources\SceenSpaceDecal.shader" />
     <None Include="Assets\Battlehub\RTGizmos\Battlehub.RTGizmos.asmref" />
     <None Include="Assets\Battlehub\RTExtensions\RTTerrain\Prefabs\Materials\TerrainHandleShader.shader" />

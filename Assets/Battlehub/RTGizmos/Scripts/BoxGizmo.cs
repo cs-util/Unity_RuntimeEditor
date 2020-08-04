@@ -16,7 +16,6 @@ namespace Battlehub.RTGizmos
             get { return Matrix4x4.TRS(Target.TransformPoint(Bounds.center), Target.rotation, Vector3.Scale(Bounds.extents, Target.lossyScale)); }
         }
 
-
         protected override bool OnDrag(int index, Vector3 offset)
         {
             Bounds bounds = Bounds;
