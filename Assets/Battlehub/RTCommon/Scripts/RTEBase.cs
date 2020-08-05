@@ -855,7 +855,6 @@ namespace Battlehub.RTCommon
             {
                 mwheel = m_zAxis == 0;
                 m_zAxis = Mathf.CeilToInt(Mathf.Abs(Input.GetAxis(InputAxis.Z)));
-
             }
 
             bool pointerDownOrUp = Input.GetPointerDown(0) ||

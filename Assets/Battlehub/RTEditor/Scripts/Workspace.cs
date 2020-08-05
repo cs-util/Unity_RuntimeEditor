@@ -1187,12 +1187,16 @@ namespace Battlehub.RTEditor
 
         private void OnRegionDepthChanged(Region region, int depth)
         {
-            RuntimeCameraWindow[] windows = region.GetComponentsInChildren<RuntimeCameraWindow>(true);
+            RuntimeWindow[] windows = region.GetComponentsInChildren<RuntimeWindow>(true);
             for (int i = 0; i < windows.Length; ++i)
             {
-                RuntimeCameraWindow window = windows[i];
-                window.SetCameraDepth(10 + depth * 5);
-
+                RuntimeWindow window = windows[i];
+                if(window is RuntimeCameraWindow)
+                {
+                    RuntimeCameraWindow cameraWindow = (RuntimeCameraWindow)window;
+                    cameraWindow.SetCameraDepth(10 + depth * 5);
+                }
+                
                 window.Depth = (region.IsModal() ? 2048 + depth : depth) * 5;
                 if (window.GetComponentsInChildren<RuntimeWindow>().Length > 1)
                 {

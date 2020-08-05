@@ -472,7 +472,7 @@ namespace Battlehub.RTEditor
 
                 if (!results.Any(r => r.gameObject.GetComponent<Menu>() || r.gameObject.GetComponent<WindowOverlay>()))
                 {
-                    IOrderedEnumerable<Region> regions = results.Select(r => r.gameObject.GetComponentInParent<Region>()).Where(r => r != null).OrderBy(r => r.transform.localPosition.z);
+                    var regions = results.Select(r => r.gameObject.GetComponentInParent<Region>()).Where(r => r != null);//.OrderBy(r => r.transform.localPosition.z);
 
                     foreach (Region region in regions)
                     {
@@ -571,7 +571,7 @@ namespace Battlehub.RTEditor
                     if (!ActiveWorkspace.IsPointerOverActiveWindow)
                     {
                         ActiveWorkspace.IsPointerOverActiveWindow = true;
-
+                        
                         RuntimeWindow[] windows = Windows;
 
                         for (int i = 0; i < windows.Length; ++i)

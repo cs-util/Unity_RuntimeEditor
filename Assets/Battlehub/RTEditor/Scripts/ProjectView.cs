@@ -26,24 +26,24 @@ namespace Battlehub.RTEditor
             get { return m_filterInput; }
         }
 
-        public override int Depth
-        { 
-            get { return base.Depth; }
-            set
-            { 
-                base.Depth = value;
-                ProjectTree.Depth = value + 1;
-                ProjectFolder.Depth = value + 1;
-            }
-        }
+        //public override int Depth
+        //{ 
+        //    get { return base.Depth; }
+        //    set
+        //    { 
+        //        base.Depth = value;
+        //        ProjectTree.Depth = value + 1;
+        //        ProjectFolder.Depth = value + 1;
+        //    }
+        //}
 
         protected override void AwakeOverride()
         {
             WindowType = RuntimeWindowType.Project;
             base.AwakeOverride();
 
-            ProjectTree.Depth = Depth + 1;
-            ProjectFolder.Depth = Depth + 1;
+            //ProjectTree.Depth = Depth + 1;
+           // ProjectFolder.Depth = Depth + 1;
         }
 
         private void Start()
