@@ -1239,6 +1239,11 @@ namespace Battlehub.RTCommon
                 return val;
             }
 
+            if(m is MethodInfo)
+            {
+                return null;
+            }
+
             throw new ArgumentException("member is not FieldInfo and is not PropertyInfo", "m");
         }
 
@@ -1269,6 +1274,11 @@ namespace Battlehub.RTCommon
             if (f != null)
             {
                 f.SetValue(accessor, value);
+                return;
+            }
+
+            if(m is MethodInfo)
+            {
                 return;
             }
 

@@ -15,15 +15,18 @@ namespace Battlehub.RTEditor
 
         [SerializeField]
         private TMP_Dropdown m_dropDown = null;
-
-        private VirtualizingTreeView m_treeView;
-
         private TMP_InputField m_filter = null;
-
+        private VirtualizingTreeView m_treeView = null;
+        
         private Type[] m_cache;
         private string m_filterText;
-
         private bool m_isOpened;
+
+        private IRTE m_editor;
+        private void Start()
+        {
+            m_editor = IOC.Resolve<IRTE>();
+        }
 
         private void Update()
         {
@@ -41,6 +44,23 @@ namespace Battlehub.RTEditor
                     OnClosed();
                 }
             }
+
+            if(m_isOpened)
+            {
+                IInput input = m_editor.Input;
+                if (input.GetKeyDown(KeyCode.DownArrow))
+                {
+                    m_treeView.Select();
+                    m_treeView.IsFocused = true;
+                }
+                else if(input.GetKeyDown(KeyCode.Return))
+                {
+                    if(m_treeView.SelectedItem != null)
+                    {
+                        Hide();
+                    }
+                }
+            }
         }
 
         private void OnOpened()
@@ -56,8 +76,14 @@ namespace Battlehub.RTEditor
             }
 
             m_treeView = GetComponentInChildren<VirtualizingTreeView>();
+            m_treeView.CanDrag = false;
+            m_treeView.CanReparent = false;
+            m_treeView.CanReorder = false;
+            m_treeView.CanSelectAll = false;
+            m_treeView.CanMultiSelect = false;
+
             m_treeView.ItemDataBinding += OnItemDataBinding;
-            m_treeView.SelectionChanged += OnSelectionChanged;
+            m_treeView.ItemClick += OnItemClick;
             m_cache = editableTypes.Where(t => t.IsSubclassOf(typeof(Component))).OrderBy(t => t.Name).ToArray();
             InstantApply(m_filterText);
         }
@@ -72,7 +98,8 @@ namespace Battlehub.RTEditor
             if (m_treeView != null)
             {
                 m_treeView.ItemDataBinding -= OnItemDataBinding;
-                m_treeView.SelectionChanged -= OnSelectionChanged;
+                m_treeView.ItemClick -= OnItemClick;
+
             }
         }
 
@@ -83,7 +110,7 @@ namespace Battlehub.RTEditor
             text.text = type.Name;
         }
 
-        private void OnSelectionChanged(object sender, SelectionChangedArgs e)
+        private void OnItemClick(object sender, ItemArgs e)
         {
             StartCoroutine(CoHide());
         }
@@ -93,14 +120,18 @@ namespace Battlehub.RTEditor
             yield return new WaitForEndOfFrame();
             if(m_treeView.SelectedItem != null)
             {
-                m_dropDown.Hide();
-                if (ComponentSelected != null)
-                {
-                    ComponentSelected((Type)m_treeView.SelectedItem);
-                }
+                Hide();
             }
         }
 
+        private void Hide()
+        {
+            m_dropDown.Hide();
+            if (ComponentSelected != null)
+            {
+                ComponentSelected((Type)m_treeView.SelectedItem);
+            }
+        }
 
         private void OnFilterValueChanged(string text)
         {
@@ -121,9 +152,7 @@ namespace Battlehub.RTEditor
         private IEnumerator CoApplyFilter(string filter)
         {
             yield return new WaitForSeconds(0.3f);
-
             InstantApply(filter);
-
         }
 
         private void InstantApply(string filter)

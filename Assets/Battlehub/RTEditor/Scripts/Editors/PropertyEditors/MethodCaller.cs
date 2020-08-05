@@ -30,6 +30,7 @@ namespace Battlehub.RTEditor
             {
                 methodInfo.Invoke(Accessor, null);
             }
+            RaiseValueChanged();
         }
     }
 

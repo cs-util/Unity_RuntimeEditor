@@ -129,12 +129,7 @@ namespace Battlehub.RTEditor
             {
                 return;
             }
-            PropertyEditor editor = Instantiate(editorPrefab).GetComponent<PropertyEditor>();
-            if (editor == null)
-            {
-                return;
-            }
-
+         
             List<CustomTypeFieldAccessor> accessorsList = new List<CustomTypeFieldAccessor>();
             int targetsCount = Targets.Length;
             if(ChildDescriptors == null)
@@ -142,8 +137,7 @@ namespace Battlehub.RTEditor
                 for(int i = 0; i < targetsCount; ++i)
                 {
                     accessorsList.Add(new CustomTypeFieldAccessor(this, i, memberInfo, memberInfo.Name));
-                }
-                
+                }   
             }
             else
             {
@@ -158,11 +152,17 @@ namespace Battlehub.RTEditor
                 }
             }
 
-            if(accessorsList.Count > 0)
+            if (accessorsList.Count > 0)
             {
-                CustomTypeFieldAccessor[] accessors = accessorsList.ToArray();
+                PropertyEditor editor = Instantiate(editorPrefab).GetComponent<PropertyEditor>();
+                if (editor == null)
+                {
+                    return;
+                }
 
                 editor.transform.SetParent(Panel, false);
+
+                CustomTypeFieldAccessor[] accessors = accessorsList.ToArray();
                 editor.Init(accessors, accessors, accessors[0].GetType().GetProperty("Value"), null, accessors[0].Name, OnValueChanging, OnValueChanged, null, false);
             }
         }
@@ -193,63 +193,91 @@ namespace Battlehub.RTEditor
         protected override void ReloadOverride(bool force)
         {
             base.ReloadOverride(force);
-
-            object value = GetValue();
-            if (force || !EqualityComparer<object>.Default.Equals(m_currentValue, value))
+            if(force)
             {
-                value = Activator.CreateInstance(MemberInfoType);
-                SetValue(value);
-                m_currentValue = value;
-                SetInputField(value);
-                
-                BuildEditor();
+                DoReload();
+            }
+            else
+            {
+                object value = GetValue();
+                if (!EqualityComparer<object>.Default.Equals(m_currentValue, value))
+                {
+                    Type memberInfoType = value != null ? value.GetType() : MemberInfoType;
+                    if (!Reflection.IsValueType(memberInfoType) || !Equals(memberInfoType, m_currentValue, value))
+                    {
+                        DoReload();
+                    }
+                }
             }
         }
 
-        //protected override void ReloadOverride()
-        //{
-        //    if (!Expander.isOn)
-        //    {
-        //        return;
-        //    }
+        private void DoReload()
+        {
+            object value = Activator.CreateInstance(MemberInfoType);
+            SetValue(value);
+            m_currentValue = value;
+            SetInputField(value);
+            BuildEditor();
+        }
 
-        //    object value = GetValue();
-        //    if (m_currentValue == null && value == null)
-        //    {
-        //        return;
-        //    }
+        private bool Equals(Type memberInfoType, object currentValue, object value)
+        {
+            FieldInfo[] fields = Reflection.GetSerializableFields(memberInfoType, false);
+            PropertyInfo[] properties = Reflection.GetSerializableProperties(memberInfoType);
+            
+            for (int i = 0; i < fields.Length; ++i)
+            {
+                FieldInfo fieldInfo = fields[i];
+                if (!m_editorsMap.IsPropertyEditorEnabled(fieldInfo.FieldType))
+                {
+                    continue;
+                }
 
-        //    if (m_currentValue == null || value == null)
-        //    {
-        //        m_currentValue = value;
-        //        SetInputField(value);
-        //        BuildEditor();
-        //    }
-        //    else
-        //    {
-        //        FieldInfo[] fields = Reflection.GetSerializableFields(value.GetType());
-        //        for (int i = 0; i < fields.Length; ++i)
-        //        {
-        //            FieldInfo fieldInfo = fields[i];
-        //            if(!EditorsMap.IsPropertyEditorEnabled(fieldInfo.FieldType))
-        //            {
-        //                continue;
-        //            }
-        //            object c = fieldInfo.GetValue(m_currentValue);
-        //            object v = fieldInfo.GetValue(value);
-        //            if (c == null && v == null)
-        //            {
-        //                continue;
-        //            }
-        //            if (c == null || v == null || !c.Equals(v))
-        //            {
-        //                m_currentValue = value;
-        //                BuildEditor();
-        //            }
-        //        }
+                if(ChildDescriptors != null && !ChildDescriptors.ContainsKey(fieldInfo))
+                {
+                    continue;
+                }
 
-        //    }
-        //}
+                object c = fieldInfo.GetValue(currentValue);
+                object v = fieldInfo.GetValue(value);
+                if (c == null && v == null)
+                {
+                    continue;
+                }
+                if (c == null || v == null || !c.Equals(v))
+                {
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < properties.Length; ++i)
+            {
+                PropertyInfo propertyInfo = properties[i];
+                if (!m_editorsMap.IsPropertyEditorEnabled(propertyInfo.PropertyType))
+                {
+                    continue;
+                }
+
+                if (ChildDescriptors != null && !ChildDescriptors.ContainsKey(propertyInfo))
+                {
+                    continue;
+                }
+
+                object c = propertyInfo.GetValue(currentValue);
+                object v = propertyInfo.GetValue(value);
+                if (c == null && v == null)
+                {
+                    continue;
+                }
+                if (c == null || v == null || !c.Equals(v))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
 
         private IEnumerator m_coExpand;
         private IEnumerator CoExpand()

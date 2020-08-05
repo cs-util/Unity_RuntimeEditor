@@ -1,4 +1,5 @@
 ﻿using Battlehub.RTCommon;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 
@@ -39,7 +40,7 @@ namespace Battlehub.RTEditor
 
         protected override void SetInputField(float value)
         {
-            m_input.text = HasMixedValues() ? null : FromMeters(value).ToString();
+            m_input.text = HasMixedValues() ? null : FromMeters(value).ToString(CultureInfo.InvariantCulture);
         }
 
         protected virtual void OnValueChanged(string value)
