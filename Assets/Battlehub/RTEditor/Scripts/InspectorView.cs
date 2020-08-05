@@ -5,6 +5,7 @@ using UnityEngine;
 using Battlehub.RTCommon;
 using UnityObject = UnityEngine.Object;
 using Battlehub.RTSL.Interface;
+using UnityEngine.Rendering;
 
 namespace Battlehub.RTEditor
 {
@@ -230,7 +231,24 @@ namespace Battlehub.RTEditor
             for (int i = 0; i < gameObjects.Length; ++i)
             {
                 GameObject go = gameObjects[i];
-                editor.Undo.AddComponent(go.GetComponent<ExposeToEditor>(), type);
+                ExposeToEditor exposeToEditor = go.GetComponent<ExposeToEditor>();
+                foreach (RequireComponent requirement in type.GetCustomAttributes(true).OfType<RequireComponent>())
+                {
+                    if(requirement.m_Type0 != null && !go.GetComponent(requirement.m_Type0))
+                    {
+                        editor.Undo.AddComponent(exposeToEditor, requirement.m_Type0);
+                    }
+                    if (requirement.m_Type1 != null && !go.GetComponent(requirement.m_Type1))
+                    {
+                        editor.Undo.AddComponent(exposeToEditor, requirement.m_Type1);
+                    }
+                    if (requirement.m_Type2 != null && !go.GetComponent(requirement.m_Type2))
+                    {
+                        editor.Undo.AddComponent(exposeToEditor, requirement.m_Type2);
+                    }
+                }
+                
+                editor.Undo.AddComponent(exposeToEditor, type);
             }
 
             editor.Undo.EndRecord();       
