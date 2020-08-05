@@ -298,7 +298,7 @@ namespace Battlehub.RTHandles
             m_linesClipUsingClipPlaneMaterial = new Material(Shader.Find("Battlehub/RTHandles/VertexColorClipUsingClipPlane"));
             m_linesClipUsingClipPlaneMaterial.color = Color.white;
 
-            m_linesBillboardMaterial = new Material(Shader.Find("Battlehub/RTHandles/LineBillboardBillboard"));
+            m_linesBillboardMaterial = new Material(Shader.Find("Battlehub/RTHandles/LineBillboard"));
             m_linesBillboardMaterial.color = Color.white;
             m_linesBillboardMaterial.SetFloat("_Scale", m_handleScale);
 

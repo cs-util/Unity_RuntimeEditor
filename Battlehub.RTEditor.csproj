@@ -602,7 +602,7 @@
     <None Include="Assets\Battlehub\RTHandles\Prefabs\Models\Materials\Shaders\DepthMaskColorShader.shader" />
     <None Include="Assets\Battlehub\RTEditor\Demo\BundledObject\NewSurfaceShader.shader" />
     <None Include="Assets\Battlehub\RTCommon\Resources\Billboard.shader" />
-    <None Include="Assets\Battlehub\RTHandles\Shaders\Resources\LineBillboardBillboard.shader" />
+    <None Include="Assets\Battlehub\RTHandles\Shaders\Resources\LineBillboard.shader" />
     <None Include="Assets\Battlehub\RTHandles\Fonts\FontLicense!.txt" />
     <None Include="Assets\Battlehub\RTHandles\Prefabs\Models\Materials\Shaders\SSCircleShader.shader" />
     <None Include="Assets\Battlehub\RTExtensions\RTBuilder\Integration\Shaders\SmoothingPreview.shader" />

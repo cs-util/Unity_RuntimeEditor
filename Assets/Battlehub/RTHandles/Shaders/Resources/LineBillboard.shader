@@ -1,4 +1,4 @@
-﻿Shader "Battlehub/RTHandles/LineBillboardBillboard"
+﻿Shader "Battlehub/RTHandles/LineBillboard"
 {
 	Properties
 	{

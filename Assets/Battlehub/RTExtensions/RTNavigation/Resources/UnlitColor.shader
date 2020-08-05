@@ -14,9 +14,8 @@
 		Offset -1, -1
 		ZTest[_ZTest]
 		ZWrite[_ZWrite]
-		Cull Back
-		
-		
+		Cull Off
+
 		Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
