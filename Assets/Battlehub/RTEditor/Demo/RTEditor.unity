@@ -248,6 +248,7 @@ MonoBehaviour:
   CanSelect: 1
   CanSnap: 1
   AddColliders: 1
+  m_markAsDestroyed: 0
 --- !u!1 &1363111702
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,6 +388,7 @@ MonoBehaviour:
   CanSelect: 1
   CanSnap: 1
   AddColliders: 1
+  m_markAsDestroyed: 0
 --- !u!45 &1363111709
 Skybox:
   m_ObjectHideFlags: 0
@@ -753,7 +755,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_CollectObjects: 0
   m_Size: {x: 10, y: 10, z: 10}
   m_Center: {x: 0, y: 2, z: 0}
@@ -767,7 +769,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 1
-  m_VoxelSize: 0.03333334
+  m_VoxelSize: 0.08333334
   m_BuildHeightMesh: 0
   m_NavMeshData: {fileID: 23800000, guid: 04db8244ca00ea64aaa529cc87343cac, type: 2}
 --- !u!114 &1896015250
@@ -804,6 +806,7 @@ MonoBehaviour:
   CanSelect: 1
   CanSnap: 1
   AddColliders: 1
+  m_markAsDestroyed: 0
 --- !u!4 &1896015251
 Transform:
   m_ObjectHideFlags: 0

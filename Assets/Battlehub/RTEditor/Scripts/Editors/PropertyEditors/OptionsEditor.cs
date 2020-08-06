@@ -4,14 +4,33 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
+using System.Linq;
 
 namespace Battlehub.RTEditor
 {
     public class RangeOptions : Range
     {
-        public string[] Options;
+        public Option[] Options;
 
+        public class Option
+        {
+            public string Text;
+            public object Value;
+            public Option(string text, object value = null)
+            {
+                Text = text;
+                Value = value;
+            }
+        }
+        
+
+        [Obsolete]
         public RangeOptions(params string[] options) : base(-1, -1)
+        {
+            Options = options.Select(opt => new Option(opt)).ToArray();
+        }
+
+        public RangeOptions(Option[] options) : base(-1, -1)
         {
             Options = options;
         }
@@ -27,15 +46,16 @@ namespace Battlehub.RTEditor
             }
             else
             {
-                m_input.value = value;
-                m_mixedValuesIndicator.text = m_input.options[value].text;
+                int index = ToIndex(value);
+                m_input.value = index;
+                m_mixedValuesIndicator.text = m_input.options[index].text;
             }
         }
 
         protected override void OnValueChanged(int index)
         {
-            SetValue(index);
-            SetInputField(index);
+            SetValue(ToValue(index));
+            SetInputField(ToValue(index));
             EndEdit();
         }
 
@@ -54,7 +74,49 @@ namespace Battlehub.RTEditor
         [SerializeField]
         protected TextMeshProUGUI m_mixedValuesIndicator = null;
 
-        public string[] Options = new string[0];
+        private RangeOptions.Option[] m_options = new RangeOptions.Option[0];
+        private Dictionary<object, int> m_valueToIndex = new Dictionary<object, int>();
+        public RangeOptions.Option[] Options
+        {
+            get { return m_options; }
+            set
+            { 
+                m_options = value;
+                m_valueToIndex.Clear();
+                if(m_options != null)
+                {
+                    for(int i = 0; i < m_options.Length; ++i)
+                    {
+                        RangeOptions.Option option = m_options[i];
+                        if(option.Value == null)
+                        {
+                            if (!m_valueToIndex.ContainsKey(i))
+                            {
+                                m_valueToIndex.Add(i, i);
+                            }
+                        }
+                        else
+                        {
+                            if (!m_valueToIndex.ContainsKey(option.Value))
+                            {
+                                m_valueToIndex.Add(option.Value, i);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        protected int ToIndex(T value)
+        {
+            return m_valueToIndex[value];
+        }
+
+        protected T ToValue(int index)
+        {
+            return (T)Options[index].Value;
+        }
+
 
         protected override void AwakeOverride()
         {
@@ -90,7 +152,7 @@ namespace Battlehub.RTEditor
 
             for (int i = 0; i < Options.Length; ++i)
             {
-                options.Add(new TMP_Dropdown.OptionData(Options[i]));
+                options.Add(new TMP_Dropdown.OptionData(Options[i].Text));
             }
 
             m_input.options = options;

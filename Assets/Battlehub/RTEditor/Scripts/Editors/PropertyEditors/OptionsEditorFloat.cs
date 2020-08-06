@@ -15,14 +15,14 @@ namespace Battlehub.RTEditor
             else
             {
                 m_input.value = Mathf.RoundToInt(value); 
-                m_mixedValuesIndicator.text = m_input.options[Mathf.RoundToInt(value)].text;
+                m_mixedValuesIndicator.text = m_input.options[Mathf.RoundToInt(ToIndex(value))].text;
             }
         }
 
         protected override void OnValueChanged(int index)
         {
-            SetValue(index);
-            SetInputField(index);
+            SetValue(ToValue(index));
+            SetInputField(ToValue(index));
             EndEdit();
         }
 
