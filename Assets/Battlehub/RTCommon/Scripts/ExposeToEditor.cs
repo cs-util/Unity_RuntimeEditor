@@ -92,6 +92,7 @@ namespace Battlehub.RTCommon
         public bool CanSnap = true;
         public bool AddColliders = true;
 
+        [SerializeField, HideInInspector]
         private bool m_markAsDestroyed;
         public bool MarkAsDestroyed
         {
