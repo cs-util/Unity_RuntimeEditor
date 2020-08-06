@@ -125,6 +125,7 @@ MonoBehaviour:
   RotateKey3: 313
   MoveDownKey: 113
   MoveUpKey: 101
+  PanButton: 2
   RotateXSensitivity: 5
   RotateYSensitivity: 5
   MoveZSensitivity: 1

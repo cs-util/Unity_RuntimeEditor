@@ -81,7 +81,6 @@ namespace Battlehub.RTEditor
                 Type assetItemType = m_project.ToType(assetItem);
                 if (assetItem.Preview == null || assetItem.Preview.PreviewData == null || assetItemType == null)
                 {
-                    //#warning None displayed for scene objects. And this is wrong
                     m_imgPreview.sprite = appearance.GetAssetIcon("None");
                 }
                 else if (assetItem.Preview.PreviewData.Length == 0)
