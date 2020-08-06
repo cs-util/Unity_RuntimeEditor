@@ -114,7 +114,12 @@ namespace Battlehub.RTEditor
 
         protected T ToValue(int index)
         {
-            return (T)Options[index].Value;
+            var val = Options[index].Value;
+            if (val == null)
+            {
+                return (T)(object)index;
+            }
+            return (T)val;
         }
 
 
