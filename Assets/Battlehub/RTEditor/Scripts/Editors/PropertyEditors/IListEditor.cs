@@ -287,7 +287,6 @@ namespace Battlehub.RTEditor
                 for (int l = 0; l < targetsCount; ++l)
                 {
                     IList list = GetValue(l);
-                    int oldSize = list.Count;
                     IList newList = Resize(list, size);
                     if (size > 0)
                     {
@@ -315,7 +314,7 @@ namespace Battlehub.RTEditor
             else
             {
                 IList list = GetValue();
-                SizeInput.text = list.Count.ToString();
+                SizeInput.text = list != null ? list.Count.ToString() : "0";
             }
         }
 

@@ -88,6 +88,11 @@ namespace Battlehub.RTEditor
 
         private UnityObject GetGameObjectOrComponent(GameObject go, Type memberInfoType)
         {
+            if(memberInfoType == typeof(GameObject))
+            {
+                return go;
+            }
+
             Component component = go.GetComponent(memberInfoType);
             if (component != null)
             {

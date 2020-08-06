@@ -62,13 +62,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_dragDropTargetGO: {fileID: 0}
-  m_renderTextureUsage: 0
-  m_activateOnAnyKey: 0
   m_canActivate: 1
+  m_activateOnAnyKey: 0
   m_windowType: 2
   m_background: {fileID: 0}
-  m_camera: {fileID: 0}
-  m_pointer: {fileID: 0}
   m_filter: {fileID: 7442203688569094156}
   m_treeView: {fileID: 2699582635115708949}
   m_toggleAssets: {fileID: 6274135307230614355}

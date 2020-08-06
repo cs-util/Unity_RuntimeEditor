@@ -285,7 +285,8 @@ namespace Battlehub.RTEditor
             {
                 Editor.Undo.BeforeUndo -= OnBeforeUndo;
             }
-            
+
+            EndEdit();
             OnDestroyOverride();
         }
 

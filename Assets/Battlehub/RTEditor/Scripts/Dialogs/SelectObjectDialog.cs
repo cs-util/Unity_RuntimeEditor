@@ -174,6 +174,7 @@ namespace Battlehub.RTEditor
                             Name = exposeToEditor.name,
                             
                         };
+                        assetItem.TypeGuid = m_project.ToGuid(typeof(GameObject));
                         assetItem.Preview = new Preview { ItemID = assetItem.ItemID, PreviewData = new byte[0] };
                         sceneCache.Add(assetItem);
                         m_sceneObjects.Add(assetItem.ItemID, obj);

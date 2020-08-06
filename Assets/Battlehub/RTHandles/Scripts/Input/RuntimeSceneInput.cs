@@ -1,5 +1,6 @@
 ﻿using Battlehub.RTCommon;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Battlehub.RTHandles
 {
@@ -13,6 +14,7 @@ namespace Battlehub.RTHandles
         public KeyCode RotateKey3 = KeyCode.AltGr;
         public KeyCode MoveDownKey = KeyCode.Q;
         public KeyCode MoveUpKey = KeyCode.E;
+        public MouseButton PanButton = MouseButton.MiddleMouse;
 
         public float RotateXSensitivity = 5.0f;
         public float RotateYSensitivity = 5.0f;
@@ -57,7 +59,7 @@ namespace Battlehub.RTHandles
         {
             IInput input = m_component.Editor.Input;
             RuntimeTools tools = m_component.Editor.Tools;
-            return input.GetPointer(2) || input.GetPointer(SwapLRMB ? 1 : 0) && tools.Current == RuntimeTool.View && tools.ActiveTool == null;
+            return input.GetPointer((int)PanButton) || input.GetPointer(SwapLRMB ? 1 : 0) && tools.Current == RuntimeTool.View && tools.ActiveTool == null;
         }
 
         protected virtual bool FreeMoveAction()
@@ -154,15 +156,15 @@ namespace Battlehub.RTHandles
                 return;
             }
 
-            bool isPointerOverAndSelected = m_component.Window.IsPointerOver;// && m_component.IsUISelected;
+            bool isPointerOverAndSelected = m_component.Window.IsPointerOver;
 
             IInput input = m_component.Editor.Input;
             RuntimeTools tools = m_component.Editor.Tools;
 
             bool canRotate = AllowRotateAction();
-            bool rotate = RotateAction() || SwapLRMB && canRotate;
-            bool pan = PanAction();
-            bool freeMove = FreeMoveAction();
+            bool rotate = (RotateAction() || SwapLRMB && canRotate) && SceneComponent.CanRotate;
+            bool pan = PanAction() && SceneComponent.CanPan;
+            bool freeMove = FreeMoveAction() && SceneComponent.CanFreeMove;
 
             if (pan && tools.Current != RuntimeTool.View)
             {
