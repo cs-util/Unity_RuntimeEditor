@@ -283,7 +283,6 @@ namespace Battlehub.RTEditor
         {
             CameraLayerSettings settings = Editor.CameraLayerSettings;
             camera.cullingMask &= settings.RaycastMask;
-
             RenderPipelineInfo.XRFix(camera);
         }
 

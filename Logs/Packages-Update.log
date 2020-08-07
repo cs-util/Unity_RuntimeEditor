@@ -7,3 +7,14 @@ Update Mode: updateDependencies
 The following packages were updated:
   com.unity.ide.vscode from version 1.2.0 to 1.2.1
   com.unity.xr.management from version 3.2.12 to 3.2.13
+
+=== Sat Aug  8 00:28:33 2020
+
+Packages were changed.
+Update Mode: mergeDefaultDependencies
+
+The following packages were added:
+  com.unity.collab-proxy@1.2.16
+  com.unity.ide.rider@1.1.4
+The following packages were updated:
+  com.unity.timeline from version 1.2.9 to 1.2.14

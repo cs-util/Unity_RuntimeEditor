@@ -74,6 +74,6 @@ MonoBehaviour:
     RenderersCacheName: SelectedRenderers
     LayerMask:
       serializedVersion: 2
-      m_Bits: 4294967295
+      m_Bits: 31588352
     OutlineStength: 5
     BlurSize: 0.7

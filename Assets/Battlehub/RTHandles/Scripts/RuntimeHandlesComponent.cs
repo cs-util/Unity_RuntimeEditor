@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
 using Battlehub.RTCommon;
 using UnityEngine.Rendering;
-using UnityEditor.Graphs;
-#if UNITY_EDITOR
-#endif
 
 namespace Battlehub.RTHandles
 {

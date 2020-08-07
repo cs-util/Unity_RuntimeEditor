@@ -54,7 +54,14 @@ namespace Battlehub.RTCommon
                     default:
                         if (m_msaaProperty != null)
                         {
-                            return Convert.ToInt32(m_msaaProperty.GetValue(QualitySettings.renderPipeline));
+                            try
+                            {
+                                return Convert.ToInt32(m_msaaProperty.GetValue(GraphicsSettings.renderPipelineAsset));
+                            }
+                            catch(Exception e)
+                            {
+                                Debug.LogError(e);
+                            }   
                         }
                         return 1;
                 }
