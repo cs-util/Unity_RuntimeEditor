@@ -409,8 +409,12 @@ namespace Battlehub.RTHandles
             Vector2 max = SelectionBounds.max;
             Canvas canvas = Window.GetComponentInParent<Canvas>();
 
-            RectTransform sceneOutput = (RectTransform)Window.GetComponent<RectTransform>().GetChild(0);
-
+            RectTransform sceneOutput = Window.GetComponent<RectTransform>();
+            if(sceneOutput.childCount > 0)
+            {
+                sceneOutput = (RectTransform)Window.GetComponent<RectTransform>().GetChild(0);
+            }
+            
             RectTransformUtility.ScreenPointToLocalPointInRectangle(sceneOutput, min, canvas.worldCamera, out min);
             min.y = sceneOutput.rect.height - min.y;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(sceneOutput, max, canvas.worldCamera, out max);
