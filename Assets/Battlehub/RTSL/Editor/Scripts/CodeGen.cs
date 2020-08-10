@@ -18,7 +18,7 @@ namespace Battlehub.RTSL
         public static bool InitializeLists = false;
         public static bool InitializeDictionaries = false;
         public static bool InitializeHs = false;
-        
+
         /// <summary>
         /// Automatically generated fields have ProtoMember tag offset = 256. 1 - 256 is reserved for user defined fields.
         /// User defined fields should be located in auto-generated partial class.
@@ -30,6 +30,11 @@ namespace Battlehub.RTSL
         /// (1024 value means, that there is 1024 - 256 - 1 = 767 slots available for auto-generated fields
         /// </summary>
         private const int SubclassOffset = 1024;
+
+        /// <summary>
+        /// skip backing fields generated for auto properties
+        /// </summary>
+        private const string k__BackingField = "k__BackingField";
 
         /// <summary>
         /// For text formatting
@@ -209,8 +214,8 @@ namespace Battlehub.RTSL
             "        }}" + BR +
             "    }}" + BR +
             "}}" + END;
-     
-        private static readonly string AddToPersistentTypeTemplate = 
+
+        private static readonly string AddToPersistentTypeTemplate =
             "m_toPeristentType.Add(typeof({0}), typeof({1}));" + BR;
         private static readonly string AddToUnityTypeTemplate =
             "m_toUnityType.Add(typeof({0}), typeof({1}));" + BR;
@@ -260,7 +265,7 @@ namespace Battlehub.RTSL
         /// <returns></returns>
         public static PropertyInfo[] GetProperties(Type type)
         {
-            return GetAllProperties(type).Where(p => p.GetGetMethod() != null && p.GetSetMethod() != null /*&& !Reflection.IsDelegate(p.PropertyType)*/).ToArray();
+            return GetAllProperties(type).Where(p => p.GetGetMethod() != null && p.GetSetMethod() != null && !Reflection.IsDelegate(p.PropertyType)).ToArray();
         }
 
         /// <summary>
@@ -271,7 +276,7 @@ namespace Battlehub.RTSL
         public static PropertyInfo[] GetAllProperties(Type type)
         {
             return type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-                .Where(p => (!p.PropertyType.IsGenericType || IsGenericList(p.PropertyType) || IsHashSet(p.PropertyType) || IsDictionary(p.PropertyType)) && p.GetIndexParameters().Length == 0).ToArray();
+                .Where(p => (!p.PropertyType.IsGenericType || IsGenericList(p.PropertyType) || IsHashSet(p.PropertyType) || IsDictionary(p.PropertyType)) && p.GetIndexParameters().Length == 0 && !Reflection.IsDelegate(p.PropertyType)).ToArray();
         }
 
         /// <summary>
@@ -281,7 +286,7 @@ namespace Battlehub.RTSL
         /// <returns></returns>
         public static FieldInfo[] GetFields(Type type)
         {
-            Func<FieldInfo, bool> filter = f => /*!Reflection.IsDelegate(f.FieldType) &&*/ (!f.FieldType.IsGenericType || IsGenericList(f.FieldType) || IsHashSet(f.FieldType) ||  IsDictionary(f.FieldType));
+            Func<FieldInfo, bool> filter = f => !Reflection.IsDelegate(f.FieldType) && !f.Name.Contains(k__BackingField) && (!f.FieldType.IsGenericType || IsGenericList(f.FieldType) || IsHashSet(f.FieldType) || IsDictionary(f.FieldType));
             if (type.IsSubclassOf(typeof(MonoBehaviour)))
             {
                 return type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).Union(
@@ -289,7 +294,7 @@ namespace Battlehub.RTSL
             }
 
             return type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).Union(
-                    type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly).Where(f => f.FieldType.IsPublic || f.FieldType.IsNestedPublic)).Where(filter).ToArray();
+                    type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly).Where(f => (f.FieldType.IsPublic || f.FieldType.IsNestedPublic))).Where(filter).ToArray();
         }
 
         public static MethodInfo[] GetMethods(Type type)
@@ -322,7 +327,7 @@ namespace Battlehub.RTSL
         /// <returns></returns>
         public static Type GetSurrogateType(Type type, int index)
         {
-            if(type == null)
+            if (type == null)
             {
                 return null;
             }
@@ -331,11 +336,11 @@ namespace Battlehub.RTSL
             {
                 type = type.GetElementType();
             }
-            else if(IsGenericList(type) || IsHashSet(type))
+            else if (IsGenericList(type) || IsHashSet(type))
             {
                 type = type.GetGenericArguments()[0];
             }
-            else if(IsDictionary(type))
+            else if (IsDictionary(type))
             {
                 type = type.GetGenericArguments()[index];
             }
@@ -387,7 +392,7 @@ namespace Battlehub.RTSL
             {
                 return HasDependencies(inspectedTypes, type.GetGenericArguments()[0]);
             }
-            else if(IsDictionary(type))
+            else if (IsDictionary(type))
             {
                 Type[] args = type.GetGenericArguments();
                 return HasDependencies(inspectedTypes, args[0]) || HasDependencies(inspectedTypes, args[1]);
@@ -491,10 +496,10 @@ namespace Battlehub.RTSL
         /// <returns></returns>
         public static string TypeName(Type type)
         {
-            if(type.IsArray)
+            if (type.IsArray)
             {
                 Type elementType = type.GetElementType();
-                if(elementType.DeclaringType == null)
+                if (elementType.DeclaringType == null)
                 {
                     return _TypeName(type);
                 }
@@ -518,7 +523,7 @@ namespace Battlehub.RTSL
                 name = Regex.Replace(name, @", Version=\d+.\d+.\d+.\d+", string.Empty);
                 name = Regex.Replace(name, @", Culture=\w+", string.Empty);
                 name = Regex.Replace(name, @", PublicKeyToken=\w+", string.Empty);
-                
+
                 if (!string.IsNullOrEmpty(Namespace(type)))
                 {
                     name = name.Remove(0, Namespace(type).Length + 1);
@@ -611,7 +616,7 @@ namespace Battlehub.RTSL
 
         public string PreparePersistentTypeName(string typeName)
         {
-            if(typeName.StartsWith("Battlehub."))
+            if (typeName.StartsWith("Battlehub."))
             {
                 typeName = typeName.Remove(0, 10);
             }
@@ -621,7 +626,7 @@ namespace Battlehub.RTSL
 
         public string PrepareMappedTypeName(string typeName)
         {
-            if(typeName.StartsWith("Battlehub."))
+            if (typeName.StartsWith("Battlehub."))
             {
                 typeName = typeName.Remove(0, 10);
             }
@@ -655,7 +660,7 @@ namespace Battlehub.RTSL
                 }
 
                 Type mappingType = Type.GetType(mapping.MappedAssemblyQualifiedName);
-                if(mappingType == null)
+                if (mappingType == null)
                 {
                     continue;
                 }
@@ -703,7 +708,7 @@ namespace Battlehub.RTSL
             for (int m = 0; m < mappings.Length; ++m)
             {
                 PersistentClassMapping mapping = mappings[m];
-                if(!mapping.IsOn)
+                if (!mapping.IsOn)
                 {
                     continue;
                 }
@@ -716,23 +721,23 @@ namespace Battlehub.RTSL
                 for (int i = 0; i < mapping.PropertyMappings.Length; ++i)
                 {
                     PersistentPropertyMapping pMapping = mapping.PropertyMappings[i];
-                    if(!pMapping.IsEnabled || pMapping.HasPropertyInTemplate)
+                    if (!pMapping.IsEnabled || pMapping.HasPropertyInTemplate)
                     {
                         continue;
                     }
-                    if(!nsHs.Contains(pMapping.PersistentNamespace))
+                    if (!nsHs.Contains(pMapping.PersistentNamespace))
                     {
                         nsHs.Add(pMapping.PersistentNamespace);
                     }
                 }
             }
 
-            foreach(string ns in nsHs)
+            foreach (string ns in nsHs)
             {
                 sb.AppendFormat(NamespaceDefinitionTemplate, ns);
                 sb.Append(BR);
             }
-            
+
             return sb.ToString();
         }
 
@@ -778,7 +783,7 @@ namespace Battlehub.RTSL
                             sb.AppendFormat(AddTypeTemplate, PrepareMappedTypeName(mapping.MappedFullTypeName), "false", endOfLine + SEMICOLON + BR + TAB3);
                         }
                     }
-                    
+
                 }
             }
 
@@ -792,7 +797,7 @@ namespace Battlehub.RTSL
             for (int i = 0; i < subclasses.Length - 1; ++i)
             {
                 PersistentSubclass subclass = subclasses[i];
-                
+
                 Type mappingType = Type.GetType(subclass.MappedAssemblyQualifiedName);
                 if (mappingType == null)
                 {
@@ -808,7 +813,7 @@ namespace Battlehub.RTSL
 
             if (subclasses.Length > 0)
             {
-                if(subclasses[subclasses.Length - 1].IsEnabled)
+                if (subclasses[subclasses.Length - 1].IsEnabled)
                 {
                     PersistentSubclass subclass = subclasses[subclasses.Length - 1];
 
@@ -843,7 +848,7 @@ namespace Battlehub.RTSL
 
             template = template.Substring(startIndex, endIndex - startIndex);
             template = template.Replace("//<TEMPLATE_USINGS_START>", string.Empty);
-            
+
             result = template;
             return true;
         }
@@ -855,7 +860,7 @@ namespace Battlehub.RTSL
             int startIndex = template.IndexOf("//<TEMPLATE_BODY_START>");
             int endIndex = template.IndexOf("//<TEMPLATE_BODY_END>");
 
-            if(startIndex < 0 || endIndex < 0 || startIndex >= endIndex)
+            if (startIndex < 0 || endIndex < 0 || startIndex >= endIndex)
             {
                 return false;
             }
@@ -874,12 +879,12 @@ namespace Battlehub.RTSL
         {
             string usings = "using Battlehub.RTSL;";
             string className = PreparePersistentTypeName(persistentTypeName);
-            if(template != null)
+            if (template != null)
             {
-                usings += template.Usings; 
+                usings += template.Usings;
                 return string.Format(UserDefinedClassTemplate, usings, ns, className, template.Body.TrimEnd());
             }
-         
+
             return string.Format(UserDefinedEmptyClassTemplate, usings, ns, className);
         }
 
@@ -933,7 +938,7 @@ namespace Battlehub.RTSL
                             typeName,
                             prop.PersistentName);
                     }
-                    else if(replacementType == typeof(long[]))
+                    else if (replacementType == typeof(long[]))
                     {
                         sb.AppendFormat(
                             ReplacementFieldInitializationTemplate, tag + AutoFieldTagOffset,
@@ -942,7 +947,7 @@ namespace Battlehub.RTSL
                 }
                 else
                 {
-                    if(IsDictionary(prop.MappedType))
+                    if (IsDictionary(prop.MappedType))
                     {
                         string fieldTemplate;
                         if (InitializeDictionaries)
@@ -958,14 +963,14 @@ namespace Battlehub.RTSL
                         Type[] args = prop.MappedType.GetGenericArguments();
                         Type t0 = GetReplacementType(args[0]);
                         Type t1 = GetReplacementType(args[1]);
-                        if(t0 != null && t1 != null)
+                        if (t0 != null && t1 != null)
                         {
                             sb.AppendFormat(
                                 fieldTemplate, tag + AutoFieldTagOffset,
                                 "Dictionary<long, long>",
                                 prop.PersistentName);
                         }
-                        else if(t0 != null)
+                        else if (t0 != null)
                         {
 
                             sb.AppendFormat(
@@ -973,7 +978,7 @@ namespace Battlehub.RTSL
                                 string.Format("Dictionary<long, {0}>", DictionaryPersistentArgTypeName(args[1])),
                                 prop.PersistentName);
                         }
-                        else if(t1 != null)
+                        else if (t1 != null)
                         {
                             sb.AppendFormat(
                                 fieldTemplate, tag + AutoFieldTagOffset,
@@ -1054,7 +1059,7 @@ namespace Battlehub.RTSL
             return mappedTypeName;
         }
 
-      
+
         private string GetTypeName(PersistentPropertyMapping prop, bool useReplacementType = true, bool forceMappedTypeName = false)
         {
             string typeName;
@@ -1090,10 +1095,10 @@ namespace Battlehub.RTSL
                         Type argType = prop.MappedType.GetGenericArguments()[0];
                         typeName = string.Format("HashSet<{0}>", GetArgName(prop, argType, forceMappedTypeName));
                     }
-                    else if(IsDictionary(prop.MappedType))
+                    else if (IsDictionary(prop.MappedType))
                     {
                         Type[] args = prop.MappedType.GetGenericArguments();
-                        typeName = string.Format("Dictionary<{0},{1}>", 
+                        typeName = string.Format("Dictionary<{0},{1}>",
                             GetArgName(prop, args[0], forceMappedTypeName),
                             GetArgName(prop, args[1], forceMappedTypeName));
                     }
@@ -1142,7 +1147,12 @@ namespace Battlehub.RTSL
                     continue;
                 }
 
-                if(prop.MappedType == null)
+                if (prop.MappedType == null)
+                {
+                    continue;
+                }
+
+                if (prop.MappedName == null || prop.MappedName.EndsWith(k__BackingField))
                 {
                     continue;
                 }
@@ -1150,23 +1160,23 @@ namespace Battlehub.RTSL
                 sb.Append(TAB);
 
                 string get = "uo.{1}";
-                if(prop.IsNonPublic)
+                if (prop.IsNonPublic)
                 {
                     get = "GetPrivate<" + mappedTypeName + "," + GetTypeName(prop, false, true) + ">(uo, \"{1}\")";
                 }
 
-                if(IsDictionary(prop.MappedType))
+                if (IsDictionary(prop.MappedType))
                 {
                     Type[] args = prop.MappedType.GetGenericArguments();
                     bool isArg0UnityObj = args[0].IsSubclassOf(typeof(UnityObject));
                     bool isArg1UnityObj = args[1].IsSubclassOf(typeof(UnityObject));
-                    if(isArg0UnityObj || isArg1UnityObj)
+                    if (isArg0UnityObj || isArg1UnityObj)
                     {
-                        if(isArg0UnityObj && isArg1UnityObj)
+                        if (isArg0UnityObj && isArg1UnityObj)
                         {
                             sb.AppendFormat("{0} = ToID(" + get + ");", prop.PersistentName, prop.MappedName);
                         }
-                        else if(isArg0UnityObj)
+                        else if (isArg0UnityObj)
                         {
                             sb.AppendFormat("{0} = ToID(" + get + ", v_ => ({2})v_);", prop.PersistentName, prop.MappedName,
                                 DictionaryPersistentArgTypeName(args[1]));
@@ -1179,7 +1189,7 @@ namespace Battlehub.RTSL
                     }
                     else
                     {
-                        sb.AppendFormat("{0} = Assign(" + get + ", k_ => ({2})k_, v_ => ({3})v_);", 
+                        sb.AppendFormat("{0} = Assign(" + get + ", k_ => ({2})k_, v_ => ({3})v_);",
                             prop.PersistentName, prop.MappedName,
                             DictionaryPersistentArgTypeName(args[0]),
                             DictionaryPersistentArgTypeName(args[1]));
@@ -1217,7 +1227,7 @@ namespace Battlehub.RTSL
                         }
                     }
                 }
-                
+
                 sb.Append(BR + TAB2);
             }
 
@@ -1240,6 +1250,10 @@ namespace Battlehub.RTSL
                 {
                     continue;
                 }
+                if (prop.MappedName == null || prop.MappedName.EndsWith(k__BackingField))
+                {
+                    continue;
+                }
 
                 sb.Append(TAB);
 
@@ -1249,7 +1263,7 @@ namespace Battlehub.RTSL
                     get = "GetPrivate<" + mappedTypeName + "," + GetTypeName(prop, false, true) + ">(uo, \"{0}\")";
                 }
 
-                if(IsDictionary(prop.MappedType))
+                if (IsDictionary(prop.MappedType))
                 {
                     Type[] args = prop.MappedType.GetGenericArguments();
                     bool isArg0UnityObj = args[0].IsSubclassOf(typeof(UnityObject));
@@ -1302,14 +1316,14 @@ namespace Battlehub.RTSL
                     {
                         if (prop.IsNonPublic)
                         {
-                            sb.AppendFormat("SetPrivate(uo, \"{0}\", Assign({1}, k_ => ({2})k_, v_ => ({3})v_));", 
+                            sb.AppendFormat("SetPrivate(uo, \"{0}\", Assign({1}, k_ => ({2})k_, v_ => ({3})v_));",
                                 prop.MappedName, prop.PersistentName,
                                 DictionaryMappedArgTypeName(args[0]),
                                 DictionaryMappedArgTypeName(args[1]));
                         }
                         else
                         {
-                            sb.AppendFormat("uo.{0} = Assign({1}, k_ => ({2})k_, v_ => ({3})v_);", 
+                            sb.AppendFormat("uo.{0} = Assign({1}, k_ => ({2})k_, v_ => ({3})v_);",
                                 prop.MappedName, prop.PersistentName,
                                 DictionaryMappedArgTypeName(args[0]),
                                 DictionaryMappedArgTypeName(args[1]));
@@ -1409,14 +1423,19 @@ namespace Battlehub.RTSL
                     continue;
                 }
 
+                if (prop.MappedName == null || prop.MappedName.EndsWith(k__BackingField))
+                {
+                    continue;
+                }
+
                 if (prop.HasDependenciesOrIsDependencyItself)
                 {
-                    if(IsDictionary(prop.MappedType))
+                    if (IsDictionary(prop.MappedType))
                     {
                         Type[] args = prop.MappedType.GetGenericArguments();
                         bool isArg0UnityObj = args[0].IsSubclassOf(typeof(UnityObject));
                         bool isArg1UnityObj = args[1].IsSubclassOf(typeof(UnityObject));
-                        if(isArg0UnityObj && isArg1UnityObj)
+                        if (isArg0UnityObj && isArg1UnityObj)
                         {
                             sb.Append(TAB);
                             sb.AppendFormat("AddDep({0}, context);", prop.PersistentName);
@@ -1446,7 +1465,7 @@ namespace Battlehub.RTSL
                             sb.Append(BR + TAB2);
                         }
                     }
-                }    
+                }
             }
             return sb.ToString();
         }
@@ -1472,6 +1491,13 @@ namespace Battlehub.RTSL
                 {
                     continue;
                 }
+
+                if (prop.MappedName == null || prop.MappedName.EndsWith(k__BackingField))
+                {
+                    continue;
+                }
+
+
                 if (prop.HasDependenciesOrIsDependencyItself)
                 {
                     string get = "uo.{0}";
@@ -1557,8 +1583,8 @@ namespace Battlehub.RTSL
                 {
                     continue;
                 }
-                
-                if(mapping.IsOn)
+
+                if (mapping.IsOn)
                 {
                     if (!namespaces.Contains(mapping.MappedNamespace) && !string.IsNullOrEmpty(mapping.MappedNamespace))
                     {
@@ -1582,6 +1608,11 @@ namespace Battlehub.RTSL
                         {
                             continue;
                         }
+                        if (propertyMapping.MappedName == null || propertyMapping.MappedName.EndsWith(k__BackingField))
+                        {
+                            continue;
+                        }
+
                         if (!namespaces.Contains(propertyMapping.MappedNamespace) && !string.IsNullOrEmpty(propertyMapping.MappedNamespace))
                         {
                             namespaces.Add(propertyMapping.MappedNamespace);
@@ -1620,7 +1651,7 @@ namespace Battlehub.RTSL
 
                                 AddNamespace(type, namespaces, PersistentClassMapping.ToPersistentNamespace(Namespace(type)));
                             }
-                            else if ( type.IsArray)
+                            else if (type.IsArray)
                             {
                                 type = type.GetElementType();
                                 if (!namespaces.Contains(Namespace(type)) && !string.IsNullOrEmpty(Namespace(type)))
@@ -1670,16 +1701,16 @@ namespace Battlehub.RTSL
 
         private Type GetReplacementType(Type type)
         {
-            if(type.IsArray)
+            if (type.IsArray)
             {
                 Type elementType = type.GetElementType();
-                if(elementType.IsSubclassOf(typeof(UnityObject)))
+                if (elementType.IsSubclassOf(typeof(UnityObject)))
                 {
                     return typeof(long[]);
                 }
             }
 
-            if(IsGenericList(type) || IsHashSet(type))
+            if (IsGenericList(type) || IsHashSet(type))
             {
                 Type elementType = type.GetGenericArguments()[0];
                 if (elementType.IsSubclassOf(typeof(UnityObject)))
@@ -1688,7 +1719,7 @@ namespace Battlehub.RTSL
                 }
             }
 
-            if(type.IsSubclassOf(typeof(UnityObject)))
+            if (type.IsSubclassOf(typeof(UnityObject)))
             {
                 return typeof(long);
             }
@@ -1718,7 +1749,7 @@ namespace Battlehub.RTSL
                         allUOTypes.AddRange(uoTypes);
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Debug.LogError("Failed to process :" + assembly.FullName + Environment.NewLine + e.ToString());
                 }
@@ -1746,7 +1777,7 @@ namespace Battlehub.RTSL
                         GetTypesRecursive(surrogateType, typesHS);
                     }
 
-                    if(IsDictionary(pInfo.PropertyType))
+                    if (IsDictionary(pInfo.PropertyType))
                     {
                         surrogateType = GetSurrogateType(pInfo.PropertyType, 1);
                         if (surrogateType != null && !typesHS.Contains(surrogateType))
@@ -1770,7 +1801,7 @@ namespace Battlehub.RTSL
                         GetTypesRecursive(surrogateType, typesHS);
                     }
 
-                    if(IsDictionary(fInfo.FieldType))
+                    if (IsDictionary(fInfo.FieldType))
                     {
                         surrogateType = GetSurrogateType(fInfo.FieldType, 1);
                         if (surrogateType != null && !typesHS.Contains(surrogateType))
@@ -1782,25 +1813,25 @@ namespace Battlehub.RTSL
                 }
             }
 
-            for(int m = 0; m < methods.Length; ++m)
+            for (int m = 0; m < methods.Length; ++m)
             {
                 MethodInfo mInfo = methods[m];
                 ParameterInfo[] parameters = mInfo.GetParameters();
-                if(parameters != null)
+                if (parameters != null)
                 {
-                    for(int i = 0; i < parameters.Length; ++i)
+                    for (int i = 0; i < parameters.Length; ++i)
                     {
                         ParameterInfo pInfo = parameters[i];
-                        if(pInfo != null && pInfo.ParameterType != null)
+                        if (pInfo != null && pInfo.ParameterType != null)
                         {
                             Type surrogateType = GetSurrogateType(pInfo.ParameterType, 0);
-                            if (surrogateType != null &&  !string.IsNullOrEmpty(surrogateType.FullName) && surrogateType != typeof(object) && !typesHS.Contains(surrogateType))
+                            if (surrogateType != null && !string.IsNullOrEmpty(surrogateType.FullName) && surrogateType != typeof(object) && !typesHS.Contains(surrogateType))
                             {
                                 typesHS.Add(surrogateType);
                                 GetTypesRecursive(surrogateType, typesHS);
                             }
 
-                            if(IsDictionary(pInfo.ParameterType))
+                            if (IsDictionary(pInfo.ParameterType))
                             {
                                 surrogateType = GetSurrogateType(pInfo.ParameterType, 1);
                                 if (surrogateType != null && !string.IsNullOrEmpty(surrogateType.FullName) && surrogateType != typeof(object) && !typesHS.Contains(surrogateType))
@@ -1842,7 +1873,7 @@ namespace Battlehub.RTSL
 
         public static string Namespace(Type type)
         {
-            if(type.IsArray)
+            if (type.IsArray)
             {
                 return type.GetElementType().Namespace;
             }

@@ -291,6 +291,23 @@ namespace Battlehub.RTHandles
             }
         }
 
+        public GameObject[] Pick()
+        {
+            m_startMousePosition = Window.Pointer.ScreenPoint;
+            m_rectTransform.anchoredPosition = m_startPt;
+            m_rectTransform.sizeDelta = new Vector2(0, 0);
+            Vector3 center = (m_startMousePosition + (Vector3)Window.Pointer.ScreenPoint) / 2;
+            center.z = 0.0f;
+            Bounds selectionBounds = new Bounds(center, m_rectTransform.sizeDelta);
+            SelectionBounds = selectionBounds;
+
+            FilteringArgs filteringArgs = new FilteringArgs();
+            Renderer[] renderers = FindObjectsOfType<Renderer>();
+            GameObject[] selection = PixelPerfectDepthTest(filteringArgs, renderers).ToArray();
+            m_rectTransform.sizeDelta = new Vector2(0, 0);
+            return selection;
+        }
+
         private void Update()
         {
             if (!Editor.Selection.Enabled)
@@ -348,43 +365,7 @@ namespace Battlehub.RTHandles
 
             if(MethodOverride == BoxSelectionMethod.PixelPerfectDepthTest)
             {
-                Vector2 min = SelectionBounds.min;
-                Vector2 max = SelectionBounds.max;
-                Canvas canvas = Window.GetComponentInParent<Canvas>();
-
-                RectTransform sceneOutput = (RectTransform)Window.GetComponent<RectTransform>().GetChild(0);
-
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(sceneOutput, min, canvas.worldCamera, out min);
-                min.y = sceneOutput.rect.height - min.y;
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(sceneOutput, max, canvas.worldCamera, out max);
-                max.y = sceneOutput.rect.height - max.y;
-
-                Rect rect = new Rect(new Vector2(Mathf.Min(min.x, max.x), Mathf.Min(min.y, max.y)), new Vector2(Mathf.Abs(max.x - min.x), Mathf.Abs(max.y - min.y)));
-                rect.x += Window.Camera.pixelRect.x;
-                rect.y += canvas.pixelRect.height - (Window.Camera.pixelRect.y + Window.Camera.pixelRect.height);
-
-                IEnumerable<GameObject> gameObjects = BoxSelectionRenderer.PickObjectsInRect(Window.Camera, rect, renderers, Mathf.RoundToInt(canvas.pixelRect.width), Mathf.RoundToInt(canvas.pixelRect.height)).Select(r => r.gameObject);
-                selection = new HashSet<GameObject>();
-                foreach(GameObject go in gameObjects)
-                {
-                    if (!selection.Contains(go))
-                    {
-                        if (Filtering != null)
-                        {
-                            filteringArgs.Object = go;
-                            Filtering(this, filteringArgs);
-                            if (!filteringArgs.Cancel)
-                            {
-                                selection.Add(go);
-                            }
-                            filteringArgs.Reset();
-                        }
-                        else
-                        {
-                            selection.Add(go);
-                        }
-                    }
-                }
+                selection = PixelPerfectDepthTest(filteringArgs, renderers);
             }
             else
             {
@@ -419,6 +400,50 @@ namespace Battlehub.RTHandles
             {
                 Editor.Selection.objects = selection.ToArray();
             }
+        }
+
+        private HashSet<GameObject> PixelPerfectDepthTest(FilteringArgs filteringArgs, Renderer[] renderers)
+        {
+            HashSet<GameObject> selection;
+            Vector2 min = SelectionBounds.min;
+            Vector2 max = SelectionBounds.max;
+            Canvas canvas = Window.GetComponentInParent<Canvas>();
+
+            RectTransform sceneOutput = (RectTransform)Window.GetComponent<RectTransform>().GetChild(0);
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(sceneOutput, min, canvas.worldCamera, out min);
+            min.y = sceneOutput.rect.height - min.y;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(sceneOutput, max, canvas.worldCamera, out max);
+            max.y = sceneOutput.rect.height - max.y;
+
+            Rect rect = new Rect(new Vector2(Mathf.Min(min.x, max.x), Mathf.Min(min.y, max.y)), new Vector2(Mathf.Max(Mathf.Abs(max.x - min.x), 1), Mathf.Max(Mathf.Abs(max.y - min.y), 1)));
+            rect.x += Window.Camera.pixelRect.x;
+            rect.y += canvas.pixelRect.height - (Window.Camera.pixelRect.y + Window.Camera.pixelRect.height);
+
+            IEnumerable<GameObject> gameObjects = BoxSelectionRenderer.PickObjectsInRect(Window.Camera, rect, renderers, Mathf.RoundToInt(canvas.pixelRect.width), Mathf.RoundToInt(canvas.pixelRect.height)).Select(r => r.gameObject);
+            selection = new HashSet<GameObject>();
+            foreach (GameObject go in gameObjects)
+            {
+                if (!selection.Contains(go))
+                {
+                    if (Filtering != null)
+                    {
+                        filteringArgs.Object = go;
+                        Filtering(this, filteringArgs);
+                        if (!filteringArgs.Cancel)
+                        {
+                            selection.Add(go);
+                        }
+                        filteringArgs.Reset();
+                    }
+                    else
+                    {
+                        selection.Add(go);
+                    }
+                }
+            }
+
+            return selection;
         }
 
         private void TrySelect(ref Bounds selectionBounds, HashSet<GameObject> selection, FilteringArgs args, ref Bounds bounds, GameObject go, Plane[] frustumPlanes)

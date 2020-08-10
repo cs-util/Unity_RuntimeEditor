@@ -958,6 +958,31 @@ namespace Battlehub.RTHandles
             return index;
         }
 
+        private int GetNextIndex(GameObject[] hits)
+        {
+            int index = -1;
+            if (hits == null || hits.Length == 0)
+            {
+                return index;
+            }
+
+            if (Selection.activeGameObject != null)
+            {
+                for (int i = 0; i < hits.Length; ++i)
+                {
+                    GameObject hit = hits[i];
+                    if (Selection.IsSelected(hit))
+                    {
+                        index = i;
+                    }
+                }
+            }
+
+            index++;
+            index %= hits.Length;
+            return index;
+        }
+
         public virtual void SelectGO(bool multiselect, bool allowUnselect)
         {
             if (!CanSelect)
@@ -975,66 +1000,7 @@ namespace Battlehub.RTHandles
                 {
                     int nextIndex = GetNextIndex(hits);
                     GameObject hitGO = hits[nextIndex].collider.GetComponentInParent<ExposeToEditor>().gameObject;
-
-                    if (multiselect)
-                    {
-                        List<UnityObject> selectionList;
-                        if (Selection.objects != null)
-                        {
-                            selectionList = Selection.objects.ToList();
-                        }
-                        else
-                        {
-                            selectionList = new List<UnityObject>();
-                        }
-
-                        if (selectionList.Contains(hitGO))
-                        {
-                            selectionList.Remove(hitGO);
-                            if (!allowUnselect)
-                            {
-                                selectionList.Insert(0, hitGO);
-                            }
-                        }
-                        else
-                        {
-                            selectionList.Insert(0, hitGO);
-                        }
-
-                        UnityObject[] selection = selectionList.ToArray();
-                        UnityObject[] filteredSelection;
-                        if (RaiseSelectionChanging(selection, out filteredSelection))
-                        {
-                            if (filteredSelection.Length == 0)
-                            {
-                                Selection.objects = null;
-                            }
-                            else
-                            {
-                                filteredSelection = filteredSelection.OrderByDescending(o => o == hitGO).ToArray();
-                                Editor.Undo.Select(Selection, selection, filteredSelection.FirstOrDefault());
-                                //Editor.Undo.Select(Selection, selection, Editor.Selection.objects != null ? Editor.Selection.objects.FirstOrDefault() : selection.FirstOrDefault());
-                            }
-                            RaiseSelectionChanged();
-                        }
-                    }
-                    else
-                    {
-                        UnityObject[] filteredSelection;
-                        if (RaiseSelectionChanging(new[] { hitGO }, out filteredSelection))
-                        {
-                            if (filteredSelection.Length == 0)
-                            {
-                                Selection.objects = null;
-                            }
-                            else
-                            {
-                                Selection.objects = filteredSelection;
-                            }
-
-                            RaiseSelectionChanged();
-                        }
-                    }
+                    SelectGO(multiselect, allowUnselect, hitGO);
                 }
                 else
                 {
@@ -1046,9 +1012,82 @@ namespace Battlehub.RTHandles
             }
             else
             {
-                if (!multiselect)
+                GameObject[] selection = m_boxSelection.Pick();
+                if(selection.Length > 0)
                 {
-                    TryToClearSelection();
+                    int nextIndex = GetNextIndex(selection);
+                    GameObject hitGO = selection[nextIndex].GetComponentInParent<ExposeToEditor>().gameObject;
+                    SelectGO(multiselect, allowUnselect, hitGO);
+                }
+                else
+                {
+                    if (!multiselect)
+                    {
+                        TryToClearSelection();
+                    }
+                }   
+            }
+        }
+
+        private void SelectGO(bool multiselect, bool allowUnselect, GameObject hitGO)
+        {
+            if (multiselect)
+            {
+                List<UnityObject> selectionList;
+                if (Selection.objects != null)
+                {
+                    selectionList = Selection.objects.ToList();
+                }
+                else
+                {
+                    selectionList = new List<UnityObject>();
+                }
+
+                if (selectionList.Contains(hitGO))
+                {
+                    selectionList.Remove(hitGO);
+                    if (!allowUnselect)
+                    {
+                        selectionList.Insert(0, hitGO);
+                    }
+                }
+                else
+                {
+                    selectionList.Insert(0, hitGO);
+                }
+
+                UnityObject[] selection = selectionList.ToArray();
+                UnityObject[] filteredSelection;
+                if (RaiseSelectionChanging(selection, out filteredSelection))
+                {
+                    if (filteredSelection.Length == 0)
+                    {
+                        Selection.objects = null;
+                    }
+                    else
+                    {
+                        filteredSelection = filteredSelection.OrderByDescending(o => o == hitGO).ToArray();
+                        Editor.Undo.Select(Selection, selection, filteredSelection.FirstOrDefault());
+                        //Editor.Undo.Select(Selection, selection, Editor.Selection.objects != null ? Editor.Selection.objects.FirstOrDefault() : selection.FirstOrDefault());
+                    }
+                    RaiseSelectionChanged();
+                }
+            }
+            else
+            {
+                UnityObject[] filteredSelection;
+                if (RaiseSelectionChanging(new[] { hitGO }, out filteredSelection))
+                {
+                    if (filteredSelection.Length == 0)
+                    {
+                        Selection.objects = null;
+                    }
+                    else
+                    {
+                        Selection.objects = filteredSelection;
+                    }
+
+                    RaiseSelectionChanged();
                 }
             }
         }

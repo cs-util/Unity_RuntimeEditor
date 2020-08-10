@@ -219,6 +219,7 @@ namespace Battlehub.RTHandles
                     }
                 }
             }
+            rteCamera.RefreshCommandBuffer();
 
             if (RenderPipelineInfo.Type != RPType.Standard)
             {
