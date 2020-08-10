@@ -642,13 +642,13 @@ namespace Battlehub.RTCommon
             RectTransform rectTransform = sceneView.GetComponent<RectTransform>();
             if (rectTransform != null)
             {
-
                 RectTransform parentTransform = rectTransform.parent as RectTransform;
                 if (parentTransform != null)
                 {
                     rectTransform.anchorMin = new Vector2(0, 0);
                     rectTransform.anchorMax = new Vector2(1, 1);
-                    rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                    // rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                    rectTransform.pivot = new Vector2(0.0f, 0.0f);
                     rectTransform.offsetMax = new Vector2(0, 0);
                     rectTransform.offsetMin = new Vector2(0, 0);
                 }
