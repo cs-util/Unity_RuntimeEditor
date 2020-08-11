@@ -42,7 +42,7 @@ namespace Battlehub.RTSL
                 return;
             }
 
-            bool typeModelExists = !string.IsNullOrEmpty(AssetDatabase.FindAssets(RTSLPath.TypeModelDll.Replace(".dll", string.Empty)).FirstOrDefault());
+            bool typeModelExists = !string.IsNullOrEmpty(AssetDatabase.FindAssets(RTSLPath.TypeModel).FirstOrDefault());
             bool saveLoadDataFolderExists = AssetDatabase.IsValidFolder("Assets" + RTSLPath.UserRoot);
             if (!typeModelExists || !saveLoadDataFolderExists)
             {

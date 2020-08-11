@@ -19,12 +19,13 @@ namespace Battlehub.RTSL
                 string userRoot = EditorPrefs.GetString("RTSLDataRoot");
                 if (string.IsNullOrEmpty(userRoot))
                 {
-                    string dll = AssetDatabase.FindAssets(TypeModelDll.Replace(".dll", string.Empty)).FirstOrDefault();
+                    string dll = AssetDatabase.FindAssets(TypeModel).FirstOrDefault();
                     if (string.IsNullOrEmpty(dll))
                     {
                         return "/" + BHRoot.Path + "/RTSL_Data";
                     }
-                    string path = AssetDatabase.GUIDToAssetPath(dll).Replace(TypeModelDll, "");
+                    string path = AssetDatabase.GUIDToAssetPath(dll);
+                    path =  path.Remove(path.LastIndexOf(TypeModel));
                     if (string.IsNullOrEmpty(path))
                     {
                         return "/" + BHRoot.Path + "/RTSL_Data";
@@ -60,7 +61,7 @@ namespace Battlehub.RTSL
             "Assets" + EditorPrefabsPath + @"/ClassMappingsTemplate.prefab"
         };
         public static readonly IList<string> SurrogatesMappingsTemplatePath = new List<string>
-        {
+        {            
             "Assets" + EditorPrefabsPath + @"/SurrogatesMappingsTemplate.prefab"
         };
 
@@ -68,7 +69,7 @@ namespace Battlehub.RTSL
         public const string PersistentClassesFolder = "PersistentClasses";
         public const string PersistentCustomImplementationClasessFolder = "CustomImplementation";
         public const string LibrariesFolder = "Libraries";
-        public const string TypeModelDll = "RTSLTypeModel.dll";
+        public const string TypeModel = "RTSLTypeModel";
     }
 }
 #endif

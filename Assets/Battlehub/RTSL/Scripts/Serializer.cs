@@ -2,6 +2,9 @@
 using System;
 using System.IO;
 using Battlehub.RTSL.Interface;
+using System.Reflection;
+using System.Linq;
+
 namespace Battlehub.RTSL
 {  
     [ProtoBuf.ProtoContract]
@@ -13,9 +16,15 @@ namespace Battlehub.RTSL
 
         static ProtobufSerializer()
         {
-#if !UNITY_EDITOR
-            Type type = Type.GetType("RTSLTypeModel, RTSLTypeModel");
 
+#if !UNITY_EDITOR
+            Assembly typeModelAssembly = AppDomain.CurrentDomain.GetAssemblies().Where(asm => asm.FullName.Contains("RTSLTypeModel")).FirstOrDefault();
+            Type type = null;
+            if (typeModelAssembly != null)
+            {
+                type = typeModelAssembly.GetTypes().Where(t => t.Name.Contains("RTSLTypeModel")).FirstOrDefault();
+            }
+            
             if(type != null)
             {
                 model = Activator.CreateInstance(type) as TypeModel;
@@ -23,7 +32,7 @@ namespace Battlehub.RTSL
 
             if(model == null)
             {
-                UnityEngine.Debug.LogError("RTSLTypeModel.dll was not found. Please build type model using Tools->Runtime SaveLoad->Build All menu item from Unity Editor");
+                UnityEngine.Debug.LogError("RTSLTypeModel was not found. Please build type model using the Build All button available through the Tools->Runtime SaveLoad->Config menu item in Unity Editor.");
             }
 #endif
             if (model == null)

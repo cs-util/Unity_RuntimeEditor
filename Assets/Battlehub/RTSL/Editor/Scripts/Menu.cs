@@ -18,6 +18,11 @@ namespace Battlehub.RTSL
 {
     public static class Menu
     {
+        public static string TypeModelDll
+        {
+            get { return string.Format("{0}_{1}.dll", RTSLPath.TypeModel, EditorUserBuildSettings.activeBuildTarget); }
+        }
+
         private static string GetRelativePath(string filespec, string folder)
         {
             Uri pathUri = new Uri(filespec);
@@ -195,14 +200,18 @@ namespace Battlehub.RTSL
         //[MenuItem("Tools/Runtime SaveLoad/Persistent Classes/Build Type Model")]
         private static void BuildTypeModel()
         {
+            //Removal of RTSLTypeModel.dll created by previous version of RTE
+            File.Delete(Application.dataPath + RTSLPath.UserRoot + "/" + RTSLPath.TypeModel + ".dll");
+
             EditorUtility.DisplayProgressBar("Build", "Building Type Model...", 0.66f);
             RuntimeTypeModel model = TypeModelCreator.Create();
 
-            model.Compile(new RuntimeTypeModel.CompilerOptions() { OutputPath = RTSLPath.TypeModelDll, TypeName = "RTSLTypeModel" });
-
-            string srcPath = Application.dataPath.Remove(Application.dataPath.LastIndexOf("Assets")) + RTSLPath.TypeModelDll;
-            string dstPath = Application.dataPath + RTSLPath.UserRoot + "/" + RTSLPath.TypeModelDll;
+            model.Compile(new RuntimeTypeModel.CompilerOptions() { OutputPath = TypeModelDll, TypeName = RTSLPath.TypeModel });
+            
+            string srcPath = Application.dataPath.Remove(Application.dataPath.LastIndexOf("Assets")) + TypeModelDll;
+            string dstPath = Application.dataPath + RTSLPath.UserRoot + "/" + TypeModelDll;
             Debug.LogFormat("Done! Move {0} to {1} ...", srcPath, dstPath);
+
             File.Delete(dstPath);
             File.Move(srcPath, dstPath);
 
@@ -349,9 +358,9 @@ namespace Battlehub.RTSL
                 EditorPrefs.SetBool("RTSL_UpdateTypeModelImportSettings", false);
                 try
                 {
-                    PluginImporter importer = AssetImporter.GetAtPath("Assets" + RTSLPath.UserRoot + "/" + RTSLPath.TypeModelDll) as PluginImporter;
-                    importer.SetCompatibleWithAnyPlatform(true);
-                    importer.SetExcludeEditorFromAnyPlatform(true);
+                    PluginImporter importer = AssetImporter.GetAtPath("Assets" + RTSLPath.UserRoot + "/" + TypeModelDll) as PluginImporter;
+                    importer.SetCompatibleWithAnyPlatform(false);
+                    importer.SetCompatibleWithPlatform(EditorUserBuildSettings.activeBuildTarget, true);
                     importer.SaveAndReimport();
                 }
                 finally
