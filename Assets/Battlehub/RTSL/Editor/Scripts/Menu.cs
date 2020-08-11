@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -23,6 +24,9 @@ namespace Battlehub.RTSL
             get { return string.Format("{0}_{1}.dll", RTSLPath.TypeModel, EditorUserBuildSettings.activeBuildTarget); }
         }
 
+        private const string LinkFileTemplate = "<linker>{0}</linker>";
+        private const string LinkFileAssemblyName = "<assembly fullname=\"RTSLTypeModel_{0}\" preserve=\"all\"/>";
+
         private static string GetRelativePath(string filespec, string folder)
         {
             Uri pathUri = new Uri(filespec);
@@ -38,7 +42,7 @@ namespace Battlehub.RTSL
         //[MenuItem("Tools/Runtime SaveLoad/Open Scene")]
         public static void OpenScene()
         {
-            if(Application.isPlaying)
+            if (Application.isPlaying)
             {
                 EditorUtility.DisplayDialog("Unable to open scene", "Unable to open scene in play mode", "OK");
                 return;
@@ -59,7 +63,7 @@ namespace Battlehub.RTSL
                 {
                     bundleLoader = new AssetBundleLoader();
                 }
-                
+
                 IOC.Register(bundleLoader);
 
                 ITypeMap typeMap = new TypeMap();
@@ -67,14 +71,14 @@ namespace Battlehub.RTSL
 
                 IUnityObjectFactory objFactory = new UnityObjectFactory();
                 IOC.Register(objFactory);
-                
+
                 ISerializer serializer = new ProtobufSerializer();
                 IOC.Register(serializer);
 
                 IStorage storage = new FileSystemStorage();
                 IOC.Register(storage);
 
-                IRuntimeShaderUtil shaderUtil = new RuntimeShaderUtil();  
+                IRuntimeShaderUtil shaderUtil = new RuntimeShaderUtil();
                 IOC.Register(shaderUtil);
 
                 IAssetDB assetDB = new AssetDB();
@@ -125,7 +129,7 @@ namespace Battlehub.RTSL
                             string relativePath = GetRelativePath(path, projectPath);
                             relativePath = relativePath.Replace('\\', '/');
                             AssetItem scene = (AssetItem)project.Root.Get(relativePath);
-                            
+
                             project.Load(new[] { scene }, (loadError, loadedObjects) =>
                             {
                                 IOC.ClearAll();
@@ -162,7 +166,7 @@ namespace Battlehub.RTSL
         [MenuItem("Tools/Runtime SaveLoad/Persistent Classes/Clean")]
         public static void CleanPersistentClasses()
         {
-            if(EditorUtility.DisplayDialog("Clean", "Do you want to remove persistent classes and type model?", "Yes", "No"))
+            if (EditorUtility.DisplayDialog("Clean", "Do you want to remove persistent classes and type model?", "Yes", "No"))
             {
                 if (EditorUtility.DisplayDialog("Clean", "Do you want to remove files from " + "Assets" + RTSLPath.UserRoot + "/CustomImplementation ?", "Yes", "No"))
                 {
@@ -177,7 +181,7 @@ namespace Battlehub.RTSL
                     finally
                     {
                         AssetDatabase.StopAssetEditing();
-                    }                    
+                    }
                 }
                 else
                 {
@@ -207,11 +211,17 @@ namespace Battlehub.RTSL
             RuntimeTypeModel model = TypeModelCreator.Create();
 
             model.Compile(new RuntimeTypeModel.CompilerOptions() { OutputPath = TypeModelDll, TypeName = RTSLPath.TypeModel });
-            
+
             string srcPath = Application.dataPath.Remove(Application.dataPath.LastIndexOf("Assets")) + TypeModelDll;
             string dstPath = Application.dataPath + RTSLPath.UserRoot + "/" + TypeModelDll;
             Debug.LogFormat("Done! Move {0} to {1} ...", srcPath, dstPath);
 
+            StringBuilder sb = new StringBuilder();
+            foreach (BuildTarget target in Enum.GetValues(typeof(BuildTarget)))
+            {
+                sb.AppendFormat(LinkFileAssemblyName, target);
+            }
+            File.WriteAllText(Application.dataPath + RTSLPath.UserRoot + "/link.xml", string.Format(LinkFileTemplate, sb.ToString()));
             File.Delete(dstPath);
             File.Move(srcPath, dstPath);
 
@@ -237,9 +247,9 @@ namespace Battlehub.RTSL
             HashSet<UnityObject> hs = ReadFromBuiltInAssetLibraries(out index, out asset, out folder);
             HashSet<UnityObject> hs2 = ReadFromSceneAssetLibraries(scene, out index, out asset, out folder);
 
-            foreach(UnityObject obj in hs)
+            foreach (UnityObject obj in hs)
             {
-                if(!hs2.Contains(obj))
+                if (!hs2.Contains(obj))
                 {
                     hs2.Add(obj);
                 }
@@ -302,7 +312,7 @@ namespace Battlehub.RTSL
             AssetDatabase.CreateAsset(asset, assetPathAndName);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-                        
+
             //Selection.activeObject = asset;
 
             AssetLibrariesListGen.UpdateList(identity + 1);
@@ -327,7 +337,7 @@ namespace Battlehub.RTSL
                     CreateShaderProfiles();
                     Debug.Log("Shader Profiles Updated");
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Debug.LogError(e);
                 }
@@ -342,7 +352,7 @@ namespace Battlehub.RTSL
                     BuildTypeModel();
                     EditorUtility.DisplayProgressBar("Build All", "Updating type model import settings", 0.99f);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Debug.LogError(e);
                     EditorUtility.ClearProgressBar();
@@ -367,7 +377,7 @@ namespace Battlehub.RTSL
                 {
                     EditorUtility.ClearProgressBar();
                 }
-            }            
+            }
         }
 
         //[MenuItem("Tools/Runtime SaveLoad/Build All")]
@@ -390,7 +400,7 @@ namespace Battlehub.RTSL
             catch
             {
                 EditorUtility.ClearProgressBar();
-            }   
+            }
         }
 
         private static HashSet<UnityObject> ReadFromAssetLibraries(string[] guids, out int index, out AssetLibraryAsset asset, out AssetFolderInfo folder)
@@ -463,7 +473,7 @@ namespace Battlehub.RTSL
                 UnityObject obj = o as UnityObject;
                 if (!obj)
                 {
-                    if(o != null)
+                    if (o != null)
                     {
                         Debug.Log(o.GetType() + " is not a UnityEngine.Object");
                     }
@@ -491,7 +501,7 @@ namespace Battlehub.RTSL
 
                     List<PrefabPartInfo> prefabParts = new List<PrefabPartInfo>();
                     AssetLibraryAssetsGUI.CreatePefabParts(go, ref identity, prefabParts);
-                    for(int i = prefabParts.Count - 1; i >= 0; --i)
+                    for (int i = prefabParts.Count - 1; i >= 0; --i)
                     {
                         PrefabPartInfo prefabPart = prefabParts[i];
                         if (hs.Contains(prefabPart.Object))
@@ -725,7 +735,7 @@ namespace Battlehub.RTSL
                { "Arial.ttf", typeof(Font) }
             };
 
-            
+
 
             List<object> builtInAssets = new List<object>();
             foreach (KeyValuePair<string, Type> kvp in builtInExtra)
@@ -747,16 +757,16 @@ namespace Battlehub.RTSL
             }
 
             GameObject defaultTree = Resources.Load<GameObject>("Tree/RTT_DefaultTree");
-            if(defaultTree != null)
+            if (defaultTree != null)
             {
                 builtInAssets.Add(defaultTree);
                 Material barkMaterial = Resources.Load<Material>("Tree/Materials/RTT_DefaultTreeBark");
-                if(barkMaterial != null)
+                if (barkMaterial != null)
                 {
                     builtInAssets.Add(barkMaterial);
                 }
                 Material branchesMaterial = Resources.Load<Material>("Tree/Materials/RTT_DefaultTreeBranches");
-                if(branchesMaterial != null)
+                if (branchesMaterial != null)
                 {
                     builtInAssets.Add(branchesMaterial);
                 }
