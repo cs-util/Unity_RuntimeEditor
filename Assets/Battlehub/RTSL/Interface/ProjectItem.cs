@@ -218,7 +218,7 @@ namespace Battlehub.RTSL.Interface
             return item;
         }
 
-        public bool IsAncestorOf(ProjectItem ancestor)
+        public bool IsDescendantOf(ProjectItem ancestor)
         {
             ProjectItem projectItem = this;
             while(projectItem != null)
