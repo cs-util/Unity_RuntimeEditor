@@ -7,7 +7,8 @@ namespace Battlehub.RTHandles
     /// 
     /// Material should render the full relevant area in opaque red rgba(1, 0, 0, 1)
     /// </summary>
-    public interface ICustomOutlinePrepass {
+    public interface ICustomOutlinePrepass
+    {
         Renderer GetRenderer();
         Material GetOutlinePrepassMaterial();
     }

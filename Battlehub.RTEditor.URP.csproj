@@ -70,6 +70,8 @@
     <Compile Include="Assets\Battlehub\UniversalRP\RTEditor\Scripts\URPInit.cs" />
     <Compile Include="Assets\Battlehub\UniversalRP\RTExtensions\RTBuilder\Scripts\PBSelectionPickerRendererURP.cs" />
     <Compile Include="Assets\Battlehub\UniversalRP\RTExtensions\RTBuilder\Scripts\ProBuilderInitURP.cs" />
+    <Compile Include="Assets\Battlehub\UniversalRP\RTHandles\Scripts\Custom\CustomOutlineRenderersCache.cs" />
+    <Compile Include="Assets\Battlehub\UniversalRP\RTHandles\Scripts\Custom\ICustomOutlineRenderersCache.cs" />
     <Compile Include="Assets\Battlehub\UniversalRP\RTHandles\Scripts\OutlineManagerURP.cs" />
     <Compile Include="Assets\Battlehub\UniversalRP\RTHandles\Scripts\RenderSelection.cs" />
     <Compile Include="Assets\Battlehub\UniversalRP\RTSL\Scripts\RTSLDepsURP.cs" />

@@ -427,6 +427,8 @@
     <Compile Include="Assets\Battlehub\RTGizmos\Scripts\SpotlightGizmo.cs" />
     <Compile Include="Assets\Battlehub\RTHandles\Demo\Scripts\DemoEditor.cs" />
     <Compile Include="Assets\Battlehub\RTHandles\Demo\Scripts\SimpleEditor.cs" />
+    <Compile Include="Assets\Battlehub\RTHandles\Outline\Scripts\Custom\CustomOutlinePrepass.cs" />
+    <Compile Include="Assets\Battlehub\RTHandles\Outline\Scripts\Custom\ICustomOutlinePrepass.cs" />
     <Compile Include="Assets\Battlehub\RTHandles\Outline\Scripts\IOutlineManager.cs" />
     <Compile Include="Assets\Battlehub\RTHandles\Outline\Scripts\OutlineEffect.cs" />
     <Compile Include="Assets\Battlehub\RTHandles\Outline\Scripts\OutlineManager.cs" />

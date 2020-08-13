@@ -1,40 +1,35 @@
-using Battlehub.RTCommon;
-using Battlehub.UIControls.DockPanels;
-using Battlehub.RTHandles;
-using Battlehub.RTEditor;
+
 using UnityEngine;
 using System.Linq;
-using Battlehub.Utils;
 using System.Collections.Generic;
+
+using Battlehub.RTCommon;
+using Battlehub.Utils;
+using Battlehub.RTEditor;
 
 namespace Battlehub.RTHandles
 {
-    public class CustomOutlineRenderersCache : EditorExtension, ICustomOutlineRenderersCache
+    public class CustomOutlineRenderersCache : MonoBehaviour, ICustomOutlineRenderersCache
     {
-        private List<ICustomOutlinePrepass> rendererItems = new List<ICustomOutlinePrepass>();
-        private IRuntimeEditor editor;
+        private List<ICustomOutlinePrepass> m_rendererItems = new List<ICustomOutlinePrepass>();
+        private IRuntimeEditor m_editor;
 
-        protected override void OnEditorExist()
+        private void Awake()
         {
-            editor = IOC.Resolve<IRuntimeEditor>();
-            if (editor.IsOpened)
-            {
-                IOC.Register("CustomOutlineRenderersCache", (ICustomOutlineRenderersCache) this);
+            m_editor = IOC.Resolve<IRuntimeEditor>();
+            IOC.Register<ICustomOutlineRenderersCache>("CustomOutlineRenderersCache", this);
 
-                TryToAddRenderers(editor.Selection);
-                editor.Selection.SelectionChanged += OnRuntimeEditorSelectionChanged;
-            }
+            TryToAddRenderers(m_editor.Selection);
+            m_editor.Selection.SelectionChanged += OnRuntimeEditorSelectionChanged;
         }
 
-        protected override void OnDestroy()
+        private void OnDestroy()
         {
-            base.OnDestroy();
-            if (editor != null)
+            if (m_editor != null)
             {
-                editor.Selection.SelectionChanged -= OnRuntimeEditorSelectionChanged;
+                m_editor.Selection.SelectionChanged -= OnRuntimeEditorSelectionChanged;
             }
-
-            IOC.Unregister("CustomOutlineRenderersCache", (ICustomOutlineRenderersCache) this);
+            IOC.Unregister<ICustomOutlineRenderersCache>("CustomOutlineRenderersCache", this);
         }
 
         private void OnRuntimeEditorSelectionChanged(Object[] unselectedObjects)
@@ -44,10 +39,10 @@ namespace Battlehub.RTHandles
                 ICustomOutlinePrepass[] renderers = unselectedObjects.Select(go => go as GameObject).Where(go => go != null).SelectMany(go => go.GetComponentsInChildren<ICustomOutlinePrepass>(true)).ToArray();
                 for(int i = 0; i < renderers.Length; ++i)
                 {
-                    rendererItems.Remove(renderers[i]);
+                    m_rendererItems.Remove(renderers[i]);
                 }
             }
-            TryToAddRenderers(editor.Selection);
+            TryToAddRenderers(m_editor.Selection);
         }
 
         private void TryToAddRenderers(IRuntimeSelection selection)
@@ -58,13 +53,14 @@ namespace Battlehub.RTHandles
                 for (int i = 0; i < renderers.Length; ++i)
                 {
                     ICustomOutlinePrepass renderer = renderers[i];
-                    rendererItems.Add(renderer);
+                    m_rendererItems.Add(renderer);
                 }
             }
         }
 
-        public List<ICustomOutlinePrepass> GetOutlineRendererItems() {
-            return rendererItems;
+        public List<ICustomOutlinePrepass> GetOutlineRendererItems() 
+        {
+            return m_rendererItems;
         }
     }
 }
