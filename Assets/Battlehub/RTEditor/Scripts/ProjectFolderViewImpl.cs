@@ -918,7 +918,7 @@ namespace Battlehub.RTEditor
 
         protected virtual void DuplicateValidateContextMenuCmd(MenuItemValidationArgs args)
         {
-            if (m_listBox.SelectedItems == null || m_listBox.SelectedItems.OfType<AssetItem>().FirstOrDefault() == null)
+            if (m_listBox.SelectedItems == null)
             {
                 args.IsValid = false;
             }
@@ -926,9 +926,9 @@ namespace Battlehub.RTEditor
 
         protected virtual void DuplicateContextMenuCmd(string arg)
         {
-            AssetItem[] assetItems = m_listBox.SelectedItems.OfType<AssetItem>().ToArray();
+            ProjectItem[] projectItems = m_listBox.SelectedItems.OfType<ProjectItem>().ToArray();
             Editor.IsBusy = true;
-            m_project.Duplicate(assetItems, (error, duplicates) => Editor.IsBusy = false);
+            m_project.Duplicate(projectItems, (error, duplicates) => Editor.IsBusy = false);
         }
 
         protected virtual void DeleteValidateContextMenuCmd(MenuItemValidationArgs args)

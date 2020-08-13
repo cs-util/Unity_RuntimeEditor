@@ -105,7 +105,7 @@ namespace Battlehub.RTEditor
             m_project.CreateCompleted += OnCreateCompleted;
             m_project.MoveCompleted += OnMoveCompleted;
             m_project.SaveCompleted += OnSaveCompleted;
-            m_project.DuplicateCompleted += OnDuplicateCompleted;
+            m_project.DuplicateItemsCompleted += OnDuplicateCompleted;
          
             if (m_project.IsOpened)
             {
@@ -141,7 +141,7 @@ namespace Battlehub.RTEditor
                 m_project.CreateCompleted -= OnCreateCompleted;
                 m_project.MoveCompleted -= OnMoveCompleted;
                 m_project.SaveCompleted -= OnSaveCompleted;
-                m_project.DuplicateCompleted -= OnDuplicateCompleted;
+                m_project.DuplicateItemsCompleted -= OnDuplicateCompleted;
             }
 
             UnityEventHelper.RemoveListener(m_filterInput, inputField => inputField.onValueChanged, OnFiltering);
@@ -294,10 +294,19 @@ namespace Battlehub.RTEditor
             m_projectFolder.InsertItems(result, userAction);
         }
 
-        private void OnDuplicateCompleted(Error error, AssetItem[] result)
+        private void OnDuplicateCompleted(Error error, ProjectItem[] result)
         {
             Editor.IsBusy = false;
-            m_projectFolder.InsertItems(result, true);
+            if(!error.HasError)
+            {
+                m_projectFolder.InsertItems(result, true);
+                foreach (ProjectItem item in result.Where(item => item.IsFolder))
+                {
+                    m_projectTree.AddItem(item.Parent, item, false, false);
+                }
+
+                m_projectTree.SelectedItem = result.FirstOrDefault();
+            }
         }
 
         private void OnProjectTreeSelectionChanged(object sender, SelectionChangedArgs<ProjectItem> e)

@@ -780,7 +780,7 @@ namespace Battlehub.RTEditor
             for (int i = 0; i < dragProjectItems.Length; ++i)
             {
                 ProjectItem dragItem = dragProjectItems[i];
-                if (dropFolder.IsAncestorOf(dragItem))
+                if (dropFolder.IsDescendantOf(dragItem))
                 {
                     return false;
                 }
@@ -855,6 +855,13 @@ namespace Battlehub.RTEditor
             createFolder.Action.AddListener(CreateFolderContextMenuCmd);
             menuItems.Add(createFolder);
 
+            MenuItemInfo duplicateFolder = new MenuItemInfo { Path = m_localization.GetString("ID_RTEditor_ProjectTreeView_Duplicate", "Duplicate") };
+            duplicateFolder.Validate = new MenuItemValidationEvent();
+            duplicateFolder.Validate.AddListener(DuplicateValidateContextMenuCmd);
+            duplicateFolder.Action = new MenuItemEvent();
+            duplicateFolder.Action.AddListener(DuplicateContextMenuCmd);
+            menuItems.Add(duplicateFolder);
+
             MenuItemInfo deleteFolder = new MenuItemInfo { Path = m_localization.GetString("ID_RTEditor_ProjectTreeView_Delete", "Delete") };
             deleteFolder.Validate = new MenuItemValidationEvent();
             deleteFolder.Validate.AddListener(DeleteFolderValidateContextMenuCmd);
@@ -888,6 +895,16 @@ namespace Battlehub.RTEditor
 
             Editor.IsBusy = true;
             m_project.CreateFolder(folder, (error, projectItem) => Editor.IsBusy = false);
+        }
+
+        protected virtual void DuplicateValidateContextMenuCmd(MenuItemValidationArgs args)
+        {
+            args.IsValid = TreeView.SelectedItem != null;
+        }
+
+        protected virtual void DuplicateContextMenuCmd(string arg)
+        {
+            m_project.Duplicate(TreeView.SelectedItems.OfType<ProjectItem>().ToArray());
         }
 
         protected virtual void DeleteFolderValidateContextMenuCmd(MenuItemValidationArgs args)
@@ -957,11 +974,21 @@ namespace Battlehub.RTEditor
 
         public virtual void AddItem(ProjectItem parentFolder, ProjectItem folder)
         {
+            AddItem(parentFolder, folder, true, true);
+        }
+
+        public virtual void AddItem(ProjectItem parentFolder, ProjectItem folder, bool select, bool expand)
+        {
             string[] existingNames = parentFolder.Children.Where(c => c != folder && c.IsFolder).Select(c => c.Name).ToArray();
-            AddItem(parentFolder, folder, existingNames);
+            AddItem(parentFolder, folder, existingNames, select, expand);
         }
 
         protected virtual void AddItem(ProjectItem parentFolder, ProjectItem folder, string[] existingNames)
+        {
+            AddItem(parentFolder, folder, existingNames, true, true);
+        }
+
+        protected virtual void AddItem(ProjectItem parentFolder, ProjectItem folder, string[] existingNames, bool select, bool expand)
         {
             m_treeView.AddChild(parentFolder, folder);
 
@@ -978,10 +1005,20 @@ namespace Battlehub.RTEditor
                 }
             }
 
-            ProjectItem projectItem = parentFolder;
-            Expand(parentFolder);
-            m_treeView.ScrollIntoView(folder);
-            m_treeView.SelectedItem = folder;
+            if(expand)
+            {
+                ProjectItem projectItem = parentFolder;
+                Expand(parentFolder);
+            }
+
+            if(select)
+            {
+                if(m_treeView.GetTreeViewItem(folder) != null)
+                {
+                    m_treeView.ScrollIntoView(folder);
+                }
+                m_treeView.SelectedItem = folder;
+            }  
         }
     }
 }

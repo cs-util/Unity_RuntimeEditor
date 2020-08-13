@@ -304,6 +304,7 @@
 		<!-- Project Tree View -->
 		<StringResource id="ID_RTEditor_ProjectTreeView_CreateFolder" value="Create Folder"/>
 		<StringResource id="ID_RTEditor_ProjectTreeView_Delete" value="Delete"/>
+    <StringResource id="ID_RTEditor_ProjectTreeView_Duplicate" value="Duplicate"/>
 		<StringResource id="ID_RTEditor_ProjectTreeView_Rename" value="Rename"/>
 		<StringResource id="ID_RTEditor_ProjectTreeView_Folder" value="Folder"/>
 		<StringResource id="ID_RTEditor_ProjectTreeView_UnableToRemove" value="Unable to remove"/>

@@ -36,7 +36,11 @@ namespace Battlehub.RTSL
         public event ProjectEventHandler<AssetItem[], bool> SaveCompleted;
         public event ProjectEventHandler<AssetItem[]> BeginLoad;
         public event ProjectEventHandler<AssetItem[], UnityObject[]> LoadCompleted;
+
+        [Obsolete]
         public event ProjectEventHandler<AssetItem[]> DuplicateCompleted;
+        public event ProjectEventHandler<ProjectItem[]> DuplicateItemsCompleted;
+
         public event ProjectEventHandler UnloadCompleted;
         public event ProjectEventHandler<AssetItem[]> ImportCompleted;
         public event ProjectEventHandler<ProjectItem[]> BeforeDeleteCompleted;
@@ -920,21 +924,24 @@ namespace Battlehub.RTSL
         {
             m_storage.GetPreviews(m_projectPath, assetItems.Select(f => f.ToString()).ToArray(), (error, previews) =>
             {
+                AssetItem[] result = null;
                 if (error.HasError)
                 {
                     callback(error, new AssetItem[0]);
                 }
-
-                AssetItem[] result = assetItems.ToArray();
-                for (int i = 0; i < result.Length; ++i)
+                else
                 {
-                    AssetItem assetItem = result[i];
-                    assetItem.Preview = previews[i];
-                }
+                    result = assetItems.ToArray();
+                    for (int i = 0; i < result.Length; ++i)
+                    {
+                        AssetItem assetItem = result[i];
+                        assetItem.Preview = previews[i];
+                    }
 
-                if (callback != null)
-                {
-                    callback(error, result);
+                    if (callback != null)
+                    {
+                        callback(error, result);
+                    }
                 }
 
                 ao.Error = error;
@@ -1875,6 +1882,23 @@ namespace Battlehub.RTSL
             ao.IsCompleted = true;
         }
 
+        private void OnDynamicIdentifiersExhausted(ProjectEventHandler<ProjectItem[]> callback, ProjectEventHandler<ProjectItem[]> eventHandler, ProjectAsyncOperation<ProjectItem[]> ao, int assetIdBackup)
+        {
+            m_projectInfo.AssetIdentifier = assetIdBackup;
+            Error error = new Error(Error.E_InvalidOperation);
+            if (callback != null)
+            {
+                callback(error, null);
+            }
+            if (eventHandler != null)
+            {
+                eventHandler(error, null);
+            }
+            ao.Error = error;
+            ao.Result = null;
+            ao.IsCompleted = true;
+        }
+
         /// <summary>
         /// Save Preview
         /// </summary>
@@ -1924,110 +1948,307 @@ namespace Battlehub.RTSL
             });
         }
 
-        /// <summary>
-        /// Duplicate
-        /// </summary>
-        /// <param name="assetItems"></param>
-        /// <param name="callback"></param>
-        /// <returns></returns>
+     
+        [Obsolete]
         public ProjectAsyncOperation<AssetItem[]> Duplicate(AssetItem[] assetItems, ProjectEventHandler<AssetItem[]> callback = null)
         {
             ProjectAsyncOperation<AssetItem[]> ao = new ProjectAsyncOperation<AssetItem[]>();
+            Duplicate((ProjectItem[])assetItems, (error, result) =>
+            {
+                if (result != null)
+                {
+                    assetItems = result.OfType<AssetItem>().ToArray();
+                }
+
+                if(callback != null)
+                {
+                    callback(error, assetItems);
+                }
+
+                ao.Error = error;
+                ao.Result = assetItems;                
+                ao.IsCompleted = true;                
+            });
+            return ao;
+        }
+
+        /// <summary>
+        /// Duplicate
+        /// </summary>
+        /// <param name="projectItems"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public ProjectAsyncOperation<ProjectItem[]> Duplicate(ProjectItem[] projectItems, ProjectEventHandler<ProjectItem[]> callback = null)
+        {
+            ProjectAsyncOperation<ProjectItem[]> ao = new ProjectAsyncOperation<ProjectItem[]>();
             if (IsBusy)
             {
-                m_actionsQueue.Enqueue(() => _Duplicate(assetItems, callback, ao));
+                m_actionsQueue.Enqueue(() => _Duplicate(projectItems, callback, ao));
             }
             else
             {
                 IsBusy = true;
-                _Duplicate(assetItems, callback, ao);
+                _Duplicate(projectItems, callback, ao);
             }
-            
+
             return ao;
         }
 
-        private void _Duplicate(AssetItem[] assetItems, ProjectEventHandler<AssetItem[]> callback, ProjectAsyncOperation<AssetItem[]> ao)
+        private void _Duplicate(ProjectItem[] projectItems, ProjectEventHandler<ProjectItem[]> callback, ProjectAsyncOperation<ProjectItem[]> ao)
         {
-            AssetItem[] scenes =  assetItems.Where(ai => IsScene(ai)).ToArray();
-            int[] sceneIndices = new int[scenes.Length];
-            for(int i = 0; i < scenes.Length; ++i)
+            List<ProjectItem> extendedProjectItems = new List<ProjectItem>();
+            ProjectItem[] folders = projectItems.Where(item => item.IsFolder).ToArray();
+            Dictionary<ProjectItem, List<string>> toSubfolderNames = new Dictionary<ProjectItem, List<string>>();
+            foreach (ProjectItem folder in folders)
             {
-                sceneIndices[i] = Array.IndexOf(assetItems, scenes[i]);
-            }
-
-            DuplicateScenes(scenes, ao, callback, (sceneDuplicates) =>
-            {
-                AssetItem[] nonScenes = assetItems.Where(ai => !IsScene(ai)).ToArray();
-
-                int[] nonSceneIndices = new int[nonScenes.Length];
-                for (int i = 0; i < nonScenes.Length; ++i)
+                bool isRoot = true;
+                foreach (ProjectItem parent in folders)
                 {
-                    nonSceneIndices[i] = Array.IndexOf(assetItems, nonScenes[i]);
+                    if(folder != parent && folder.IsDescendantOf(parent))
+                    {
+                        isRoot = false;
+                        break;
+                    }
                 }
 
-                ProjectAsyncOperation<UnityObject[]> loadAo = new ProjectAsyncOperation<UnityObject[]>();
-                _Load(nonScenes, (loadError, loadedObjects) =>
+                if(isRoot)
                 {
-                    if (loadError.HasError)
+                    foreach (ProjectItem projectItem in folder.Flatten(false))
                     {
-                        callback(loadError, null);
-                        return;
+                        extendedProjectItems.Add(projectItem);
                     }
 
-                    for(int i = 0; i < loadedObjects.Length; ++i)
+                    if(!toSubfolderNames.ContainsKey(folder.Parent))
                     {
-                        string name = loadedObjects[i].name;
-                        loadedObjects[i] = Instantiate(loadedObjects[i]);
-                        loadedObjects[i].name = name;
+                        toSubfolderNames.Add(folder.Parent, new List<string>(folder.Parent.Children.Where(item => item.IsFolder).Select(item => item.Name)));
                     }
+                }
+            }
 
-                    _Save(nonScenes.Select(ai => ai.Parent).ToArray(), nonScenes.Select(ai => ai.Preview.PreviewData).ToArray(), loadedObjects, null, null, (saveError, nonSceneDuplicates) =>
+            foreach(ProjectItem item in projectItems.Where(item => !item.IsFolder))
+            {
+                if(!extendedProjectItems.Contains(item))
+                {
+                    extendedProjectItems.Add(item);
+                }
+            }
+
+            folders = extendedProjectItems.Where(item => item.IsFolder).ToArray();
+            int[] folderIndices = new int[folders.Length];
+            for (int i = 0; i < folders.Length; ++i)
+            {
+                folderIndices[i] = extendedProjectItems.IndexOf(folders[i]);
+            }
+            DuplicateFolders(folders, toSubfolderNames, ao, callback, folderDuplicates =>
+            {
+                Dictionary<ProjectItem, ProjectItem> folderToDuplicate = new Dictionary<ProjectItem, ProjectItem>();
+                for(int i = 0; i < folders.Length; ++i)
+                {
+                    folderToDuplicate.Add(folders[i], folderDuplicates[i]);
+                }
+
+                AssetItem[] scenes = extendedProjectItems.Where(item => IsScene(item)).OfType<AssetItem>().ToArray();
+                int[] sceneIndices = new int[scenes.Length];
+                for (int i = 0; i < scenes.Length; ++i)
+                {
+                    sceneIndices[i] = extendedProjectItems.IndexOf(scenes[i]);
+                }
+
+                DuplicateScenes(scenes, folderToDuplicate, ao, callback, (sceneDuplicates) =>
+                {
+                    AssetItem[] nonScenes = extendedProjectItems.Where(item => !item.IsFolder && !IsScene(item)).OfType<AssetItem>().ToArray();
+                    m_storage.GetPreviews(m_projectPath, nonScenes.Select(item => item.ToString()).ToArray(), (Error getPreviewsError, Preview[] preivews) =>
                     {
-                        for(int i = 0; i < loadedObjects.Length; ++i)
+                        if(getPreviewsError.HasError)
                         {
-                            Destroy(loadedObjects[i]);
+                            if (callback != null)
+                            {
+                                callback(getPreviewsError, null);
+                            }
+                            ao.Error = getPreviewsError;
+                            ao.IsCompleted = true;
+                            RaiseDuplicateCompleted(ao);
+                            return;
+                        }                        
+
+                        int[] nonSceneIndices = new int[nonScenes.Length];
+                        for (int i = 0; i < nonScenes.Length; ++i)
+                        {
+                            nonScenes[i].Preview = preivews[i];
+                            nonSceneIndices[i] = extendedProjectItems.IndexOf(nonScenes[i]);
                         }
 
-                        AssetItem[] result = null;
-                        if(!saveError.HasError)
+                        ProjectAsyncOperation<UnityObject[]> loadAo = new ProjectAsyncOperation<UnityObject[]>();
+                        _Load(nonScenes, (loadError, loadedObjects) =>
                         {
-                            result = new AssetItem[sceneDuplicates.Length + nonSceneDuplicates.Length];
-                            for (int i = 0; i < sceneIndices.Length; ++i)
+                            if (loadError.HasError)
                             {
-                                result[sceneIndices[i]] = sceneDuplicates[i];
+                                if(callback != null)
+                                {
+                                    callback(loadError, null);
+                                }
+                                ao.Error = loadError;
+                                ao.IsCompleted = true;
+                                return;
                             }
-                            for(int i = 0; i < nonSceneIndices.Length; ++i)
-                            {
-                                result[nonSceneIndices[i]] = nonSceneDuplicates[i];
-                            }
-                        }
-                        
-                        callback(saveError, result);
 
-                        ao.Result = result;
-                        ao.Error = saveError;
-                        ao.IsCompleted = true;
-                    }, 
-                    ao, 
-                    () =>
-                    {
-                        RaiseDuplicateCompleted(ao);
+                            for (int i = 0; i < loadedObjects.Length; ++i)
+                            {
+                                string name = loadedObjects[i].name;
+                                GameObject go = loadedObjects[i] as GameObject;
+                                bool wasActive = false;
+                                if (go != null)
+                                {
+                                    wasActive = go.activeSelf;
+                                    go.SetActive(false);
+                                }
+                                
+                                loadedObjects[i] = Instantiate(loadedObjects[i]);
+                                loadedObjects[i].name = name;
+
+                                if(go != null)
+                                {
+                                    go.SetActive(wasActive);
+                                }
+                            }
+
+                            ProjectItem[] nonSceneParents = nonScenes.Select(ai => (folderToDuplicate.ContainsKey(ai.Parent) ? folderToDuplicate[ai.Parent] : ai.Parent)).ToArray();
+                            ProjectAsyncOperation<AssetItem[]> saveAo = new ProjectAsyncOperation<AssetItem[]>();
+                            _Save(nonSceneParents, nonScenes.Select(ai => ai.Preview.PreviewData).ToArray(), loadedObjects, null, null, (saveError, nonSceneDuplicates) =>
+                            {
+                                for (int i = 0; i < loadedObjects.Length; ++i)
+                                {
+                                    Destroy(loadedObjects[i]);
+                                }
+
+                                ProjectItem[] result = null;
+                                if (!saveError.HasError)
+                                {
+                                    result = new ProjectItem[folders.Length + sceneDuplicates.Length + nonSceneDuplicates.Length];
+                                    for (int i = 0; i < folderIndices.Length; ++i)
+                                    {
+                                        result[folderIndices[i]] = folderDuplicates[i];
+                                    }
+                                    for (int i = 0; i < sceneIndices.Length; ++i)
+                                    {
+                                        result[sceneIndices[i]] = sceneDuplicates[i];
+                                    }
+                                    for (int i = 0; i < nonSceneIndices.Length; ++i)
+                                    {
+                                        result[nonSceneIndices[i]] = nonSceneDuplicates[i];
+                                    }
+                                }
+
+                                if(callback != null)
+                                {
+                                    callback(saveError, result);
+                                }
+                                
+                                ao.Result = result;
+                                ao.Error = saveError;
+                                ao.IsCompleted = true;
+                            },
+                            saveAo,
+                            () =>
+                            {
+                                RaiseDuplicateCompleted(ao);
+                            });
+                        },
+                        loadAo, () => 
+                        {
+                            if(ao.Error != null && ao.HasError)
+                            {
+                                RaiseDuplicateCompleted(ao);
+                            }
+                        });
                     });
-                }, 
-                loadAo, () => { });
+                });
             });
         }
 
-        private void RaiseDuplicateCompleted(ProjectAsyncOperation<AssetItem[]> ao)
+        private void RaiseDuplicateCompleted(ProjectAsyncOperation<ProjectItem[]> ao)
         {
             if (DuplicateCompleted != null)
             {
-                DuplicateCompleted(ao.Error, ao.Result);
+                DuplicateCompleted(ao.Error, ao.Result?.OfType<AssetItem>().ToArray());
+            }
+            if(DuplicateItemsCompleted != null)
+            {
+                DuplicateItemsCompleted(ao.Error, ao.Result);
             }
             IsBusy = false;
         }
 
-        private AssetItem DuplicateScene(AssetItem assetItem, ProjectAsyncOperation<AssetItem[]> ao, ProjectEventHandler<AssetItem[]> callback, int assetIdBackup)
+        private void DuplicateFolders(ProjectItem[] folders, Dictionary<ProjectItem, List<string>> toSubfolderName, ProjectAsyncOperation<ProjectItem[]> ao, ProjectEventHandler<ProjectItem[]> callback, Action<ProjectItem[]> done)
+        {
+            if (folders.Length == 0)
+            {
+                done(new ProjectItem[0]);
+                return;
+            }
+
+            string[] paths = new string[folders.Length];
+            string[] names = new string[folders.Length];
+            ProjectItem[] result = new ProjectItem[folders.Length];
+            Dictionary<ProjectItem, ProjectItem> m_toDuplicate = new Dictionary<ProjectItem, ProjectItem>();
+            for(int i = 0; i < folders.Length; ++i)
+            {
+                ProjectItem folder = folders[i];
+                ProjectItem parentFolder = folder.Parent;
+
+                List<string> uniqueNames;
+                if (toSubfolderName.TryGetValue(parentFolder, out uniqueNames))
+                {
+                    names[i] = PathHelper.GetUniqueName(folder.Name, uniqueNames);
+                    uniqueNames.Add(names[i]);
+                }
+                else
+                {
+                    names[i] = folder.Name;
+                }
+
+                ProjectItem duplicatedFolder = new ProjectItem
+                {
+                    Name = names[i],
+                    Parent = m_toDuplicate.ContainsKey(parentFolder) ? m_toDuplicate[parentFolder] : parentFolder,
+                    Children = new List<ProjectItem>()
+                };
+                m_toDuplicate.Add(folder, duplicatedFolder);
+
+                paths[i] = duplicatedFolder.Parent.ToString();
+                result[i] = duplicatedFolder;
+            }
+
+            m_storage.Create(m_projectPath, paths, names, error =>
+            {
+                ao.Error = error;
+                if(error.HasError)
+                {
+                    if(callback != null)
+                    {
+                        callback(ao.Error, result);
+                    }
+
+                    ao.IsCompleted = true;
+                    RaiseDuplicateCompleted(ao);
+                    return;
+                }
+
+                for (int i = 0; i < folders.Length; ++i)
+                {
+                    ProjectItem duplicatedFolder = result[i];
+                    ProjectItem parentFolder = duplicatedFolder.Parent;
+
+                    parentFolder.Children.Add(duplicatedFolder);
+                    parentFolder.Children.Sort((item0, item1) => item0.Name.ToUpper().CompareTo(item1.Name.ToUpper()));
+                }
+
+                done(result);
+            });
+        }
+
+
+        private AssetItem DuplicateScene(AssetItem assetItem, ProjectAsyncOperation<ProjectItem[]> ao, ProjectEventHandler<ProjectItem[]> callback, int assetIdBackup)
         {
             AssetItem copy = new AssetItem();
             copy.TypeGuid = assetItem.TypeGuid;
@@ -2066,7 +2287,7 @@ namespace Battlehub.RTSL
             return copy;
         }
 
-        private void DuplicateScenes(AssetItem[] scenes, ProjectAsyncOperation<AssetItem[]> ao, ProjectEventHandler<AssetItem[]> callback, Action<AssetItem[]> done)
+        private void DuplicateScenes(AssetItem[] scenes, Dictionary<ProjectItem, ProjectItem> folderToDuplicate, ProjectAsyncOperation<ProjectItem[]> ao, ProjectEventHandler<ProjectItem[]> callback, Action<AssetItem[]> done)
         {
             if (scenes.Length == 0)
             {
@@ -2106,7 +2327,7 @@ namespace Battlehub.RTSL
                    return;
                }
 
-               m_storage.Save(m_projectPath, scenes.Select(ai => ai.Parent.ToString()).ToArray(), duplicates, persistentObjects, m_projectInfo, false, saveError =>
+               m_storage.Save(m_projectPath, scenes.Select(ai => (folderToDuplicate.ContainsKey(ai.Parent) ? folderToDuplicate[ai.Parent] : ai.Parent).ToString()).ToArray(), duplicates, persistentObjects, m_projectInfo, false, saveError =>
                {
                    if (saveError.HasError)
                    {
@@ -2123,7 +2344,7 @@ namespace Battlehub.RTSL
 
                    for (int i = 0; i < scenes.Length; ++i)
                    {
-                       scenes[i].Parent.AddChild(duplicates[i]);
+                       (folderToDuplicate.ContainsKey(scenes[i].Parent) ? folderToDuplicate[scenes[i].Parent] : scenes[i].Parent).AddChild(duplicates[i]);
                    }
 
                    done(duplicates);

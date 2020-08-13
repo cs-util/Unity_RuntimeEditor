@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SyntaxTree.VisualStudio.Unity.Bridge;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -36,7 +37,9 @@ namespace Battlehub.RTSL.Interface
         event ProjectEventHandler<AssetItem[], bool> SaveCompleted;
         event ProjectEventHandler<AssetItem[]> BeginLoad;
         event ProjectEventHandler<AssetItem[], UnityObject[]> LoadCompleted;
+        [Obsolete("Use DuplicateItemsCompleted instead")]
         event ProjectEventHandler<AssetItem[]> DuplicateCompleted;
+        event ProjectEventHandler<ProjectItem[]> DuplicateItemsCompleted;
         event ProjectEventHandler UnloadCompleted;
         event ProjectEventHandler<AssetItem[]> ImportCompleted;
         event ProjectEventHandler<ProjectItem[]> BeforeDeleteCompleted;
@@ -116,7 +119,10 @@ namespace Battlehub.RTSL.Interface
         ProjectAsyncOperation<AssetItem[]> Save(ProjectItem[] parents, byte[][] previewData, object[] obj, string[] nameOverrides, ProjectEventHandler<AssetItem[]> callback = null);
         ProjectAsyncOperation<AssetItem[]> Save(ProjectItem[] parents, byte[][] previewData, object[] obj, string[] nameOverrides, bool isUserAction, ProjectEventHandler<AssetItem[]> callback = null);
         ProjectAsyncOperation<AssetItem[]> SavePreview(AssetItem[] assetItems, ProjectEventHandler<AssetItem[]> callback = null);
+
+        [Obsolete]
         ProjectAsyncOperation<AssetItem[]> Duplicate(AssetItem[] assetItems, ProjectEventHandler<AssetItem[]> callback = null);
+        ProjectAsyncOperation<ProjectItem[]> Duplicate(ProjectItem[] projectItems, ProjectEventHandler<ProjectItem[]> callback = null);
 
         ProjectAsyncOperation<UnityObject[]> Load(AssetItem[] assetItems, ProjectEventHandler<UnityObject[]> callback = null);
         ProjectAsyncOperation Unload(ProjectEventHandler completedCallback = null);
