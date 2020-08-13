@@ -20,6 +20,7 @@ namespace Battlehub.RTHandles.URP
             public Color OutlineColor = new Color32(255, 128, 0, 255);
             public string MeshesCacheName = "SelectedMeshes";
             public string RenderersCacheName = "SelectedRenderers";
+            public string CustomRenderersCacheName = "CustomOutlineRenderersCache";
             public LayerMask LayerMask = -1;
 
             [Range(0.5f, 10f)]
@@ -38,6 +39,7 @@ namespace Battlehub.RTHandles.URP
 
             private IMeshesCache m_meshesCache;
             private IRenderersCache m_renderersCache;
+            private ICustomOutlineRenderersCache m_customRenderersCache;
                         
             private int m_prepassId;
             private RenderTargetIdentifier m_prepassRT;
@@ -54,10 +56,11 @@ namespace Battlehub.RTHandles.URP
             private int m_outlineStrengthId;
             private int m_blurDirectionId;
 
-            public void Setup(RenderTargetIdentifier camerColorRT, IMeshesCache meshesCache, IRenderersCache renderersCache)
+            public void Setup(RenderTargetIdentifier camerColorRT, IMeshesCache meshesCache, IRenderersCache renderersCache, ICustomOutlineRenderersCache customRenderersCache)
             {
                 m_meshesCache = meshesCache;
                 m_renderersCache = renderersCache;
+                m_customRenderersCache = customRenderersCache;
                 m_cameraColorRT = camerColorRT;
             }
 
@@ -139,6 +142,27 @@ namespace Battlehub.RTHandles.URP
                     }
                 }
 
+                if(m_customRenderersCache != null)
+                {
+                    List<ICustomOutlinePrepass> renderers = m_customRenderersCache.GetOutlineRendererItems();
+                    for(int i = 0; i < renderers.Count; ++i)
+                    {
+                        ICustomOutlinePrepass renderer = renderers[i];
+                        if(renderer != null && renderer.GetRenderer().gameObject.activeSelf)
+                        {
+                            Material[] materials = renderer.GetRenderer().sharedMaterials;
+
+                            for(int j = 0; j < materials.Length; ++j)
+                            {
+                                if(materials[j] != null)
+                                {
+                                    cmd.DrawRenderer(renderer.GetRenderer(), renderer.GetOutlinePrepassMaterial(), j);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 cmd.Blit(m_prepassRT, m_blurredRT);
                 cmd.SetGlobalFloat(m_outlineStrengthId, Settings.OutlineStength);
                 cmd.SetGlobalVector(m_blurDirectionId, new Vector2(Settings.BlurSize, 0));
@@ -179,14 +203,15 @@ namespace Battlehub.RTHandles.URP
             {
                 IMeshesCache meshesCache = IOC.Resolve<IMeshesCache>(m_settings.MeshesCacheName);
                 IRenderersCache renderersCache = IOC.Resolve<IRenderersCache>(m_settings.RenderersCacheName);
+                ICustomOutlineRenderersCache customRenderersCache = IOC.Resolve<ICustomOutlineRenderersCache>(m_settings.CustomRenderersCacheName);
                 
-                if ((meshesCache == null || meshesCache.IsEmpty) && (renderersCache == null || renderersCache.IsEmpty))
+                if ((meshesCache == null || meshesCache.IsEmpty) && (renderersCache == null || renderersCache.IsEmpty) && (customRenderersCache == null || customRenderersCache.GetOutlineRendererItems().Count == 0))
                 {
                     return;
                 }
 
                 var src = renderer.cameraColorTarget;
-                m_scriptablePass.Setup(src, meshesCache, renderersCache); 
+                m_scriptablePass.Setup(src, meshesCache, renderersCache, customRenderersCache); 
                 renderer.EnqueuePass(m_scriptablePass);
             }
         }

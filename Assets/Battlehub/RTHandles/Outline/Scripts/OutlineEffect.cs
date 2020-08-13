@@ -23,6 +23,10 @@ namespace Battlehub.RTHandles
 
         private List<Renderer> m_objectRenderers;
         private HashSet<Renderer> m_objectRenderersHs;
+
+        private List<ICustomOutlinePrepass> m_customObjectRenderers;
+        private HashSet<ICustomOutlinePrepass> m_customObjectRenderersHs;
+
         private Material m_outlineMaterial;
         private Camera m_camera;
         private int m_rtWidth = 512;
@@ -60,6 +64,31 @@ namespace Battlehub.RTHandles
             RecreateCommandBuffer();
         }
 
+        public void AddRenderers(ICustomOutlinePrepass[] renderers)
+        {
+            foreach (ICustomOutlinePrepass renderer in renderers)
+            {
+                if (!m_customObjectRenderersHs.Contains(renderer))
+                {
+                    m_customObjectRenderers.Add(renderer);
+                    m_customObjectRenderersHs.Add(renderer);
+                }
+            }
+
+            RecreateCommandBuffer();
+        }
+
+        public void RemoveRenderers(ICustomOutlinePrepass[] renderers)
+        {
+            foreach (ICustomOutlinePrepass renderer in renderers)
+            {
+                m_customObjectRenderers.Remove(renderer);
+                m_customObjectRenderersHs.Remove(renderer);
+            }
+
+            RecreateCommandBuffer();
+        }
+
         public void ClearOutlineData()
         {
             m_objectRenderers.Clear();
@@ -71,6 +100,8 @@ namespace Battlehub.RTHandles
         {
             m_objectRenderers = new List<Renderer>();
             m_objectRenderersHs = new HashSet<Renderer>();
+            m_customObjectRenderers = new List<ICustomOutlinePrepass>();
+            m_customObjectRenderersHs = new HashSet<ICustomOutlinePrepass>();
 
             m_commandBuffer = new CommandBuffer();
             m_commandBuffer.name = "UnityOutlineFX Command Buffer";
@@ -112,7 +143,7 @@ namespace Battlehub.RTHandles
 
             m_commandBuffer.Clear();
 
-            if (m_objectRenderers.Count == 0)
+            if (m_objectRenderers.Count == 0 && m_customObjectRenderers.Count == 0)
             {
                 return;
             }
@@ -154,6 +185,31 @@ namespace Battlehub.RTHandles
                 {
                     m_objectRenderers.Remove(renderer);
                     m_objectRenderersHs.Remove(renderer);
+                }
+
+            }
+
+            for (int i = m_customObjectRenderers.Count - 1; i >= 0; --i)
+            {
+                ICustomOutlinePrepass renderer = m_customObjectRenderers[i];
+                if (renderer != null && renderer.GetRenderer() != null)
+                {
+                    if (((1 << renderer.GetRenderer().gameObject.layer) & m_camera.cullingMask) != 0 && renderer.GetRenderer().enabled)
+                    {
+                        id += 0.25f;
+                        m_commandBuffer.SetGlobalFloat("_ObjectId", id);
+
+                        int submeshCount = renderer.GetRenderer().sharedMaterials.Length;
+                        for (int s = 0; s < submeshCount; ++s)
+                        {
+                            m_commandBuffer.DrawRenderer(renderer.GetRenderer(), renderer.GetOutlinePrepassMaterial(), s);
+                        }
+                    }
+                }
+                else
+                {
+                    m_customObjectRenderers.Remove(renderer);
+                    m_customObjectRenderersHs.Remove(renderer);
                 }
 
             }

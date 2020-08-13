@@ -115,6 +115,9 @@ namespace Battlehub.RTHandles
             {
                 Renderer[] renderers = unselectedObjects.Select(go => go as GameObject).Where(go => go != null).SelectMany(go => go.GetComponentsInChildren<Renderer>(true)).ToArray();
                 m_outlineEffect.RemoveRenderers(renderers);
+
+                ICustomOutlinePrepass[] customRenderers = unselectedObjects.Select(go => go as GameObject).Where(go => go != null).SelectMany(go => go.GetComponentsInChildren<ICustomOutlinePrepass>(true)).ToArray();
+                m_outlineEffect.RemoveRenderers(customRenderers);
             }
             TryToAddRenderers(selection);
         }
@@ -125,6 +128,9 @@ namespace Battlehub.RTHandles
             {
                 Renderer[] renderers = selection.gameObjects.Where(go => go != null).Select(go => go.GetComponent<ExposeToEditor>()).Where(e => e != null && e.ShowSelectionGizmo && !e.gameObject.IsPrefab() && (e.gameObject.hideFlags & HideFlags.HideInHierarchy) == 0).SelectMany(e => e.GetComponentsInChildren<Renderer>().Where(r => (r.gameObject.hideFlags & HideFlags.HideInHierarchy) == 0)).ToArray();
                 m_outlineEffect.AddRenderers(renderers);
+
+                ICustomOutlinePrepass[] customRenderers = selection.gameObjects.Where(go => go != null).Select(go => go.GetComponent<ExposeToEditor>()).Where(e => e != null && e.ShowSelectionGizmo && !e.gameObject.IsPrefab() && (e.gameObject.hideFlags & HideFlags.HideInHierarchy) == 0).SelectMany(e => e.GetComponentsInChildren<ICustomOutlinePrepass>()).ToArray();
+                m_outlineEffect.AddRenderers(customRenderers);
             }
         }
 
