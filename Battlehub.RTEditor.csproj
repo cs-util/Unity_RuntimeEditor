@@ -456,6 +456,7 @@
     <Compile Include="Assets\Battlehub\RTHandles\Scripts\RotationHandleModel.cs" />
     <Compile Include="Assets\Battlehub\RTHandles\Scripts\RuntimeHandlesComponent.cs" />
     <Compile Include="Assets\Battlehub\RTHandles\Scripts\RuntimeHandlesHitTester.cs" />
+    <Compile Include="Assets\Battlehub\RTHandles\Scripts\RuntimeHighlightComponent.cs" />
     <Compile Include="Assets\Battlehub\RTHandles\Scripts\RuntimeSceneComponent.cs" />
     <Compile Include="Assets\Battlehub\RTHandles\Scripts\RuntimeSelectionComponent.cs" />
     <Compile Include="Assets\Battlehub\RTHandles\Scripts\RuntimeSelectionComponentUI.cs" />

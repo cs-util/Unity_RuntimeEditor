@@ -958,7 +958,7 @@ namespace Battlehub.RTHandles
             return index;
         }
 
-        private int GetNextIndex(GameObject[] hits)
+        private int GetNextIndex(Renderer[] hits)
         {
             int index = -1;
             if (hits == null || hits.Length == 0)
@@ -970,8 +970,8 @@ namespace Battlehub.RTHandles
             {
                 for (int i = 0; i < hits.Length; ++i)
                 {
-                    GameObject hit = hits[i];
-                    if (Selection.IsSelected(hit))
+                    Renderer hit = hits[i];
+                    if (Selection.IsSelected(hit.gameObject))
                     {
                         index = i;
                     }
@@ -1012,7 +1012,7 @@ namespace Battlehub.RTHandles
             }
             else
             {
-                GameObject[] selection = m_boxSelection.Pick();
+                Renderer[] selection = m_boxSelection.Pick();
                 if(selection.Length > 0)
                 {
                     int nextIndex = GetNextIndex(selection);

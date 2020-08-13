@@ -5,18 +5,17 @@ using System.Collections.Generic;
 
 using Battlehub.RTCommon;
 using Battlehub.Utils;
-using Battlehub.RTEditor;
 
 namespace Battlehub.RTHandles
 {
     public class CustomOutlineRenderersCache : MonoBehaviour, ICustomOutlineRenderersCache
     {
         private List<ICustomOutlinePrepass> m_rendererItems = new List<ICustomOutlinePrepass>();
-        private IRuntimeEditor m_editor;
+        private IRTE m_editor;
 
         private void Awake()
         {
-            m_editor = IOC.Resolve<IRuntimeEditor>();
+            m_editor = IOC.Resolve<IRTE>();
             IOC.Register<ICustomOutlineRenderersCache>("CustomOutlineRenderersCache", this);
 
             TryToAddRenderers(m_editor.Selection);
@@ -37,7 +36,7 @@ namespace Battlehub.RTHandles
             if (unselectedObjects != null)
             {
                 ICustomOutlinePrepass[] renderers = unselectedObjects.Select(go => go as GameObject).Where(go => go != null).SelectMany(go => go.GetComponentsInChildren<ICustomOutlinePrepass>(true)).ToArray();
-                for(int i = 0; i < renderers.Length; ++i)
+                for (int i = 0; i < renderers.Length; ++i)
                 {
                     m_rendererItems.Remove(renderers[i]);
                 }
@@ -58,7 +57,7 @@ namespace Battlehub.RTHandles
             }
         }
 
-        public List<ICustomOutlinePrepass> GetOutlineRendererItems() 
+        public List<ICustomOutlinePrepass> GetOutlineRendererItems()
         {
             return m_rendererItems;
         }

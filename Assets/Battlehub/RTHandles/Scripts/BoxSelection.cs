@@ -291,7 +291,7 @@ namespace Battlehub.RTHandles
             }
         }
 
-        public GameObject[] Pick()
+        public Renderer[] Pick(Renderer[] renderers = null, bool filterObjects = true)
         {
             m_startMousePosition = Window.Pointer.ScreenPoint;
             m_rectTransform.anchoredPosition = m_startPt;
@@ -301,11 +301,21 @@ namespace Battlehub.RTHandles
             Bounds selectionBounds = new Bounds(center, m_rectTransform.sizeDelta);
             SelectionBounds = selectionBounds;
 
-            FilteringArgs filteringArgs = new FilteringArgs();
-            Renderer[] renderers = FindObjectsOfType<Renderer>();
-            GameObject[] selection = PixelPerfectDepthTest(filteringArgs, renderers).ToArray();
+            if(renderers == null)
+            {
+                renderers = FindObjectsOfType<Renderer>();
+            }
+
+            IEnumerable<Renderer> selection = PixelPerfectDepthTest(renderers);
             m_rectTransform.sizeDelta = new Vector2(0, 0);
-            return selection;
+
+            if (filterObjects)
+            {
+                FilteringArgs filteringArgs = new FilteringArgs();
+                return FilterObjects(filteringArgs, selection).ToArray();
+            }
+
+            return selection.ToArray();
         }
 
         private void Update()
@@ -365,7 +375,7 @@ namespace Battlehub.RTHandles
 
             if(MethodOverride == BoxSelectionMethod.PixelPerfectDepthTest)
             {
-                selection = PixelPerfectDepthTest(filteringArgs, renderers);
+                selection = new HashSet<GameObject>(FilterObjects(filteringArgs, PixelPerfectDepthTest(renderers)).Select(rend => rend.gameObject));
             }
             else
             {
@@ -402,9 +412,8 @@ namespace Battlehub.RTHandles
             }
         }
 
-        private HashSet<GameObject> PixelPerfectDepthTest(FilteringArgs filteringArgs, Renderer[] renderers)
+        private IEnumerable<Renderer> PixelPerfectDepthTest(Renderer[] renderers)
         {
-            HashSet<GameObject> selection;
             Vector2 min = SelectionBounds.min;
             Vector2 max = SelectionBounds.max;
             Canvas canvas = Window.GetComponentInParent<Canvas>();
@@ -424,25 +433,29 @@ namespace Battlehub.RTHandles
             rect.x += Window.Camera.pixelRect.x;
             rect.y += canvas.pixelRect.height - (Window.Camera.pixelRect.y + Window.Camera.pixelRect.height);
 
-            IEnumerable<GameObject> gameObjects = BoxSelectionRenderer.PickObjectsInRect(Window.Camera, rect, renderers, Mathf.RoundToInt(canvas.pixelRect.width), Mathf.RoundToInt(canvas.pixelRect.height)).Select(r => r.gameObject);
-            selection = new HashSet<GameObject>();
-            foreach (GameObject go in gameObjects)
+            return BoxSelectionRenderer.PickObjectsInRect(Window.Camera, rect, renderers, Mathf.RoundToInt(canvas.pixelRect.width), Mathf.RoundToInt(canvas.pixelRect.height));
+        }
+
+        private HashSet<Renderer> FilterObjects(FilteringArgs filteringArgs, IEnumerable<Renderer> renderers)
+        {
+            HashSet<Renderer> selection = new HashSet<Renderer>();
+            foreach (Renderer rend in renderers)
             {
-                if (!selection.Contains(go))
+                if (!selection.Contains(rend))
                 {
                     if (Filtering != null)
                     {
-                        filteringArgs.Object = go;
+                        filteringArgs.Object = rend.gameObject;
                         Filtering(this, filteringArgs);
                         if (!filteringArgs.Cancel)
                         {
-                            selection.Add(go);
+                            selection.Add(rend);
                         }
                         filteringArgs.Reset();
                     }
                     else
                     {
-                        selection.Add(go);
+                        selection.Add(rend);
                     }
                 }
             }
