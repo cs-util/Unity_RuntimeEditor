@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 using UnityObject = UnityEngine.Object;
 namespace Battlehub.RTHandles
 {
-    public static class BoxSelectionRenderer 
+    public static class BoxSelectionRenderer
     {
         private static RenderTextureFormat s_renderTextureFormat;
         private static bool s_initialized;
@@ -37,14 +37,14 @@ namespace Battlehub.RTHandles
 
         private static void Init()
         {
-            if(s_initialized)
+            if (s_initialized)
             {
                 return;
             }
 
             s_initialized = true;
             s_objectSelectionShader = Shader.Find("Battlehub/RTHandles/BoxSelectionShader");
-                        
+
             for (int i = 0; i < s_preferredFormats.Length; i++)
             {
                 if (SystemInfo.SupportsRenderTextureFormat(s_preferredFormats[i]))
@@ -55,12 +55,7 @@ namespace Battlehub.RTHandles
             }
         }
 
-        public static Renderer[] PickObjectsInRect(
-            Camera camera,
-            Rect selectionRect,
-            Renderer[] renderers,
-            int renderTextureWidth = -1,
-            int renderTextureHeight = -1)
+        public static Color32[] Render(Camera camera, Renderer[] renderers, Vector2Int reqiestedTexSize,  out Vector2Int texSize)
         {
             for (int i = 0; i < renderers.Length; ++i)
             {
@@ -75,31 +70,35 @@ namespace Battlehub.RTHandles
                 }
             }
 
-            Texture2D tex = Render(camera, ObjectSelectionShader, renderers, renderTextureWidth, renderTextureHeight);
-            Color32[] pix = tex.GetPixels32();
+            Texture2D tex = Render(camera, ObjectSelectionShader, renderers, reqiestedTexSize.x, reqiestedTexSize.y);
+            Color32[] texPizels = tex.GetPixels32();
+            texSize = new Vector2Int(tex.width, tex.height);
+            UnityObject.DestroyImmediate(tex);
+            return texPizels;
+        }
 
+        public static Renderer[] PickRenderersInRect(Camera camera, Rect selectionRect, Renderer[] renderers, Color32[] texPixels, Vector2Int texSize)
+        {
             selectionRect.width /= camera.rect.width;
             selectionRect.height /= camera.rect.height;
             selectionRect.x = (selectionRect.x - camera.pixelRect.x) / camera.rect.width;
-            selectionRect.y = (selectionRect.y - (tex.height - (camera.pixelRect.y + camera.pixelRect.height))) / camera.rect.height;
+            selectionRect.y = (selectionRect.y - (texSize.y - (camera.pixelRect.y + camera.pixelRect.height))) / camera.rect.height;
 
             int ox = System.Math.Max(0, Mathf.FloorToInt(selectionRect.x));
-            int oy = System.Math.Max(0, Mathf.FloorToInt((tex.height - selectionRect.y) - selectionRect.height));
-            int imageWidth = tex.width;
-            int imageHeight = tex.height;
+            int oy = System.Math.Max(0, Mathf.FloorToInt(texSize.y - selectionRect.y - selectionRect.height));
+
             int width = Mathf.FloorToInt(selectionRect.width);
             int height = Mathf.FloorToInt(selectionRect.height);
-            UnityObject.DestroyImmediate(tex);
 
             List<Renderer> selectedRenderers = new List<Renderer>();
             HashSet<int> used = new HashSet<int>();
 
-            for (int y = oy; y < System.Math.Min(oy + height, imageHeight); y++)
+            for (int y = oy; y < System.Math.Min(oy + height, texSize.y); y++)
             {
-                for (int x = ox; x < System.Math.Min(ox + width, imageWidth); x++)
+                for (int x = ox; x < System.Math.Min(ox + width, texSize.x); x++)
                 {
-                    int index = (int)DecodeRGBA(pix[y * imageWidth + x]) - 1;
-                    if(index < 0 || index >= renderers.Length)
+                    int index = (int)DecodeRGBA(texPixels[y * texSize.x + x]) - 1;
+                    if (index < 0 || index >= renderers.Length)
                     {
                         continue;
                     }
@@ -108,6 +107,11 @@ namespace Battlehub.RTHandles
                     {
                         Renderer selectedRenderer = renderers[index];
                         selectedRenderers.Add(selectedRenderer);
+
+                        if (selectedRenderers.Count == renderers.Length)
+                        {
+                            return selectedRenderers.ToArray();
+                        }
                     }
                 }
             }
@@ -115,16 +119,32 @@ namespace Battlehub.RTHandles
             return selectedRenderers.ToArray();
         }
 
+        public static Renderer[] PickRenderersInRect(
+            Camera camera,
+            Rect selectionRect,
+            Renderer[] renderers,
+            int renderTextureWidth = -1,
+            int renderTextureHeight = -1)
+        {
+
+            Vector2Int texSize;
+            Color32[] pixels = Render(camera, renderers, new Vector2Int(renderTextureWidth, renderTextureHeight), out texSize);
+            return PickRenderersInRect(camera, selectionRect, renderers, pixels, texSize);
+        }
+
+     
         private static uint DecodeRGBA(Color32 color)
         {
-            uint r = (uint)color.r;
-            uint g = (uint)color.g;
-            uint b = (uint)color.b;
+            uint r = color.r;
+            uint g = color.g;
+            uint b = color.b;
 
             if (System.BitConverter.IsLittleEndian)
+            {
                 return r << 16 | g << 8 | b;
-            else
-                return r << 24 | g << 16 | b << 8;
+            }
+
+            return r << 24 | g << 16 | b << 8;
         }
 
         private static Color32 EncodeRGBA(uint hash)
@@ -150,7 +170,7 @@ namespace Battlehub.RTHandles
             int width = -1,
             int height = -1)
         {
-            
+
             bool autoSize = width < 0 || height < 0;
 
             int _width = autoSize ? (int)camera.pixelRect.width : width;
@@ -167,7 +187,7 @@ namespace Battlehub.RTHandles
             renderCam.cullingMask = 0;
 
             IRenderPipelineCameraUtility cameraUtility = IOC.Resolve<IRenderPipelineCameraUtility>();
-            if(cameraUtility != null)
+            if (cameraUtility != null)
             {
                 cameraUtility.EnablePostProcessing(renderCam, false);
                 cameraUtility.SetBackgroundColor(renderCam, Color.white);
@@ -233,7 +253,7 @@ namespace Battlehub.RTHandles
             {
                 renderCam.Render();
             }
-            
+
             Texture2D img = new Texture2D(_width, _height, TextureFormat, false, false);
             img.ReadPixels(new Rect(0, 0, _width, _height), 0, 0);
             img.Apply();

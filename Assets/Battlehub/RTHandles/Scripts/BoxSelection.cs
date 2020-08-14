@@ -293,20 +293,17 @@ namespace Battlehub.RTHandles
 
         public Renderer[] Pick(Renderer[] renderers = null, bool filterObjects = true)
         {
-            m_startMousePosition = Window.Pointer.ScreenPoint;
-            m_rectTransform.anchoredPosition = m_startPt;
-            m_rectTransform.sizeDelta = new Vector2(0, 0);
-            Vector3 center = (m_startMousePosition + (Vector3)Window.Pointer.ScreenPoint) / 2;
-            center.z = 0.0f;
-            Bounds selectionBounds = new Bounds(center, m_rectTransform.sizeDelta);
-            SelectionBounds = selectionBounds;
+            return Pick(renderers, new Bounds(Window.Pointer.ScreenPoint, Vector2.zero), filterObjects);
+        }
 
-            if(renderers == null)
+        private Renderer[] Pick(Renderer[] renderers, Bounds bounds, bool filterObjects = true)
+        {
+            if (renderers == null)
             {
                 renderers = FindObjectsOfType<Renderer>();
             }
 
-            IEnumerable<Renderer> selection = PixelPerfectDepthTest(renderers);
+            IEnumerable<Renderer> selection = PixelPerfectDepthTest(renderers, bounds);
             m_rectTransform.sizeDelta = new Vector2(0, 0);
 
             if (filterObjects)
@@ -316,6 +313,41 @@ namespace Battlehub.RTHandles
             }
 
             return selection.ToArray();
+        }
+
+        public Color32[] BeginPick(out Vector2Int texSize, Renderer[] renderers = null)
+        {
+            if (renderers == null)
+            {
+                renderers = FindObjectsOfType<Renderer>();
+            }
+
+            Canvas canvas = Window.GetComponentInParent<Canvas>();
+            return BoxSelectionRenderer.Render(Window.Camera, renderers, new Vector2Int(Mathf.RoundToInt(canvas.pixelRect.width), Mathf.RoundToInt(canvas.pixelRect.height)), out texSize);
+        }
+
+        public Renderer[] EndPick(Color32[] texPixels, Vector2Int texSize, Renderer[] renderers = null)
+        {
+            if (renderers == null)
+            {
+                renderers = FindObjectsOfType<Renderer>();
+            }
+
+            Bounds bounds = new Bounds(Window.Pointer.ScreenPoint, Vector2.zero);
+            return EndPick(texPixels, texSize, renderers, bounds);
+        }
+
+        private Renderer[] EndPick(Color32[] texPixels, Vector2Int texSize, Renderer[] renderers, Bounds bounds)
+        {
+            Canvas canvas = Window.GetComponentInParent<Canvas>();
+            RectTransform sceneOutput = Window.GetComponent<RectTransform>();
+            if (sceneOutput.childCount > 0)
+            {
+                sceneOutput = (RectTransform)Window.GetComponent<RectTransform>().GetChild(0);
+            }
+
+            Rect selectionRect = SelectionBoundsToSelectionRect(bounds, canvas, sceneOutput);
+            return BoxSelectionRenderer.PickRenderersInRect(Window.Camera, selectionRect, renderers, texPixels, texSize);
         }
 
         private void Update()
@@ -375,7 +407,7 @@ namespace Battlehub.RTHandles
 
             if(MethodOverride == BoxSelectionMethod.PixelPerfectDepthTest)
             {
-                selection = new HashSet<GameObject>(FilterObjects(filteringArgs, PixelPerfectDepthTest(renderers)).Select(rend => rend.gameObject));
+                selection = new HashSet<GameObject>(FilterObjects(filteringArgs, PixelPerfectDepthTest(renderers, SelectionBounds)).Select(rend => rend.gameObject));
             }
             else
             {
@@ -412,18 +444,25 @@ namespace Battlehub.RTHandles
             }
         }
 
-        private IEnumerable<Renderer> PixelPerfectDepthTest(Renderer[] renderers)
+        private IEnumerable<Renderer> PixelPerfectDepthTest(Renderer[] renderers, Bounds bounds)
         {
-            Vector2 min = SelectionBounds.min;
-            Vector2 max = SelectionBounds.max;
             Canvas canvas = Window.GetComponentInParent<Canvas>();
 
             RectTransform sceneOutput = Window.GetComponent<RectTransform>();
-            if(sceneOutput.childCount > 0)
+            if (sceneOutput.childCount > 0)
             {
                 sceneOutput = (RectTransform)Window.GetComponent<RectTransform>().GetChild(0);
             }
-            
+
+            Rect rect = SelectionBoundsToSelectionRect(bounds, canvas, sceneOutput);
+            return BoxSelectionRenderer.PickRenderersInRect(Window.Camera, rect, renderers, Mathf.RoundToInt(canvas.pixelRect.width), Mathf.RoundToInt(canvas.pixelRect.height));
+        }
+
+        private Rect SelectionBoundsToSelectionRect(Bounds bounds, Canvas canvas, RectTransform sceneOutput)
+        {
+            Vector2 min = bounds.min;
+            Vector2 max = bounds.max;
+
             RectTransformUtility.ScreenPointToLocalPointInRectangle(sceneOutput, min, canvas.worldCamera, out min);
             min.y = sceneOutput.rect.height - min.y;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(sceneOutput, max, canvas.worldCamera, out max);
@@ -432,8 +471,7 @@ namespace Battlehub.RTHandles
             Rect rect = new Rect(new Vector2(Mathf.Min(min.x, max.x), Mathf.Min(min.y, max.y)), new Vector2(Mathf.Max(Mathf.Abs(max.x - min.x), 1), Mathf.Max(Mathf.Abs(max.y - min.y), 1)));
             rect.x += Window.Camera.pixelRect.x;
             rect.y += canvas.pixelRect.height - (Window.Camera.pixelRect.y + Window.Camera.pixelRect.height);
-
-            return BoxSelectionRenderer.PickObjectsInRect(Window.Camera, rect, renderers, Mathf.RoundToInt(canvas.pixelRect.width), Mathf.RoundToInt(canvas.pixelRect.height));
+            return rect;
         }
 
         private HashSet<Renderer> FilterObjects(FilteringArgs filteringArgs, IEnumerable<Renderer> renderers)
