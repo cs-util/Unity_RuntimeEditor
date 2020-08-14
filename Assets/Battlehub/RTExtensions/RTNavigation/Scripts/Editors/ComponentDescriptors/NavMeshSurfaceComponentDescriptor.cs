@@ -3,6 +3,7 @@ using Battlehub.RTEditor;
 using Battlehub.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.AI;
@@ -15,6 +16,9 @@ namespace Battlehub.RTNavigation
         public override PropertyDescriptor[] GetProperties(ComponentEditor editor, object converter)
         {
             ILocalization lc = IOC.Resolve<ILocalization>();
+
+            bool overrideVoxelSize = editor.NotNullComponents.OfType<NavMeshSurface>().All(nms => nms.overrideVoxelSize);
+            bool overrideTileSize = editor.NotNullComponents.OfType<NavMeshSurface>().All(nms => nms.overrideTileSize);
 
             MemberInfo agentTypeInfo = Strong.MemberInfo((NavMeshSurface x) => x.agentTypeID);
             MemberInfo collectObjectsInfo = Strong.MemberInfo((NavMeshSurface x) => x.collectObjects);
@@ -46,10 +50,23 @@ namespace Battlehub.RTNavigation
             descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTNavigation_NavMeshAgentComponentDescriptor_CollectObjects"), editor.Components, collectObjectsInfo));
             descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTNavigation_NavMeshAgentComponentDescriptor_UseGeometry"), editor.Components, useGeometryInfo));
             descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTNavigation_NavMeshAgentComponentDescriptor_DefaultArea"), editor.Components, defaultAreaInfo));
-            descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTNavigation_NavMeshAgentComponentDescriptor_OverrideVoxelSize"), editor.Components, overrideVoxelSizeInfo));
-            descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTNavigation_NavMeshAgentComponentDescriptor_VoxelSize"), editor.Components, voxelSizeInfo));
-            descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTNavigation_NavMeshAgentComponentDescriptor_OverrideTileSize"), editor.Components, overrideTileSizeInfo));
-            descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTNavigation_NavMeshAgentComponentDescriptor_TileSize"), editor.Components, tileSizeInfo));
+            descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTNavigation_NavMeshAgentComponentDescriptor_OverrideVoxelSize"), editor.Components, overrideVoxelSizeInfo)
+            {
+                ValueChangedCallback = () => editor.BuildEditor()
+            });
+            if (overrideVoxelSize)
+            {
+                descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTNavigation_NavMeshAgentComponentDescriptor_VoxelSize"), editor.Components, voxelSizeInfo)); 
+            }
+            descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTNavigation_NavMeshAgentComponentDescriptor_OverrideTileSize"), editor.Components, overrideTileSizeInfo)
+            {
+                ValueChangedCallback = () => editor.BuildEditor()
+            });
+
+            if (overrideTileSize)
+            {
+                descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTNavigation_NavMeshAgentComponentDescriptor_TileSize"), editor.Components, tileSizeInfo));
+            }
             descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTNavigation_NavMeshAgentComponentDescriptor_BuildHeightMesh"), editor.Components, buildHightMesh));
             descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTNavigation_NavMeshAgentComponentDescriptor_Bake"), editor.Components, bakeMethodInfo) 
             { 

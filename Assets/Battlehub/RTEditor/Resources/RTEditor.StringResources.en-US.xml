@@ -266,7 +266,10 @@
 		<StringResource id="ID_RTEditor_CD_Transform_Scale" value="Scale"/>
 		
 		<StringResource id="ID_RTEditor_CD_Terrain" value="Terrain"/>
-		
+    
+    <!-- GameObject Editor-->
+    <StringResource id="ID_RTEditor_GOE_Layer" value="Layer"/>
+    
 		<!-- Property Editors -->
 		<StringResource id="ID_RTEditor_PE_ArrayEditor_Size" value="Size"/>
 		<StringResource id="ID_RTEditor_PE_ObjectEditor_None" value="None"/>

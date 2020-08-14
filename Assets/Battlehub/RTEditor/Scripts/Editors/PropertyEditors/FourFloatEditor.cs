@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
+using System.Globalization;
 
 namespace Battlehub.RTEditor
 {
@@ -104,24 +105,24 @@ namespace Battlehub.RTEditor
         {
             if(HasMixedValues())
             {
-                m_xInput.text = HasMixedValues((target, accessor) => GetX(GetValue(target, accessor)), (v1, v2) => v1.Equals(v2)) ? null : GetX(v).ToString(); 
-                m_yInput.text = HasMixedValues((target, accessor) => GetY(GetValue(target, accessor)), (v1, v2) => v1.Equals(v2)) ? null : GetY(v).ToString(); 
-                m_zInput.text = HasMixedValues((target, accessor) => GetZ(GetValue(target, accessor)), (v1, v2) => v1.Equals(v2)) ? null : GetZ(v).ToString();
-                m_wInput.text = HasMixedValues((target, accessor) => GetW(GetValue(target, accessor)), (v1, v2) => v1.Equals(v2)) ? null : GetW(v).ToString();
+                m_xInput.text = HasMixedValues((target, accessor) => GetX(GetValue(target, accessor)), (v1, v2) => v1.Equals(v2)) ? null : GetX(v).ToString(FormatProvider); 
+                m_yInput.text = HasMixedValues((target, accessor) => GetY(GetValue(target, accessor)), (v1, v2) => v1.Equals(v2)) ? null : GetY(v).ToString(FormatProvider); 
+                m_zInput.text = HasMixedValues((target, accessor) => GetZ(GetValue(target, accessor)), (v1, v2) => v1.Equals(v2)) ? null : GetZ(v).ToString(FormatProvider);
+                m_wInput.text = HasMixedValues((target, accessor) => GetW(GetValue(target, accessor)), (v1, v2) => v1.Equals(v2)) ? null : GetW(v).ToString(FormatProvider);
             }
             else
             {
-                m_xInput.text = GetX(v).ToString();
-                m_yInput.text = GetY(v).ToString();
-                m_zInput.text = GetZ(v).ToString();
-                m_wInput.text = GetW(v).ToString();
+                m_xInput.text = GetX(v).ToString(FormatProvider);
+                m_yInput.text = GetY(v).ToString(FormatProvider);
+                m_zInput.text = GetZ(v).ToString(FormatProvider);
+                m_wInput.text = GetW(v).ToString(FormatProvider);
             }
         }
 
         private void OnXValueChanged(string value)
         {
             float val;
-            if (float.TryParse(value, out val) && Target != null)
+            if (float.TryParse(value, NumberStyles.Any, FormatProvider, out val) && Target != null)
             {
                 object[] targets = Targets;
                 object[] accessors = Accessors;
@@ -136,7 +137,7 @@ namespace Battlehub.RTEditor
         private void OnYValueChanged(string value)
         {
             float val;
-            if (float.TryParse(value, out val) && Target != null)
+            if (float.TryParse(value, NumberStyles.Any, FormatProvider, out val) && Target != null)
             {
                 object[] targets = Targets;
                 object[] accessors = Accessors;
@@ -151,7 +152,7 @@ namespace Battlehub.RTEditor
         private void OnZValueChanged(string value)
         {
             float val;
-            if (float.TryParse(value, out val) && Target != null)
+            if (float.TryParse(value, NumberStyles.Any, FormatProvider, out val) && Target != null)
             {
                 object[] targets = Targets;
                 object[] accessors = Accessors;
@@ -166,7 +167,7 @@ namespace Battlehub.RTEditor
         private void OnWValueChanged(string value)
         {
             float val;
-            if (float.TryParse(value, out val) && Target != null)
+            if (float.TryParse(value, NumberStyles.Any, FormatProvider, out val) && Target != null)
             {
                 object[] targets = Targets;
                 object[] accessors = Accessors;

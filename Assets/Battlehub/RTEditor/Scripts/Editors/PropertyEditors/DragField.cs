@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Events;
 using Battlehub.RTCommon;
 using TMPro;
+using System.Globalization;
 
 namespace Battlehub.RTEditor
 {
@@ -66,14 +67,14 @@ namespace Battlehub.RTEditor
             }
 
             float d;
-            if (float.TryParse(Field.text, out d))
+            if (float.TryParse(Field.text, NumberStyles.Any, CultureInfo.InvariantCulture, out d))
             {
                 d += IncrementFactor * eventData.delta.x;
                 Field.text = d.ToString();
             }
             else if(string.IsNullOrEmpty(Field.text))
             {
-                Field.text = (IncrementFactor * eventData.delta.x).ToString();
+                Field.text = (IncrementFactor * eventData.delta.x).ToString(CultureInfo.InvariantCulture);
             }
         }
 

@@ -40,13 +40,13 @@ namespace Battlehub.RTEditor
 
         protected override void SetInputField(float value)
         {
-            m_input.text = HasMixedValues() ? null : FromMeters(value).ToString(CultureInfo.InvariantCulture);
+            m_input.text = HasMixedValues() ? null : FromMeters(value).ToString(FormatProvider);
         }
 
         protected virtual void OnValueChanged(string value)
         {
             float val;
-            if(float.TryParse(value, out val))
+            if(float.TryParse(value, NumberStyles.Any, FormatProvider, out val))
             {
                 SetValue(ToMeters(val));
             }

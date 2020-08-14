@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Globalization;
+using UnityEngine;
 
 namespace Battlehub.RTEditor
 {
@@ -62,7 +63,7 @@ namespace Battlehub.RTEditor
         protected override void OnValueChanged(string value)
         {
             float val;
-            if (float.TryParse(value, out val))
+            if (float.TryParse(value, NumberStyles.Any, FormatProvider, out val))
             {
                 if(Min <= val && val <= Max)
                 {

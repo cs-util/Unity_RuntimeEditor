@@ -1,4 +1,5 @@
 ﻿using Battlehub.RTCommon;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 
@@ -60,20 +61,20 @@ namespace Battlehub.RTEditor
         {
             if (HasMixedValues())
             {
-                m_xInput.text = HasMixedValues((target, accessor) => GetValue(target, accessor).x, (v1, v2) => v1.Equals(v2)) ? null : FromMeters(value.x).ToString();
-                m_yInput.text = HasMixedValues((target, accessor) => GetValue(target, accessor).y, (v1, v2) => v1.Equals(v2)) ? null : FromMeters(value.y).ToString();
+                m_xInput.text = HasMixedValues((target, accessor) => GetValue(target, accessor).x, (v1, v2) => v1.Equals(v2)) ? null : FromMeters(value.x).ToString(FormatProvider);
+                m_yInput.text = HasMixedValues((target, accessor) => GetValue(target, accessor).y, (v1, v2) => v1.Equals(v2)) ? null : FromMeters(value.y).ToString(FormatProvider);
             }
             else
             {
-                m_xInput.text = FromMeters(value.x).ToString();
-                m_yInput.text = FromMeters(value.y).ToString();
+                m_xInput.text = FromMeters(value.x).ToString(FormatProvider);
+                m_yInput.text = FromMeters(value.y).ToString(FormatProvider);
             }
         }
 
         private void OnXValueChanged(string value)
         {
             float val;
-            if (float.TryParse(value, out val) && Target != null)
+            if (float.TryParse(value, NumberStyles.Any, FormatProvider, out val) && Target != null)
             {
                 object[] targets = Targets;
                 object[] accessors = Accessors;
@@ -89,7 +90,7 @@ namespace Battlehub.RTEditor
         private void OnYValueChanged(string value)
         {
             float val;
-            if (float.TryParse(value, out val) && Target != null)
+            if (float.TryParse(value, NumberStyles.Any, FormatProvider, out val) && Target != null)
             {
                 object[] targets = Targets;
                 object[] accessors = Accessors;

@@ -248,6 +248,7 @@ MonoBehaviour:
   CanSelect: 1
   CanSnap: 1
   AddColliders: 1
+  m_markAsDestroyed: 0
 --- !u!1 &1363111702
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,6 +389,7 @@ MonoBehaviour:
   CanSelect: 1
   CanSnap: 1
   AddColliders: 1
+  m_markAsDestroyed: 0
 --- !u!114 &1363111708
 MonoBehaviour:
   m_ObjectHideFlags: 0

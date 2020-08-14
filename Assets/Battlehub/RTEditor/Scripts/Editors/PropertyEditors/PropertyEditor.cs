@@ -10,6 +10,7 @@ using UnityObject = UnityEngine.Object;
 using System.Linq;
 using System.Collections;
 using TMPro;
+using System.Globalization;
 
 namespace Battlehub.RTEditor
 {
@@ -179,6 +180,11 @@ namespace Battlehub.RTEditor
         protected PropertyEditorCallback m_endRecordCallback;
         protected PropertyEditorCallback m_afterRedoCallback;
         protected PropertyEditorCallback m_afterUndoCallback;
+
+        protected virtual IFormatProvider FormatProvider
+        {
+            get { return CultureInfo.InvariantCulture; }
+        }
         
         private Dictionary<MemberInfo, PropertyDescriptor> m_childDescriptors;
         protected Dictionary<MemberInfo, PropertyDescriptor> ChildDescriptors

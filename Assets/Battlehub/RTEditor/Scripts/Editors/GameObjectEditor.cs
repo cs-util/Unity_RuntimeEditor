@@ -20,8 +20,10 @@ namespace Battlehub.RTEditor
         [SerializeField]
         private TMP_InputField InputName = null;
         [SerializeField]
+        private TMP_Dropdown LayerDropdown = null;
+        [SerializeField]
         private Transform ComponentsPanel = null;
-
+        
         private IRuntimeEditor m_editor;
         private IEditorsMap m_editorsMap;
 
@@ -63,6 +65,9 @@ namespace Battlehub.RTEditor
             }
         }
 
+        private Dictionary<int, int> m_layerToIndex;
+        private Dictionary<int, int> m_indexToLayer;
+
         private void Awake()
         {
             m_editorsMap = IOC.Resolve<IEditorsMap>();
@@ -82,6 +87,41 @@ namespace Battlehub.RTEditor
                 List<Component> group = groups[i];
                 CreateComponentEditor(group);
             }
+
+            List<TMP_Dropdown.OptionData> layers = new List<TMP_Dropdown.OptionData>
+            {
+                new TMP_Dropdown.OptionData("0: Default"),
+                new TMP_Dropdown.OptionData("1: Transparent FX"),
+                new TMP_Dropdown.OptionData("2: Ignore Raycast"),
+                new TMP_Dropdown.OptionData("4: Water"),
+                new TMP_Dropdown.OptionData("5: UI"),
+            };
+
+            m_layerToIndex = new Dictionary<int, int>();
+            m_layerToIndex.Add(0, 0);
+            m_layerToIndex.Add(1, 1);
+            m_layerToIndex.Add(2, 2);
+            m_layerToIndex.Add(4, 3);
+            m_layerToIndex.Add(5, 4);
+
+            int index = m_layerToIndex.Count;
+            for (int i = 10; i <= 15; ++i, ++index)
+            {
+                m_layerToIndex.Add(i, index);
+                layers.Add(new TMP_Dropdown.OptionData(string.Format("{0}: Layer {0}", i)));
+            }
+
+            for(int i = 25; i <= 30; ++i, ++index)
+            {
+                m_layerToIndex.Add(i, index);
+                layers.Add(new TMP_Dropdown.OptionData(string.Format("{0}: Layer {0}", i)));
+            }
+
+            m_indexToLayer = m_layerToIndex.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+
+            LayerDropdown.options = layers;
+            LayerDropdown.value = m_layerToIndex.ContainsKey(m_editor.Selection.activeGameObject.layer) ? m_layerToIndex[m_editor.Selection.activeGameObject.layer] : 0;
+            LayerDropdown.onValueChanged.AddListener(OnLayerChanged);
         }
 
         private void OnDestroy()
@@ -98,6 +138,11 @@ namespace Battlehub.RTEditor
             if (m_editor != null && m_editor.Object != null)
             {
                 m_editor.Object.ComponentAdded -= OnComponentAdded;
+            }
+
+            if(LayerDropdown != null)
+            {
+                LayerDropdown.onValueChanged.RemoveListener(OnLayerChanged);
             }
         }
 
@@ -427,6 +472,15 @@ namespace Battlehub.RTEditor
                         }
                     }
                 }
+            }
+        }
+
+        private void OnLayerChanged(int value)
+        {
+            int layer = m_indexToLayer[value];
+            foreach(GameObject go in m_editor.Selection.gameObjects)
+            {
+                go.layer = layer;
             }
         }
     }
