@@ -845,12 +845,15 @@ namespace Battlehub.RTBuilder
             else
             {
                 RuntimeWindow sceneWindow = m_rte.GetWindow(RuntimeWindowType.Scene);
-                IRuntimeSelectionComponent selectionComponent = sceneWindow.IOCContainer.Resolve<IRuntimeSelectionComponent>();
-                if(selectionComponent != null)
+                if(sceneWindow != null)
                 {
-                    selectionComponent.CanSelect = value;
-                    selectionComponent.CanSelectAll = value;
-                }
+                    IRuntimeSelectionComponent selectionComponent = sceneWindow.IOCContainer.Resolve<IRuntimeSelectionComponent>();
+                    if (selectionComponent != null)
+                    {
+                        selectionComponent.CanSelect = value;
+                        selectionComponent.CanSelectAll = value;
+                    }
+                }  
             }
         }
 

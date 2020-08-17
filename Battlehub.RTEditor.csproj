@@ -283,6 +283,7 @@
     <Compile Include="Assets\Battlehub\RTExtensions\MeshEditor\Scripts\FaceSelection.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\MeshEditor\Scripts\MeshEditor.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\MeshEditor\Scripts\Utils.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTBuilder\Demo\ProbuilderWithTransformHandlesDemo.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTBuilder\Integration\Scripts\IMeshEditor.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTBuilder\Integration\Scripts\PBAutoUVConversion.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTBuilder\Integration\Scripts\PBAutoUVEditor.cs" />

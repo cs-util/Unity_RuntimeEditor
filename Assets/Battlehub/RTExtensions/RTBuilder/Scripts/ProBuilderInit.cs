@@ -41,8 +41,6 @@ namespace Battlehub.RTBuilder
                     appearance.RegisterPrefab(prefab);
                 }
             }
-
-
         }
 
         private void RegisterWindow(IWindowManager wm, string typeName, string header, Sprite icon, GameObject prefab, bool isDialog)
