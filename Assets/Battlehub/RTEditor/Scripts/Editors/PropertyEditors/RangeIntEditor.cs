@@ -53,7 +53,7 @@ namespace Battlehub.RTEditor
 
         private void OnSliderValueChanged(float value)
         {
-            m_input.text = value.ToString();
+            m_input.text = value.ToString(FormatProvider);
         }
 
         protected override void OnValueChanged(string value)
