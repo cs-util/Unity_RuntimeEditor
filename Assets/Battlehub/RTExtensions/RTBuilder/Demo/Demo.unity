@@ -960,6 +960,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 14053334767221141, guid: 093f7837d7a6b2942ba94eef4f7cdfc6,
+        type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 259516427730851110, guid: 093f7837d7a6b2942ba94eef4f7cdfc6,
         type: 3}
       propertyPath: m_AnchorMin.y

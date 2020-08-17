@@ -4,6 +4,7 @@ using Battlehub.RTHandles;
 using Battlehub.UIControls;
 using Battlehub.Utils;
 using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -363,8 +364,16 @@ namespace Battlehub.RTTerrain
             m_editor = IOC.Resolve<IRTE>();
             m_editor.Tools.ToolChanging += OnEditorToolChanging;
             m_wm = IOC.Resolve<IWindowManager>();
-            m_wm.WindowCreated += OnWindowCreated;
-            m_wm.AfterLayout += OnAfterLayout;
+            if (m_wm != null)
+            {
+                m_wm.WindowCreated += OnWindowCreated;
+                m_wm.AfterLayout += OnAfterLayout;
+            }
+            else
+            {
+                SubscribeSelectionChangingEvent(false);
+                SubscribeSelectionChangingEvent(true);
+            }
 
             Projector = IOC.Resolve<TerrainProjectorBase>();
             Projector.transform.SetParent(m_editor.Root, false);
@@ -378,7 +387,15 @@ namespace Battlehub.RTTerrain
                 }
             }
 
-            for(int i = 0; i < m_toggles.Length; ++i)
+            if (IOC.Resolve<ITerrainAreaTool>() == null)
+            {
+                if (m_toggles[(int)EditorType.Area])
+                {
+                    m_toggles[(int)EditorType.Area].gameObject.SetActive(false);
+                }
+            }
+
+            for (int i = 0; i < m_toggles.Length; ++i)
             {
                 Toggle toggle = m_toggles[i];
                 if(toggle != null)
@@ -467,7 +484,18 @@ namespace Battlehub.RTTerrain
                     m_editor.Tools.Custom = editorType;
                 }
             }
-            
+
+            StartCoroutine(CoUpdateSize());
+        }
+
+        private IEnumerator CoUpdateSize()
+        {
+            //Dirty workaround to fix incorrect TreeView layout (Brushes, Layers)
+            yield return new WaitForEndOfFrame();
+            RectTransform rt = GetComponent<RectTransform>();
+            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rt.rect.width + 0.01f);
+            yield return new WaitForEndOfFrame();
+            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rt.rect.width - 0.01f);
         }
 
         private void UpdateProjectorState(EditorType editorType)

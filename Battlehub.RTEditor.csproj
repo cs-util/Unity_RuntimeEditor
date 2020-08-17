@@ -369,6 +369,7 @@
     <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\NavMeshDebugController.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\NavigationInit.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTNavigation\Scripts\NavigationView.cs" />
+    <Compile Include="Assets\Battlehub\RTExtensions\RTTerrain\Demo\TerrainEditorDemo.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTTerrain\RTSL\Mappings\Editor\RegisterTemplates.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTTerrain\Scripts\Editors\Brushes\Brush.cs" />
     <Compile Include="Assets\Battlehub\RTExtensions\RTTerrain\Scripts\Editors\Brushes\TerrainBrush.cs" />

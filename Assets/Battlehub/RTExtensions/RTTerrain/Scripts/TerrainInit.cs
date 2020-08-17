@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Battlehub.RTTerrain
 {
     [MenuDefinition(-1)]
+    [DefaultExecutionOrder(-1)]
     public class TerrainInit : EditorExtension
     {
         [SerializeField]
@@ -87,7 +88,10 @@ namespace Battlehub.RTTerrain
                 RegisterWindow(wm, "TerrainEditor", lc.GetString("ID_RTTerrain_WM_Header_TerrainEditor", "Terrain Editor"),
                     Resources.Load<Sprite>("icons8-earth-element-24"), m_terrainView, false);
 
-                appearance.RegisterPrefab(m_terrainView);
+                if(appearance != null)
+                {
+                    appearance.RegisterPrefab(m_terrainView);
+                }
             }
 
             if(m_terrainComponentEditor != null)
@@ -96,15 +100,21 @@ namespace Battlehub.RTTerrain
                 if(!editorsMap.HasMapping(typeof(Terrain)))
                 {
                     editorsMap.AddMapping(typeof(Terrain), m_terrainComponentEditor.gameObject, true, false);
-                    appearance.RegisterPrefab(m_terrainComponentEditor.gameObject);
+                    if (appearance != null)
+                    {
+                        appearance.RegisterPrefab(m_terrainComponentEditor.gameObject);
+                    }
                 }
             }
 
-            foreach(GameObject prefab in m_prefabs)
+            if (appearance != null)
             {
-                if(prefab != null)
+                foreach (GameObject prefab in m_prefabs)
                 {
-                    appearance.RegisterPrefab(prefab);
+                    if (prefab != null)
+                    {
+                        appearance.RegisterPrefab(prefab);
+                    }
                 }
             }
         }

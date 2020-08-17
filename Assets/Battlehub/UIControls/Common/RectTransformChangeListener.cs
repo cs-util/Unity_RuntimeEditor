@@ -10,8 +10,12 @@ namespace Battlehub.UIControls
     {
         public event RectTransformChanged RectTransformChanged;
 
-       
         protected override void OnRectTransformDimensionsChange()
+        {
+            RaiseRectTransformChanged();
+        }
+
+        public void RaiseRectTransformChanged()
         {
             if (RectTransformChanged != null)
             {

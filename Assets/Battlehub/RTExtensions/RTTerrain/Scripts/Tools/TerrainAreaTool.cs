@@ -94,7 +94,7 @@ namespace Battlehub.RTTerrain
             IOC.UnregisterFallback<ITerrainAreaTool>(this);
         }
 
-        protected override TerrainAreaHandle CreateHandle(SceneView scene)
+        protected override TerrainAreaHandle CreateHandle(RuntimeWindow scene)
         {
             TerrainAreaHandle exisitingHandle = GetComponentInChildren<TerrainAreaHandle>();
             TerrainAreaHandle handle = base.CreateHandle(scene);

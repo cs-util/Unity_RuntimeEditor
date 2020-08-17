@@ -40,6 +40,14 @@ namespace Battlehub.RTEditor.Demo
             base.OnEditorExist();
             m_wm = IOC.Resolve<IWindowManager>();
             Subscribe();
+            if (m_wm == null)
+            {
+                RuntimeWindow scene = IOC.Resolve<IRTE>().GetWindow(RuntimeWindowType.Scene);
+                if (scene != null)
+                {
+                    CreateHandle(scene);
+                }
+            }
         }
 
         protected override void OnEditorClosed()
@@ -56,9 +64,12 @@ namespace Battlehub.RTEditor.Demo
 
         private void Subscribe()
         {
-            m_wm.WindowCreated += OnWindowCreated;
-            m_wm.AfterLayout += OnAfterLayout;
-            m_wm.WindowDestroyed += OnWindowDestroyed;
+            if (m_wm != null)
+            {
+                m_wm.WindowCreated += OnWindowCreated;
+                m_wm.AfterLayout += OnAfterLayout;
+                m_wm.WindowDestroyed += OnWindowDestroyed;
+            }
         }
 
         private void Unsubscribe()
@@ -100,12 +111,11 @@ namespace Battlehub.RTEditor.Demo
             if (scene != null)
             {
                 T handle = CreateHandle(scene);
-
                 m_windowToHandle.Add(windowTransform, handle);
             }
         }
 
-        protected virtual T CreateHandle(SceneView scene)
+        protected virtual T CreateHandle(RuntimeWindow scene)
         {
             GameObject go = new GameObject(typeof(T).Name);
             go.transform.SetParent(transform, false);
