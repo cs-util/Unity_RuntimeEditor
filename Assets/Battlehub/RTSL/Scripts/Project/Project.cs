@@ -2254,8 +2254,11 @@ namespace Battlehub.RTSL
             copy.TypeGuid = assetItem.TypeGuid;
             copy.Name = assetItem.Name;
             copy.Ext = assetItem.Ext;
-            copy.Dependencies = assetItem.Dependencies.ToArray();
-
+            if(assetItem.Dependencies != null)
+            {
+                copy.Dependencies = assetItem.Dependencies.ToArray();
+            }
+            
             if (assetItem.Preview != null)
             {
                 copy.Preview = new Preview
@@ -2306,8 +2309,13 @@ namespace Battlehub.RTSL
                 {
                     return;
                 }
-                copy.Name = PathHelper.GetUniqueName(copy.Name, names[i]);
-                names[i].Add(copy.Name);
+
+                if(!folderToDuplicate.ContainsKey(scenes[i].Parent))
+                {
+                    copy.Name = PathHelper.GetUniqueName(copy.Name, names[i]);
+                    names[i].Add(copy.Name);
+                }
+                
                 duplicates[i] = copy;
             }
 
