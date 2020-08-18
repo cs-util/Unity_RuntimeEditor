@@ -26,11 +26,17 @@ namespace Battlehub.Utils
         private Vector2 m_defaultCursorHotspot;
         public Texture2D DefaultCursorTexture
         {
-            get {return m_defaultCursorTexture;}
+            get 
+            {
+                return m_defaultCursorTexture;
+            }
         }
         public Vector2 DefaultCursorHotspot
         {
-            get {return m_defaultCursorHotspot;}
+            get 
+            {
+                return m_defaultCursorHotspot;
+            }
         }
         public void SetDefaultCursor(Texture2D texture, Vector2 hotspot)
         {
@@ -74,7 +80,9 @@ namespace Battlehub.Utils
             if(texture != null)
             {
                 hotspot = new Vector2(texture.width * hotspot.x, texture.height * hotspot.y);
-            } else {
+            } 
+            else 
+            {
                 texture = DefaultCursorTexture;
                 if(texture != null)
                 {
