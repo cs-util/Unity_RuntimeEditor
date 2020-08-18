@@ -16,70 +16,50 @@ namespace Battlehub.RTEditor
     public class GameObjectEditor : MonoBehaviour
     {
         [SerializeField]
-        private Toggle TogEnableDisable = null;
+        private BoolEditor IsActiveEditor = null;
         [SerializeField]
         private TMP_InputField InputName = null;
         [SerializeField]
         private TMP_Dropdown LayerDropdown = null;
         [SerializeField]
         private Transform ComponentsPanel = null;
-        
-        private IRuntimeEditor m_editor;
-        private IEditorsMap m_editorsMap;
 
-        public bool IsGameObjectActive
+        private class GameObjectWrapper
         {
-            get
-            {
-                GameObject go = m_editor.Selection.activeGameObject;
-                if(go == null)
-                {
-                    return false;
-                }
-                return GetActiveSelf(m_editor.Selection.gameObjects);
-            }
-            set
-            {
-                GameObject[] gameObjects = m_editor.Selection.gameObjects;
-                if (gameObjects != null)
-                {
-                    for(int i = 0; i < gameObjects.Length; ++i)
-                    {
-                        GameObject go = gameObjects[i];
-                        if(go != null)
-                        {
-                            go.SetActive(value);
-                        }
-                    }
+            private GameObject m_gameObject;
 
-                    if (TogEnableDisable != null)
-                    {
-                        TogEnableDisable.onValueChanged.RemoveListener(OnEnableDisable);
-                    }
-                    TogEnableDisable.isOn = value;
-                    if (TogEnableDisable != null)
-                    {
-                        TogEnableDisable.onValueChanged.AddListener(OnEnableDisable);
-                    }
-                }
+            public bool IsActive
+            {
+                get { return m_gameObject.activeSelf; }
+                set { m_gameObject.SetActive(value); }
+            }
+
+            public GameObjectWrapper(GameObject gameObject)
+            {
+                m_gameObject = gameObject;
             }
         }
 
+        private GameObjectWrapper[] m_selectedGameObjects;
+
         private Dictionary<int, int> m_layerToIndex;
         private Dictionary<int, int> m_indexToLayer;
+
+        private IRuntimeEditor m_editor;
+        private IEditorsMap m_editorsMap;
 
         private void Awake()
         {
             m_editorsMap = IOC.Resolve<IEditorsMap>();
             m_editor = IOC.Resolve<IRuntimeEditor>();
             m_editor.Object.ComponentAdded += OnComponentAdded;
-
+            
             GameObject[] selectedObjects = m_editor.Selection.gameObjects;
             InputName.text = GetObjectName(selectedObjects);
-            TogEnableDisable.isOn = GetActiveSelf(selectedObjects);
-
             InputName.onEndEdit.AddListener(OnEndEditName);
-            TogEnableDisable.onValueChanged.AddListener(OnEnableDisable);
+
+            m_selectedGameObjects = m_editor.Selection.gameObjects.Select(go => new GameObjectWrapper(go)).ToArray();
+            IsActiveEditor.Init(m_selectedGameObjects, Strong.PropertyInfo((GameObjectWrapper x) => x.IsActive), string.Empty);
 
             List<List<Component>> groups = GetComponentGroups(selectedObjects);
             for(int i = 0; i < groups.Count; ++i)
@@ -130,14 +110,13 @@ namespace Battlehub.RTEditor
             {
                 InputName.onEndEdit.RemoveListener(OnEndEditName);
             }
-            if (TogEnableDisable != null)
+            
+            if (m_editor != null)
             {
-                TogEnableDisable.onValueChanged.RemoveListener(OnEnableDisable);
-            }
-
-            if (m_editor != null && m_editor.Object != null)
-            {
-                m_editor.Object.ComponentAdded -= OnComponentAdded;
+                if(m_editor.Object != null)
+                {
+                    m_editor.Object.ComponentAdded -= OnComponentAdded;
+                }
             }
 
             if(LayerDropdown != null)
@@ -376,28 +355,6 @@ namespace Battlehub.RTEditor
             m_editor.IsDirty = true;
         }
 
-        private void OnEnableDisable(bool enable)
-        {
-            //Wrong? how does it work?
-            PropertyInfo prop = Strong.PropertyInfo((GameObjectEditor x) => x.IsGameObjectActive, "IsGameObjectActive");
-
-            m_editor.Undo.BeginRecord();
-            GameObject[] gameObjects = m_editor.Selection.gameObjects;
-            for (int i = 0; i < gameObjects.Length; ++i)
-            {
-                GameObject go = gameObjects[i];
-                if (go == null)
-                {
-                    continue;
-                }
-
-                m_editor.Undo.BeginRecordValue(go, this, prop);
-                go.SetActive(enable);
-                m_editor.Undo.EndRecordValue(go, this, prop, null);
-            }
-            m_editor.Undo.EndRecord();
-        }
-
         private void OnEndEditName(string name)
         {
             GameObject[] gameObjects = m_editor.Selection.gameObjects;
@@ -474,6 +431,8 @@ namespace Battlehub.RTEditor
                 }
             }
         }
+
+
 
         private void OnLayerChanged(int value)
         {

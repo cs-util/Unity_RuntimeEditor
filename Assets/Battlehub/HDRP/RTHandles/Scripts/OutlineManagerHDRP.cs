@@ -66,10 +66,41 @@ namespace Battlehub.RTHandles.HDRP
 
             TryToAddRenderers(m_editor.Selection);
             m_editor.Selection.SelectionChanged += OnRuntimeEditorSelectionChanged;
+            m_editor.Object.Enabled += OnObjectEnabled;
+            m_editor.Object.Disabled += OnObjectDisabled;
 
             IOC.RegisterFallback<IOutlineManager>(this);
 
             StartCoroutine(EnableSelectionFullScreenPass());
+        }
+
+        private void OnDestroy()
+        {
+            if (m_editor != null)
+            {
+                if(m_editor.Selection != null)
+                {
+                    m_editor.Selection.SelectionChanged -= OnRuntimeEditorSelectionChanged;
+                }
+                
+                if(m_editor.Object != null)
+                {
+                    m_editor.Object.Enabled -= OnObjectEnabled;
+                    m_editor.Object.Disabled -= OnObjectDisabled;
+                }
+            }
+
+            if (m_selectionOverride != null)
+            {
+                m_selectionOverride.SelectionChanged -= OnSelectionChanged;
+            }
+
+            if(m_graphics != null)
+            {
+                m_graphics.DestroySharedRenderersCache(m_cache);
+            }
+            
+            IOC.UnregisterFallback<IOutlineManager>(this);
         }
 
         private IEnumerator EnableSelectionFullScreenPass()
@@ -88,24 +119,28 @@ namespace Battlehub.RTHandles.HDRP
             }
         }
 
-        private void OnDestroy()
+        private void OnObjectEnabled(ExposeToEditor obj)
         {
-            if (m_editor != null)
-            {
-                m_editor.Selection.SelectionChanged -= OnRuntimeEditorSelectionChanged;
-            }
-
             if (m_selectionOverride != null)
             {
-                m_selectionOverride.SelectionChanged -= OnSelectionChanged;
+                OnSelectionChanged(m_selectionOverride.objects);
             }
-
-            if(m_graphics != null)
+            else
             {
-                m_graphics.DestroySharedRenderersCache(m_cache);
+                OnRuntimeEditorSelectionChanged(m_editor.Selection.objects);
             }
-            
-            IOC.UnregisterFallback<IOutlineManager>(this);
+        }
+
+        private void OnObjectDisabled(ExposeToEditor obj)
+        {
+            if (m_selectionOverride != null)
+            {
+                OnSelectionChanged(m_selectionOverride.objects);
+            }
+            else
+            {
+                OnRuntimeEditorSelectionChanged(m_editor.Selection.objects);
+            }
         }
 
         private void OnRuntimeEditorSelectionChanged(Object[] unselectedObject)
@@ -120,6 +155,12 @@ namespace Battlehub.RTHandles.HDRP
 
         private void OnSelectionChanged(IRuntimeSelection selection, Object[] unselectedObjects)
         {
+            TryToRemoveRenderers(unselectedObjects);
+            TryToAddRenderers(selection);
+        }
+
+        private void TryToRemoveRenderers(Object[] unselectedObjects)
+        {
             if (unselectedObjects != null)
             {
                 Renderer[] renderers = unselectedObjects.Select(go => go as GameObject).Where(go => go != null).SelectMany(go => go.GetComponentsInChildren<Renderer>(true)).ToArray();
@@ -129,14 +170,13 @@ namespace Battlehub.RTHandles.HDRP
                     m_cache.Remove(renderer);
                 }
             }
-            TryToAddRenderers(selection);
         }
 
         private void TryToAddRenderers(IRuntimeSelection selection)
         {
             if (selection.gameObjects != null)
             {
-                Renderer[] renderers = selection.gameObjects.Where(go => go != null).Select(go => go.GetComponent<ExposeToEditor>()).Where(e => e != null && e.ShowSelectionGizmo && !e.gameObject.IsPrefab() && (e.gameObject.hideFlags & HideFlags.HideInHierarchy) == 0).SelectMany(e => e.GetComponentsInChildren<Renderer>().Where(r => (r.gameObject.hideFlags & HideFlags.HideInHierarchy) == 0)).ToArray();
+                Renderer[] renderers = selection.gameObjects.Where(go => go != null).Select(go => go.GetComponent<ExposeToEditor>()).Where(e => e != null && e.ShowSelectionGizmo && !e.gameObject.IsPrefab() && (e.gameObject.hideFlags & HideFlags.HideInHierarchy) == 0).SelectMany(e => e.GetComponentsInChildren<Renderer>().Where(r => r.gameObject.activeInHierarchy && (r.gameObject.hideFlags & HideFlags.HideInHierarchy) == 0)).ToArray();
                 for (int i = 0; i < renderers.Length; ++i)
                 {
                     Renderer renderer = renderers[i];

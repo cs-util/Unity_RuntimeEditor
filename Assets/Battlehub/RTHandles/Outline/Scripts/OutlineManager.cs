@@ -67,6 +67,8 @@ namespace Battlehub.RTHandles
 
             TryToAddRenderers(m_editor.Selection);
             m_editor.Selection.SelectionChanged += OnRuntimeEditorSelectionChanged;
+            m_editor.Object.Enabled += OnObjectEnabled;
+            m_editor.Object.Disabled += OnObjectDisabled;
 
             RTEComponent rteComponent = GetComponentInParent<RTEComponent>();
             if(rteComponent != null)
@@ -85,7 +87,16 @@ namespace Battlehub.RTHandles
 
             if(m_editor != null)
             {
-                m_editor.Selection.SelectionChanged -= OnRuntimeEditorSelectionChanged;
+                if(m_editor.Selection != null)
+                {
+                    m_editor.Selection.SelectionChanged -= OnRuntimeEditorSelectionChanged;
+                }
+                
+                if(m_editor.Object != null)
+                {
+                    m_editor.Object.Enabled -= OnObjectEnabled;
+                    m_editor.Object.Disabled -= OnObjectDisabled;
+                }
             }
 
             if(m_selectionOverride != null)
@@ -96,6 +107,30 @@ namespace Battlehub.RTHandles
             if(m_outlineEffect != null)
             {
                 Destroy(m_outlineEffect);
+            }
+        }
+
+        private void OnObjectEnabled(ExposeToEditor obj)
+        {
+            if (m_selectionOverride != null)
+            {
+                OnSelectionChanged(m_selectionOverride.objects);
+            }
+            else
+            {
+                OnRuntimeEditorSelectionChanged(m_editor.Selection.objects);
+            }
+        }
+
+        private void OnObjectDisabled(ExposeToEditor obj)
+        {
+            if (m_selectionOverride != null)
+            {
+                OnSelectionChanged(m_selectionOverride.objects);
+            }
+            else
+            {
+                OnRuntimeEditorSelectionChanged(m_editor.Selection.objects);
             }
         }
 
@@ -111,6 +146,12 @@ namespace Battlehub.RTHandles
 
         private void OnSelectionChanged(IRuntimeSelection selection, Object[] unselectedObjects)
         {
+            TryToRemoveRenderers(unselectedObjects);
+            TryToAddRenderers(selection);
+        }
+
+        private void TryToRemoveRenderers(Object[] unselectedObjects)
+        {
             if (unselectedObjects != null)
             {
                 Renderer[] renderers = unselectedObjects.Select(go => go as GameObject).Where(go => go != null).SelectMany(go => go.GetComponentsInChildren<Renderer>(true)).ToArray();
@@ -119,17 +160,16 @@ namespace Battlehub.RTHandles
                 ICustomOutlinePrepass[] customRenderers = unselectedObjects.Select(go => go as GameObject).Where(go => go != null).SelectMany(go => go.GetComponentsInChildren<ICustomOutlinePrepass>(true)).ToArray();
                 m_outlineEffect.RemoveRenderers(customRenderers);
             }
-            TryToAddRenderers(selection);
         }
 
         private void TryToAddRenderers(IRuntimeSelection selection)
         {
             if (selection.gameObjects != null)
             {
-                Renderer[] renderers = selection.gameObjects.Where(go => go != null).Select(go => go.GetComponent<ExposeToEditor>()).Where(e => e != null && e.ShowSelectionGizmo && !e.gameObject.IsPrefab() && (e.gameObject.hideFlags & HideFlags.HideInHierarchy) == 0).SelectMany(e => e.GetComponentsInChildren<Renderer>().Where(r => (r.gameObject.hideFlags & HideFlags.HideInHierarchy) == 0)).ToArray();
+                Renderer[] renderers = selection.gameObjects.Where(go => go != null).Select(go => go.GetComponent<ExposeToEditor>()).Where(e => e != null && e.ShowSelectionGizmo && !e.gameObject.IsPrefab() && (e.gameObject.hideFlags & HideFlags.HideInHierarchy) == 0).SelectMany(e => e.GetComponentsInChildren<Renderer>().Where(r => r.gameObject.activeInHierarchy && (r.gameObject.hideFlags & HideFlags.HideInHierarchy) == 0)).ToArray();
                 m_outlineEffect.AddRenderers(renderers);
 
-                ICustomOutlinePrepass[] customRenderers = selection.gameObjects.Where(go => go != null).Select(go => go.GetComponent<ExposeToEditor>()).Where(e => e != null && e.ShowSelectionGizmo && !e.gameObject.IsPrefab() && (e.gameObject.hideFlags & HideFlags.HideInHierarchy) == 0).SelectMany(e => e.GetComponentsInChildren<ICustomOutlinePrepass>()).ToArray();
+                ICustomOutlinePrepass[] customRenderers = selection.gameObjects.Where(go => go != null).Select(go => go.GetComponent<ExposeToEditor>()).Where(e => e != null && e.ShowSelectionGizmo && !e.gameObject.IsPrefab() && (e.gameObject.hideFlags & HideFlags.HideInHierarchy) == 0).SelectMany(e => e.GetComponentsInChildren<ICustomOutlinePrepass>()).Where(e => e.GetRenderer().gameObject.activeInHierarchy).ToArray();
                 m_outlineEffect.AddRenderers(customRenderers);
             }
         }
