@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5976821594683258210}
   - component: {fileID: 8699273911348580086}
   m_Layer: 0
-  m_Name: Battlehub_EditorsMapAuto
+  m_Name: Battlehub_EditorsMapTemplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68,6 +68,7 @@ MonoBehaviour:
   - {fileID: 1000013256475392, guid: daf1985b0ff70be4f949269449ad5ab1, type: 3}
   - {fileID: 1000013256475392, guid: b3869b72d165b1a4bbc0a2af36147707, type: 3}
   - {fileID: 1000013256475392, guid: 2291aaf81204cc74ebdc34c552e56fa6, type: 3}
+  - {fileID: 1000012655383494, guid: 02b5b5fe664ee234e9996bd254faa847, type: 3}
   IsDefaultMaterialEditorEnabled: 1
   DefaultMaterialEditor: {fileID: 1000013302785078, guid: e271b6853f0d680408d9527a996e88ce,
     type: 3}

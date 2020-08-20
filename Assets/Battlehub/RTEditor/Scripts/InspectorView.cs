@@ -5,18 +5,11 @@ using UnityEngine;
 using Battlehub.RTCommon;
 using UnityObject = UnityEngine.Object;
 using Battlehub.RTSL.Interface;
-using UnityEngine.Rendering;
 
 namespace Battlehub.RTEditor
 {
     public class InspectorView : RuntimeWindow
     {
-        [SerializeField]
-        private GameObject m_gameObjectEditor = null;
-
-        [SerializeField]
-        private GameObject m_materialEditor = null;
-
         [SerializeField]
         private Transform m_panel = null;
 
@@ -36,15 +29,6 @@ namespace Battlehub.RTEditor
         {
             WindowType = RuntimeWindowType.Inspector;
             base.AwakeOverride();
-
-            if (m_gameObjectEditor == null)
-            {
-                Debug.LogError("GameObjectEditor is not set");
-            }
-            if (m_materialEditor == null)
-            {
-                Debug.LogError("MaterialEditor is not set");
-            }
 
             m_editorsMap = IOC.Resolve<IEditorsMap>();
             m_settingsComponent = IOC.Resolve<ISettingsComponent>();
@@ -153,6 +137,7 @@ namespace Battlehub.RTEditor
             {
                 return;
             }
+
 
             UnityObject[] selectedObjects = Editor.Selection.objects.Where(o => o != null).ToArray();
             Type objType;

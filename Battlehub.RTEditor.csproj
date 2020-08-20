@@ -205,6 +205,8 @@
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\EditorsMapStorage.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\GameObjectEditor.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\IEditorsMap.cs" />
+    <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\LayersEditor.cs" />
+    <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\LayersInfo.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\MaterialEditor.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\PropertyEditors\ArrayEditor.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\PropertyEditors\BoolEditor.cs" />

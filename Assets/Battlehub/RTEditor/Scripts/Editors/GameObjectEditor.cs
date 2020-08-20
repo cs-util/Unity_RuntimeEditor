@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-
-using Battlehub.RTCommon;
+﻿using Battlehub.RTCommon;
+using Battlehub.RTSL.Interface;
+using Battlehub.UIControls;
 using Battlehub.Utils;
-using TMPro;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 using UnityObject = UnityEngine.Object;
 
 namespace Battlehub.RTEditor
@@ -19,6 +21,8 @@ namespace Battlehub.RTEditor
         private TMP_InputField InputName = null;
         [SerializeField]
         private OptionsEditor LayerEditor = null;
+        [SerializeField]
+        private Button EditLayersButton = null;
         [SerializeField]
         private Transform ComponentsPanel = null;
 
@@ -56,36 +60,32 @@ namespace Battlehub.RTEditor
             m_selectedGameObjects = m_editor.Selection.gameObjects.Select(go => new GameObjectWrapper(go)).ToArray();
             IsActiveEditor.Init(m_selectedGameObjects, Strong.PropertyInfo((GameObjectWrapper x) => x.IsActive), string.Empty);
 
-            List<RangeOptions.Option> layers = new List<RangeOptions.Option>
-            {
-                new RangeOptions.Option("0: Default", 0),
-                new RangeOptions.Option("1: Transparent FX", 1),
-                new RangeOptions.Option("2: Ignore Raycast", 2),
-                new RangeOptions.Option("4: Water", 4),
-                new RangeOptions.Option("5: UI", 5),
-            };
-
-
-            int index = layers.Count;
-            for (int i = 10; i <= 15; ++i, ++index)
-            {
-                layers.Add(new RangeOptions.Option(string.Format("{0}: Layer {0}", i), index));
-            }
-
-            for (int i = 25; i <= 30; ++i, ++index)
-            {
-                layers.Add(new RangeOptions.Option(string.Format("{0}: Layer {0}", i), index));
-            }
-
-            LayerEditor.Options = layers.ToArray();
-            LayerEditor.Init(m_editor.Selection.gameObjects, Strong.PropertyInfo((GameObject x) => x.layer), string.Empty);
-
             List<List<Component>> groups = GetComponentGroups(selectedObjects);
-            for(int i = 0; i < groups.Count; ++i)
+            for (int i = 0; i < groups.Count; ++i)
             {
                 List<Component> group = groups[i];
                 CreateComponentEditor(group);
             }
+
+            UnityEventHelper.AddListener(EditLayersButton, btn => btn.onClick, OnEditLayersClick);
+
+            m_editor.IsBusy = true;
+            LayersEditor.GetLayers(layersInfo =>
+            {
+                m_editor.IsBusy = false;
+                List<RangeOptions.Option> layers = new List<RangeOptions.Option>();
+
+                foreach (LayersInfo.Layer layer in layersInfo.Layers)
+                {
+                    if(!string.IsNullOrEmpty(layer.Name))
+                    {
+                        layers.Add(new RangeOptions.Option(string.Format("{0}: {1}", layer.Index, layer.Name), layer.Index));
+                    }
+                }
+
+                LayerEditor.Options = layers.ToArray();
+                LayerEditor.Init(m_editor.Selection.gameObjects, Strong.PropertyInfo((GameObject x) => x.layer), string.Empty);
+            });
         }
 
         private void OnDestroy()
@@ -102,6 +102,8 @@ namespace Battlehub.RTEditor
                     m_editor.Object.ComponentAdded -= OnComponentAdded;
                 }
             }
+
+            UnityEventHelper.RemoveListener(EditLayersButton, btn => btn.onClick, OnEditLayersClick);
         }
 
         private void Update()
@@ -409,6 +411,11 @@ namespace Battlehub.RTEditor
                     }
                 }
             }
+        }
+
+        private void OnEditLayersClick()
+        {
+            LayersEditor.BeginEdit();
         }
     }
 }

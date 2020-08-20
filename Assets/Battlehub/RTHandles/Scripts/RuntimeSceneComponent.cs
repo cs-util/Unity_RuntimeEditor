@@ -551,7 +551,6 @@ namespace Battlehub.RTHandles
             {
                 SecondaryPivotTransform.position = bounds.center;
             }
-
         }
 
         public override void Focus(Vector3 objPosition, float objSize)

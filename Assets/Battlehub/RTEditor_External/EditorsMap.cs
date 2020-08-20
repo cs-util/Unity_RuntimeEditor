@@ -202,6 +202,7 @@ namespace Battlehub.RTEditor
                 { typeof(RuntimeAnimation), new EditorDescriptor(21, true, false) },
                 { typeof(AudioSource), new EditorDescriptor(21, true, false) },
                 { typeof(AudioListener), new EditorDescriptor(21, true, false) },
+                { typeof(LayersInfo), new EditorDescriptor(24, true, false) },
             };
         }
 

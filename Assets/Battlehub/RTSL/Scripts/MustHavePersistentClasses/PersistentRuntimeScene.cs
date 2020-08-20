@@ -53,9 +53,7 @@ namespace Battlehub.RTSL.Battlehub.SL2
             }
 
             HashSet<object> allDeps = getSceneDepsCtx.Dependencies;
-            
             Queue<UnityObject> depsQueue = new Queue<UnityObject>(allDeps.OfType<UnityObject>());
-
             List<PersistentObject> assets = new List<PersistentObject>();
             List<int> assetIdentifiers = new List<int>();
 
@@ -81,21 +79,10 @@ namespace Battlehub.RTSL.Battlehub.SL2
                         {
                             if (!m_assetDB.IsMapped(uo))
                             {
-                                if (uo is Texture2D)
-                                {
-                                    Texture2D texture = (Texture2D)uo;
-                                    persistentObject.ReadFrom(uo);
-                                    assets.Add(persistentObject);
-                                    assetIdentifiers.Add(uo.GetInstanceID());
-                                    persistentObject.GetDepsFrom(uo, getDepsCtx);
-                                }
-                                else
-                                {
-                                    persistentObject.ReadFrom(uo);
-                                    assets.Add(persistentObject);
-                                    assetIdentifiers.Add(uo.GetInstanceID());
-                                    persistentObject.GetDepsFrom(uo, getDepsCtx);
-                                }
+                                persistentObject.ReadFrom(uo);
+                                assets.Add(persistentObject);
+                                assetIdentifiers.Add(uo.GetInstanceID());
+                                persistentObject.GetDepsFrom(uo, getDepsCtx);
                             }
                             else
                             {
@@ -141,7 +128,6 @@ namespace Battlehub.RTSL.Battlehub.SL2
 
             Assets = assets.ToArray();
             AssetIdentifiers = assetIdentifiers.ToArray();
-
             ClearReferencesCache();
         }
 
