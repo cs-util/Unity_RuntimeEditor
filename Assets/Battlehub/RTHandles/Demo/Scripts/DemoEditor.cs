@@ -171,7 +171,7 @@ namespace Battlehub.RTHandles.Demo
         private void OnFocusClick()
         {
             IScenePivot scenePivot = Editor.GetWindow(RuntimeWindowType.Scene).IOCContainer.Resolve<IScenePivot>();
-            scenePivot.Focus();
+            scenePivot.Focus(FocusMode.Default);
         }
 
         private void OnPlayClick()

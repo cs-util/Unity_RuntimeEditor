@@ -496,7 +496,13 @@ namespace Battlehub.RTHandles
             }
         }
 
+        [Obsolete]
         public override void Focus()
+        {
+            Focus(FocusMode.Selected);
+        }
+
+        public override void Focus(FocusMode focusMode = FocusMode.Selected)
         {
             if (m_lockInput)
             {
@@ -505,27 +511,47 @@ namespace Battlehub.RTHandles
 
             m_autoFocusTransform = null;
 
-            if (Selection.activeTransform == null)
+            Transform[] transforms;
+            if(focusMode == FocusMode.Selected || focusMode == FocusMode.Default)
             {
-                return;
+                if (Selection.activeTransform == null)
+                {
+                    return;
+                }
+
+                if ((Selection.activeTransform.gameObject.hideFlags & HideFlags.DontSave) != 0 || Selection.activeGameObject.IsPrefab())
+                {
+                    return;
+                }
+
+                m_autoFocusTransform = Selection.activeTransform;
+                transforms = Selection.gameObjects.Select(go => go.transform).ToArray();
+            }
+            else
+            {
+                transforms = Editor.Object.Get(true).SelectMany(e => e.GetComponentsInChildren<Renderer>()).Where(r => r.gameObject.activeInHierarchy).Select(r => r.transform).ToArray();
             }
 
-            if ((Selection.activeTransform.gameObject.hideFlags & HideFlags.DontSave) != 0 || Selection.activeGameObject.IsPrefab())
-            {
-                return;
-            }
-
-            m_autoFocusTransform = Selection.activeTransform;
-
-            Bounds bounds = CalculateBounds(Selection.gameObjects.Select(go => go.transform).ToArray());
-            if(bounds.extents == Vector3.zero)
+            Bounds bounds = CalculateBounds(transforms);
+            if (bounds.extents == Vector3.zero)
             {
                 bounds.extents = Vector3.one * 0.5f;
             }
             float objSize = Mathf.Max(bounds.extents.y, bounds.extents.x, bounds.extents.z) * 2.0f;
 
             Focus(bounds.center, objSize);
-            SecondaryPivotTransform.position = Selection.activeTransform.position;
+            if (focusMode == FocusMode.Selected || focusMode == FocusMode.Default)
+            {
+                if (Selection.activeTransform != null)
+                {
+                    SecondaryPivotTransform.position = Selection.activeTransform.position;
+                }
+            }
+            else
+            {
+                SecondaryPivotTransform.position = bounds.center;
+            }
+
         }
 
         public override void Focus(Vector3 objPosition, float objSize)

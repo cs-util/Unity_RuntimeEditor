@@ -9,6 +9,13 @@ using UnityObject = UnityEngine.Object;
 
 namespace Battlehub.RTHandles
 {
+    public enum FocusMode
+    {
+        Selected,
+        AllActive,
+        Default = Selected
+    }
+
     public interface IScenePivot
     {
         Vector3 Pivot
@@ -41,7 +48,9 @@ namespace Battlehub.RTHandles
             set;
         }
 
+        [Obsolete]
         void Focus();
+        void Focus(FocusMode mode = FocusMode.Default);
         void Focus(Vector3 objPosition, float objSize);
     }
 
@@ -1428,7 +1437,13 @@ namespace Battlehub.RTHandles
             return Selection.gameObjects.Where(g => CanTransformObject(g)).Select(g => g.transform).OrderByDescending(g => Selection.activeTransform == g).ToArray();
         }
 
+        [Obsolete]
         public virtual void Focus()
+        {
+
+        }
+
+        public virtual void Focus(FocusMode focusMode = FocusMode.Default)
         {
 
         }

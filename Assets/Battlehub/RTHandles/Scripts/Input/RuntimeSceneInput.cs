@@ -7,6 +7,7 @@ namespace Battlehub.RTHandles
     public class RuntimeSceneInput : RuntimeSelectionInput
     {
         public KeyCode FocusKey = KeyCode.F;
+        public KeyCode FocusActiveKey = KeyCode.LeftShift;
         public KeyCode SnapToGridKey = KeyCode.G;
         public KeyCode SnapToGridKey2 = KeyCode.LeftShift;
         public KeyCode RotateKey = KeyCode.LeftAlt;
@@ -78,6 +79,12 @@ namespace Battlehub.RTHandles
         {
             IInput input = m_component.Editor.Input;
             return input.GetKeyDown(FocusKey);
+        }
+
+        protected virtual bool FocusActiveAction()
+        {
+            IInput input = m_component.Editor.Input;
+            return input.GetKey(FocusActiveKey);
         }
 
         protected virtual bool SnapToGridAction()
@@ -274,10 +281,17 @@ namespace Battlehub.RTHandles
 
                     if (FocusAction())
                     {
-                        if(SceneComponent.Selection.activeTransform != null && SceneComponent.Selection.activeTransform.GetComponent<Terrain>() == null)
+                        if(FocusActiveAction())
                         {
-                            SceneComponent.Focus();
+                            SceneComponent.Focus(FocusMode.AllActive);
                         }
+                        else
+                        {
+                            if (SceneComponent.Selection.activeTransform != null && SceneComponent.Selection.activeTransform.GetComponent<Terrain>() == null)
+                            {
+                                SceneComponent.Focus(FocusMode.Selected);
+                            }
+                        }   
                     }
 
                     if (SelectAllAction())

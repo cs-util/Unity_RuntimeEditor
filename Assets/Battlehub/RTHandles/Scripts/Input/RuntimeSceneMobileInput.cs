@@ -177,7 +177,7 @@ namespace Battlehub.RTHandles
 
         private void OnFocus()
         {
-            SceneComponent.Focus();
+            SceneComponent.Focus(FocusMode.Default);
         }
 
         private void UpdateVisualState()
