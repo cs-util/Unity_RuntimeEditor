@@ -27666,7 +27666,7 @@ MonoBehaviour:
   PersistentTypeGUID: ffc644d8-714e-46ab-8098-72aaf29889dd
   PersistentBaseNamespace: UnityEngine.Battlehub.SL2
   PersistentBaseTypeName: PersistentObject
-  CreateCustomImplementation: 0
+  CreateCustomImplementation: 1
   UseTemplate: 1
   Subclasses: []
   PropertyMappings: []
@@ -39633,7 +39633,7 @@ MonoBehaviour:
   PersistentTypeGUID: 86c7cff3-3220-4c24-88b1-58fc87fb33a9
   PersistentBaseNamespace: UnityEngine.Battlehub.SL2
   PersistentBaseTypeName: PersistentBehaviour
-  CreateCustomImplementation: 0
+  CreateCustomImplementation: 1
   UseTemplate: 1
   Subclasses: []
   PropertyMappings:
@@ -39891,7 +39891,7 @@ MonoBehaviour:
     UseSurrogate2: 0
     HasDependenciesOrIsDependencyItself: 1
     IsNonPublic: 0
-    HasPropertyInTemplate: 0
+    HasPropertyInTemplate: 1
   - IsEnabled: 1
     IsProperty: 1
     PersistentTag: 18

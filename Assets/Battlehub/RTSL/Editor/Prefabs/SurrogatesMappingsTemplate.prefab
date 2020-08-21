@@ -5814,6 +5814,157 @@ MonoBehaviour:
     HasDependenciesOrIsDependencyItself: 0
     IsNonPublic: 0
     HasPropertyInTemplate: 0
+--- !u!1 &881869632934555183
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8086039015073110155}
+  - component: {fileID: 6151374036048543131}
+  m_Layer: 0
+  m_Name: UnityEngine.SkeletonBone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8086039015073110155
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 881869632934555183}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5114501035391644904}
+  m_RootOrder: 294
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6151374036048543131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 881869632934555183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0530efbda98e7b4f8991b85a6e01467, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Version: 2.2
+  IsSelected: 1
+  IsLocked: 1
+  PersistentPropertyTag: 6
+  PersistentSubclassTag: 0
+  MappedAssemblyName: UnityEngine.AnimationModule
+  MappedNamespace: UnityEngine
+  MappedTypeName: SkeletonBone
+  MappedTypeGUID: 725b3922-baad-470a-b3b6-4bf8b0fc0214
+  PersistentNamespace: UnityEngine.Battlehub.SL2
+  PersistentTypeName: PersistentSkeletonBone
+  PersistentTypeGUID: d8d749ff-462b-4966-90b2-3adb261c5788
+  PersistentBaseNamespace: Battlehub.RTSL
+  PersistentBaseTypeName: PersistentSurrogate
+  CreateCustomImplementation: 0
+  UseTemplate: 1
+  Subclasses: []
+  PropertyMappings:
+  - IsEnabled: 1
+    IsProperty: 0
+    PersistentTag: 1
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: String
+    PersistentName: name
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: String
+    MappedName: name
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 0
+    PersistentTag: 2
+    PersistentNamespace: UnityEngine.Battlehub.SL2
+    PersistentTypeName: Vector3
+    PersistentName: position
+    MappedAssemblyName: UnityEngine.CoreModule
+    MappedNamespace: UnityEngine
+    MappedTypeName: Vector3
+    MappedName: position
+    UseSurrogate: 1
+    UseSurrogate2: 1
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 0
+    PersistentTag: 3
+    PersistentNamespace: UnityEngine.Battlehub.SL2
+    PersistentTypeName: Quaternion
+    PersistentName: rotation
+    MappedAssemblyName: UnityEngine.CoreModule
+    MappedNamespace: UnityEngine
+    MappedTypeName: Quaternion
+    MappedName: rotation
+    UseSurrogate: 1
+    UseSurrogate2: 1
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 0
+    PersistentTag: 4
+    PersistentNamespace: UnityEngine.Battlehub.SL2
+    PersistentTypeName: Vector3
+    PersistentName: scale
+    MappedAssemblyName: UnityEngine.CoreModule
+    MappedNamespace: UnityEngine
+    MappedTypeName: Vector3
+    MappedName: scale
+    UseSurrogate: 1
+    UseSurrogate2: 1
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 5
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: String
+    PersistentName: parentName
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: String
+    MappedName: parentName
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 1
+    PersistentTag: 6
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Int32
+    PersistentName: transformModified
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Int32
+    MappedName: transformModified
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
 --- !u!1 &882163810889650086
 GameObject:
   m_ObjectHideFlags: 0
@@ -8820,6 +8971,217 @@ MonoBehaviour:
   UseTemplate: 1
   Subclasses: []
   PropertyMappings: []
+--- !u!1 &1700584385711041413
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4051431916987407813}
+  - component: {fileID: 310511109050969376}
+  m_Layer: 0
+  m_Name: UnityEngine.HumanLimit
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4051431916987407813
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700584385711041413}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5114501035391644904}
+  m_RootOrder: 293
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &310511109050969376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700584385711041413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0530efbda98e7b4f8991b85a6e01467, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Version: 2.2
+  IsSelected: 0
+  IsLocked: 1
+  PersistentPropertyTag: 10
+  PersistentSubclassTag: 0
+  MappedAssemblyName: UnityEngine.AnimationModule
+  MappedNamespace: UnityEngine
+  MappedTypeName: HumanLimit
+  MappedTypeGUID: 7b020a77-6a2a-4918-85bf-34c7c18f42c2
+  PersistentNamespace: UnityEngine.Battlehub.SL2
+  PersistentTypeName: PersistentHumanLimit
+  PersistentTypeGUID: 19f7a6b2-28bd-4ec2-99cb-728a9117c4af
+  PersistentBaseNamespace: Battlehub.RTSL
+  PersistentBaseTypeName: PersistentSurrogate
+  CreateCustomImplementation: 0
+  UseTemplate: 1
+  Subclasses: []
+  PropertyMappings:
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 1
+    PersistentNamespace: UnityEngine.Battlehub.SL2
+    PersistentTypeName: Vector3
+    PersistentName: m_Min
+    MappedAssemblyName: UnityEngine.CoreModule
+    MappedNamespace: UnityEngine
+    MappedTypeName: Vector3
+    MappedName: m_Min
+    UseSurrogate: 1
+    UseSurrogate2: 1
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 2
+    PersistentNamespace: UnityEngine.Battlehub.SL2
+    PersistentTypeName: Vector3
+    PersistentName: m_Max
+    MappedAssemblyName: UnityEngine.CoreModule
+    MappedNamespace: UnityEngine
+    MappedTypeName: Vector3
+    MappedName: m_Max
+    UseSurrogate: 1
+    UseSurrogate2: 1
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 3
+    PersistentNamespace: UnityEngine.Battlehub.SL2
+    PersistentTypeName: Vector3
+    PersistentName: m_Center
+    MappedAssemblyName: UnityEngine.CoreModule
+    MappedNamespace: UnityEngine
+    MappedTypeName: Vector3
+    MappedName: m_Center
+    UseSurrogate: 1
+    UseSurrogate2: 1
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 4
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: m_AxisLength
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: m_AxisLength
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 5
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Int32
+    PersistentName: m_UseDefaultValues
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Int32
+    MappedName: m_UseDefaultValues
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 6
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Boolean
+    PersistentName: useDefaultValues
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Boolean
+    MappedName: useDefaultValues
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 7
+    PersistentNamespace: UnityEngine.Battlehub.SL2
+    PersistentTypeName: Vector3
+    PersistentName: min
+    MappedAssemblyName: UnityEngine.CoreModule
+    MappedNamespace: UnityEngine
+    MappedTypeName: Vector3
+    MappedName: min
+    UseSurrogate: 1
+    UseSurrogate2: 1
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 8
+    PersistentNamespace: UnityEngine.Battlehub.SL2
+    PersistentTypeName: Vector3
+    PersistentName: max
+    MappedAssemblyName: UnityEngine.CoreModule
+    MappedNamespace: UnityEngine
+    MappedTypeName: Vector3
+    MappedName: max
+    UseSurrogate: 1
+    UseSurrogate2: 1
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 9
+    PersistentNamespace: UnityEngine.Battlehub.SL2
+    PersistentTypeName: Vector3
+    PersistentName: center
+    MappedAssemblyName: UnityEngine.CoreModule
+    MappedNamespace: UnityEngine
+    MappedTypeName: Vector3
+    MappedName: center
+    UseSurrogate: 1
+    UseSurrogate2: 1
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 10
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: axisLength
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: axisLength
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
 --- !u!1 &1744739256513752664
 GameObject:
   m_ObjectHideFlags: 0
@@ -10039,6 +10401,142 @@ MonoBehaviour:
     MappedNamespace: System
     MappedTypeName: UInt32
     MappedName: secondGlyph
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+--- !u!1 &1981216054152131623
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 622178747622007884}
+  - component: {fileID: 7298169782143182078}
+  m_Layer: 0
+  m_Name: UnityEngine.HumanBone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &622178747622007884
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1981216054152131623}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5114501035391644904}
+  m_RootOrder: 291
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7298169782143182078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1981216054152131623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0530efbda98e7b4f8991b85a6e01467, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Version: 2.2
+  IsSelected: 1
+  IsLocked: 1
+  PersistentPropertyTag: 5
+  PersistentSubclassTag: 0
+  MappedAssemblyName: UnityEngine.AnimationModule
+  MappedNamespace: UnityEngine
+  MappedTypeName: HumanBone
+  MappedTypeGUID: 4696b5e8-a2b5-4c22-a877-21aca6dc5431
+  PersistentNamespace: UnityEngine.Battlehub.SL2
+  PersistentTypeName: PersistentHumanBone
+  PersistentTypeGUID: 7e67c9c9-1a6e-4b3f-8d7b-cee05df2f082
+  PersistentBaseNamespace: Battlehub.RTSL
+  PersistentBaseTypeName: PersistentSurrogate
+  CreateCustomImplementation: 0
+  UseTemplate: 1
+  Subclasses: []
+  PropertyMappings:
+  - IsEnabled: 1
+    IsProperty: 0
+    PersistentTag: 1
+    PersistentNamespace: UnityEngine.Battlehub.SL2
+    PersistentTypeName: HumanLimit
+    PersistentName: limit
+    MappedAssemblyName: UnityEngine.AnimationModule
+    MappedNamespace: UnityEngine
+    MappedTypeName: HumanLimit
+    MappedName: limit
+    UseSurrogate: 1
+    UseSurrogate2: 1
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 2
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: String
+    PersistentName: m_BoneName
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: String
+    MappedName: m_BoneName
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 3
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: String
+    PersistentName: m_HumanName
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: String
+    MappedName: m_HumanName
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 4
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: String
+    PersistentName: boneName
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: String
+    MappedName: boneName
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 5
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: String
+    PersistentName: humanName
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: String
+    MappedName: humanName
     UseSurrogate: 0
     UseSurrogate2: 0
     HasDependenciesOrIsDependencyItself: 0
@@ -39697,6 +40195,397 @@ MonoBehaviour:
     HasDependenciesOrIsDependencyItself: 0
     IsNonPublic: 1
     HasPropertyInTemplate: 0
+--- !u!1 &7741337302342477670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6676466029851659076}
+  - component: {fileID: 2324426420657060982}
+  m_Layer: 0
+  m_Name: UnityEngine.HumanDescription
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6676466029851659076
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7741337302342477670}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5114501035391644904}
+  m_RootOrder: 292
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2324426420657060982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7741337302342477670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0530efbda98e7b4f8991b85a6e01467, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Version: 2.2
+  IsSelected: 0
+  IsLocked: 1
+  PersistentPropertyTag: 22
+  PersistentSubclassTag: 0
+  MappedAssemblyName: UnityEngine.AnimationModule
+  MappedNamespace: UnityEngine
+  MappedTypeName: HumanDescription
+  MappedTypeGUID: 4bb12ee8-47ce-405a-a741-ea3b90885b4b
+  PersistentNamespace: UnityEngine.Battlehub.SL2
+  PersistentTypeName: PersistentHumanDescription
+  PersistentTypeGUID: e99365bd-041a-48a2-8844-8117b17bba2d
+  PersistentBaseNamespace: Battlehub.RTSL
+  PersistentBaseTypeName: PersistentSurrogate
+  CreateCustomImplementation: 0
+  UseTemplate: 1
+  Subclasses: []
+  PropertyMappings:
+  - IsEnabled: 1
+    IsProperty: 0
+    PersistentTag: 1
+    PersistentNamespace: UnityEngine.Battlehub.SL2
+    PersistentTypeName: HumanBone[]
+    PersistentName: human
+    MappedAssemblyName: UnityEngine.AnimationModule
+    MappedNamespace: UnityEngine
+    MappedTypeName: HumanBone[]
+    MappedName: human
+    UseSurrogate: 1
+    UseSurrogate2: 1
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 0
+    PersistentTag: 2
+    PersistentNamespace: UnityEngine.Battlehub.SL2
+    PersistentTypeName: SkeletonBone[]
+    PersistentName: skeleton
+    MappedAssemblyName: UnityEngine.AnimationModule
+    MappedNamespace: UnityEngine
+    MappedTypeName: SkeletonBone[]
+    MappedName: skeleton
+    UseSurrogate: 1
+    UseSurrogate2: 1
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 3
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: m_ArmTwist
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: m_ArmTwist
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 4
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: m_ForeArmTwist
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: m_ForeArmTwist
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 5
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: m_UpperLegTwist
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: m_UpperLegTwist
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 6
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: m_LegTwist
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: m_LegTwist
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 7
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: m_ArmStretch
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: m_ArmStretch
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 8
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: m_LegStretch
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: m_LegStretch
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 9
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: m_FeetSpacing
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: m_FeetSpacing
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 10
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: m_GlobalScale
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: m_GlobalScale
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 11
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: String
+    PersistentName: m_RootMotionBoneName
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: String
+    MappedName: m_RootMotionBoneName
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 12
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Boolean
+    PersistentName: m_HasTranslationDoF
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Boolean
+    MappedName: m_HasTranslationDoF
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 13
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Boolean
+    PersistentName: m_HasExtraRoot
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Boolean
+    MappedName: m_HasExtraRoot
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 0
+    IsProperty: 0
+    PersistentTag: 14
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Boolean
+    PersistentName: m_SkeletonHasParents
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Boolean
+    MappedName: m_SkeletonHasParents
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 1
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 15
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: upperArmTwist
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: upperArmTwist
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 16
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: lowerArmTwist
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: lowerArmTwist
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 17
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: upperLegTwist
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: upperLegTwist
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 18
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: lowerLegTwist
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: lowerLegTwist
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 19
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: armStretch
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: armStretch
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 20
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: legStretch
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: legStretch
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 21
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Single
+    PersistentName: feetSpacing
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Single
+    MappedName: feetSpacing
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
+  - IsEnabled: 1
+    IsProperty: 1
+    PersistentTag: 22
+    PersistentNamespace: System.Battlehub.SL2
+    PersistentTypeName: Boolean
+    PersistentName: hasTranslationDoF
+    MappedAssemblyName: mscorlib
+    MappedNamespace: System
+    MappedTypeName: Boolean
+    MappedName: hasTranslationDoF
+    UseSurrogate: 0
+    UseSurrogate2: 0
+    HasDependenciesOrIsDependencyItself: 0
+    IsNonPublic: 0
+    HasPropertyInTemplate: 0
 --- !u!1 &7754566806658234104
 GameObject:
   m_ObjectHideFlags: 0
@@ -41379,6 +42268,10 @@ Transform:
   - {fileID: 780077445059868640}
   - {fileID: 3702482358015489381}
   - {fileID: 7195737950896136529}
+  - {fileID: 622178747622007884}
+  - {fileID: 6676466029851659076}
+  - {fileID: 4051431916987407813}
+  - {fileID: 8086039015073110155}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -277,6 +277,11 @@ namespace Battlehub.RTSL.Battlehub.SL2
             List<GameObject> goList = new List<GameObject>();
             List<bool> goActivationList = new List<bool>();
 
+            //This list is necessary to deal with edge cases where Avatar for some Animators must be created using AvatarBuilder.
+            //AvatarBuilder requires a hierarchy of children with names.
+            //TODO: Implement a common mechanism to handle such situations. For example, add the OnAfterWrite method.
+            List<int> deferredIndices = new List<int>();
+
             for (int i = 0; i < Data.Length; ++i)
             {
                 PersistentObject data = Data[i];
@@ -288,14 +293,32 @@ namespace Battlehub.RTSL.Battlehub.SL2
                     Debug.LogWarningFormat("objects does not have object with instance id {0} however PersistentData of type {1} is present", id, data.GetType());
                     continue;
                 }
-
+                
+                if(obj is Animator)
+                {
+                    deferredIndices.Add(i);
+                    continue;
+                }
+                   
                 data.WriteTo(obj);
+
                 if (obj is GameObject)
                 {
                     goList.Add((GameObject)obj);
                     PersistentGameObject goData = (PersistentGameObject)data;
                     goActivationList.Add(goData.ActiveSelf);
                 }
+            }
+
+            for(int i = 0; i < deferredIndices.Count; ++i)
+            {
+                int index = deferredIndices[i];
+
+                PersistentObject data = Data[index];
+                long id = Identifiers[index];
+
+                UnityObject obj = FromID<UnityObject>(id);
+                data.WriteTo(obj);
             }
 
             for (int i = 0; i < goList.Count; ++i)
