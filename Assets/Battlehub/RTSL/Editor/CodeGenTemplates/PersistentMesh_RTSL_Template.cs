@@ -8,7 +8,9 @@ using UnityEngine;
 
 namespace Battlehub.RTSL.Internal
 {
-    [PersistentTemplate("UnityEngine.Mesh", new[] { "vertices", "subMeshCount", "indexFormat", "triangles" })]
+    [PersistentTemplate("UnityEngine.Mesh", 
+        new[] { "vertices", "subMeshCount", "indexFormat", "triangles", "boneWeights", "bindposes", "bounds", "normals", "tangents", "uv", "uv2", "colors"},
+        new[] { "UnityEngine.Vector2", "UnityEngine.Vector3", "UnityEngine.Vector4", "UnityEngine.BoneWeight", "UnityEngine.Matrix4x4", "UnityEngine.Bounds", "UnityEngine.Color" })]
     public class PersistentMesh_RTSL_Template : PersistentSurrogateTemplate
     {
 #if RTSL_COMPILE_TEMPLATES
@@ -27,6 +29,30 @@ namespace Battlehub.RTSL.Internal
 
         [ProtoMember(5)]
         public MeshTopology[] m_topology;
+
+        [ProtoMember(258)]
+        public BoneWeight[] boneWeights;
+
+        [ProtoMember(259)]
+        public Matrix4x4[] bindposes;
+
+        [ProtoMember(261)]
+        public Bounds bounds;
+
+        [ProtoMember(263)]
+        public Vector3[] normals;
+
+        [ProtoMember(264)]
+        public Vector4[] tangents;
+
+        [ProtoMember(265)]
+        public Vector2[] uv;
+
+        [ProtoMember(266)]
+        public Vector2[] uv2;
+
+        [ProtoMember(273)]
+        public Color[] colors;
 
         public override object WriteTo(object obj)
         {
@@ -68,9 +94,18 @@ namespace Battlehub.RTSL.Internal
                     {
                         o.SetTriangles(m_tris[i].Array, i);
                     }
-                }
-                
+                }   
             }
+
+            o.boneWeights = boneWeights;
+            o.bindposes = bindposes;
+            o.bounds = bounds;
+            o.normals = normals;
+            o.tangents = tangents;
+            o.uv = uv;
+            o.uv2 = uv2;
+            o.colors = colors;
+
             return  base.WriteTo(obj); 
         }
 
@@ -82,7 +117,16 @@ namespace Battlehub.RTSL.Internal
                 return;
             }
             Mesh o = (Mesh)obj;
-            
+
+            boneWeights = o.boneWeights;
+            bindposes = o.bindposes;
+            bounds = o.bounds;
+            normals = o.normals;
+            tangents = o.tangents;
+            uv = o.uv;
+            uv2 = o.uv2;
+            colors = o.colors;
+
             indexFormat = o.indexFormat;
             subMeshCount = o.subMeshCount;
             if(o.vertices != null)
