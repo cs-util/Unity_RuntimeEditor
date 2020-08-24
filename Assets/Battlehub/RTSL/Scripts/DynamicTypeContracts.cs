@@ -1,10 +1,6 @@
 ﻿using ProtoBuf;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using UnityEngine.Events;
-using UnityObject = UnityEngine.Object;
+
 
 namespace Battlehub.RTSL
 {
@@ -21,18 +17,6 @@ namespace Battlehub.RTSL
         }
     }
 
-    public interface IRTSerializable
-    {
-        void Serialize();
-
-        void Deserialize(Dictionary<long, UnityObject> dependencies);
-
-        void GetDependencies(Dictionary<long, UnityObject> dependencies);
-
-        void FindDependencies<T>(Dictionary<long, T> dependencies, Dictionary<long, T> objects, bool allowNulls);
-
-    }
-
     [ProtoContract]
     public abstract class PrimitiveContract
     {
@@ -40,13 +24,6 @@ namespace Battlehub.RTSL
         {
             return new PrimitiveContract<T>(value);
         }
-
-        //public static PrimitiveContract Create(Type type)
-        //{
-        //    Type d1 = typeof(PrimitiveContract<>);
-        //    Type constructed = d1.MakeGenericType(type);
-        //    return (PrimitiveContract)Activator.CreateInstance(constructed);
-        //}
 
         public object ValueBase
         {

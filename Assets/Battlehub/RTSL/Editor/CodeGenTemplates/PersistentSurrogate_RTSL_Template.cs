@@ -34,6 +34,8 @@ namespace Battlehub.RTSL.Internal
 
     public class PersistentSurrogateTemplate : ScriptableObject
     {
+        protected new int hideFlags;
+
         protected IAssetDB m_assetDB;
 
         public virtual void ReadFrom(object obj)

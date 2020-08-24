@@ -8,12 +8,12 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Battlehub.SL2;
 using UnityObject = UnityEngine.Object;
 using UnityEngine;
-
+using System.IO;
 
 namespace Battlehub.RTSL.Battlehub.SL2
 {
     [ProtoContract]
-    public class PersistentRuntimeScene : PersistentRuntimePrefab
+    public class PersistentRuntimeScene : PersistentRuntimePrefab, ICustomSerialization
     {
         [ProtoMember(1)]
         public PersistentObject[] Assets;
@@ -288,6 +288,85 @@ namespace Battlehub.RTSL.Battlehub.SL2
                 return null;
             }
             return base.CreateDescriptorAndData(go, persistentData, persistentIdentifiers, getDepsFromCtx, parentDescriptor);
+        }
+
+        public bool AllowStandardSerialization
+        {
+            get { return true; }
+        }
+
+        private List<ICustomSerialization> m_customSerializationAssets;
+        private List<int> m_customSerializationAssetIndices;
+
+        [ProtoBeforeSerialization]
+        public void OnBeforeSerialization()
+        {
+            if(!RTSLSettings.IsCustomSerializationEnabled)
+            {
+                return;
+            }
+            m_customSerializationAssets = new List<ICustomSerialization>();
+            m_customSerializationAssetIndices = new List<int>();
+
+            for (int i = 0; i < Assets.Length; ++i)
+            {
+                ICustomSerialization asset = Assets[i] as ICustomSerialization;
+                if (asset != null)
+                {
+                    m_customSerializationAssets.Add(asset);
+                    m_customSerializationAssetIndices.Add(i);
+                    if (!asset.AllowStandardSerialization)
+                    {
+                        Assets[i] = null;
+                    }
+                }
+            }
+        }
+
+        public void Serialize(Stream stream, BinaryWriter writer)
+        {
+            writer.Write(m_customSerializationAssets.Count);
+            for (int i = 0; i < m_customSerializationAssets.Count; ++i)
+            {
+                ICustomSerialization asset = m_customSerializationAssets[i];
+                writer.Write(asset.AllowStandardSerialization);
+                writer.Write(m_customSerializationAssetIndices[i]);
+                writer.Write(m_typeMap.ToGuid(asset.GetType()).ToByteArray());
+                asset.Serialize(stream, writer);
+            }
+            m_customSerializationAssets = null;
+            m_customSerializationAssetIndices = null;
+        }
+
+        public void Deserialize(Stream stream, BinaryReader reader)
+        {
+            List<PersistentObject> assets = Assets != null ? Assets.ToList() : new List<PersistentObject>();
+
+            int count = reader.ReadInt32();
+            for (int i = 0; i < count; ++i)
+            {
+                bool allowStandardSerialization = reader.ReadBoolean();
+                int index = reader.ReadInt32();
+                Guid typeGuid = new Guid(reader.ReadBytes(16));
+                Type type = m_typeMap.ToType(typeGuid);
+                if (type == null)
+                {
+                    //Type removal is not allowed
+                    throw new InvalidOperationException("Unknown type guid " + typeGuid);
+                }
+
+                ICustomSerialization customSerializationAsset;
+                if(!allowStandardSerialization)
+                {
+                    PersistentObject asset = (PersistentObject)Activator.CreateInstance(type);
+                    assets.Insert(index, asset);
+                }
+
+                customSerializationAsset = (ICustomSerialization)assets[index];
+                customSerializationAsset.Deserialize(stream, reader);
+            }
+
+            Assets = assets.ToArray();
         }
     }
 }

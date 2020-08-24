@@ -16,7 +16,7 @@ namespace Battlehub.RTSL.Interface
 
         object Deserialize(byte[] b, Type type);
 
-        object Deserialize(Stream stream, Type type);
+        object Deserialize(Stream stream, Type type, long length = -1);
 
         void Serialize<TData>(TData data, Stream stream);
 

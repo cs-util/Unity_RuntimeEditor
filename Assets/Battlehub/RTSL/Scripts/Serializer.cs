@@ -82,9 +82,13 @@ namespace Battlehub.RTSL
             }
         }
 
-        public object Deserialize(Stream stream, Type type)
+        public object Deserialize(Stream stream, Type type, long length = -1)
         {
-            return model.Deserialize(stream, null, type);
+            if(length <= 0)
+            {
+                return model.Deserialize(stream, null, type);
+            }
+            return model.Deserialize(stream, null, type, (int)length);
         }
 
         public TData Deserialize<TData>(byte[] b)
@@ -100,14 +104,13 @@ namespace Battlehub.RTSL
         {
             using (var stream = new MemoryStream(b))
             {
-                TData deserialized = (TData)model.Deserialize(stream, obj, typeof(TData));
-                return deserialized;
+                return (TData)model.Deserialize(stream, obj, typeof(TData));
             }
         }
 
         public void Serialize<TData>(TData data, Stream stream)
         {
-            model.Serialize(stream, data);
+            model.Serialize(stream, data);            
         }
 
         public byte[] Serialize<TData>(TData data)

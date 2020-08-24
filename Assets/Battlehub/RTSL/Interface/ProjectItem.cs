@@ -330,6 +330,9 @@ namespace Battlehub.RTSL.Interface
         [ProtoMember(3)]
         public long[] Dependencies;
 
+        [ProtoMember(4, IsRequired = true)]
+        public long CustomDataOffset = -1;
+
         private Preview m_preview;
         public Preview Preview
         {

@@ -2320,7 +2320,7 @@ namespace Battlehub.RTSL
             }
 
 
-           m_storage.Load(m_projectPath, scenes.Select(item => item.ToString()).ToArray(), scenes.Select(s => typeof(PersistentRuntimeScene)).ToArray(), (loadError, persistentObjects) =>
+           m_storage.Load(m_projectPath, scenes, scenes.Select(s => typeof(PersistentRuntimeScene)).ToArray(), (loadError, persistentObjects) =>
            {
                if (loadError.HasError)
                {
@@ -2548,7 +2548,7 @@ namespace Battlehub.RTSL
                 }
             }
 
-            m_storage.Load(m_projectPath, loadAssetItemsHs.Select(item => item.ToString()).ToArray(), persistentTypes, (error, persistentObjects) =>
+            m_storage.Load(m_projectPath, loadAssetItemsHs.ToArray(), persistentTypes, (error, persistentObjects) =>
             {
                 if (error.HasError)
                 {

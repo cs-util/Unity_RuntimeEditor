@@ -75,9 +75,9 @@ namespace Battlehub.RTSL
            "namespace {1}" + BR +
            "{{" + BR +
            "    [CustomImplementation]" + BR +
-           "    public partial class {2}" + BR +
+           "    public partial class {2} {3}" + BR +
            "    {{" +
-           "        {3}" + BR +
+           "        {4}" + BR +
            "    }}" + BR +
            "}}" + BR +
            "#endif" + END;
@@ -853,6 +853,26 @@ namespace Battlehub.RTSL
             return true;
         }
 
+        public static bool TryGetTemplateInterfaces(string template, out string result)
+        {
+            result = string.Empty;
+
+            int startIndex = template.IndexOf("//<TEMPLATE_INTERFACES_START>");
+            int endIndex = template.IndexOf("//<TEMPLATE_INTERFACES_END>");
+
+            if (startIndex < 0 || endIndex < 0 || startIndex >= endIndex)
+            {
+                return false;
+            }
+
+            template = template.Substring(startIndex, endIndex - startIndex);
+            template = template.Replace("//<TEMPLATE_INTERFACES_START>", string.Empty);
+
+            result = " : " + template.Trim(Environment.NewLine.ToCharArray()).Trim(' ');
+            
+            return true;
+        }
+
         public static bool TryGetTemplateBody(string template, out string result)
         {
             result = string.Empty;
@@ -882,7 +902,7 @@ namespace Battlehub.RTSL
             if (template != null)
             {
                 usings += template.Usings;
-                return string.Format(UserDefinedClassTemplate, usings, ns, className, template.Body.TrimEnd());
+                return string.Format(UserDefinedClassTemplate, usings, ns, className, template.Interfaces, template.Body.TrimEnd());
             }
 
             return string.Format(UserDefinedEmptyClassTemplate, usings, ns, className);

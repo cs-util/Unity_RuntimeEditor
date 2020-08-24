@@ -389,6 +389,65 @@ namespace Battlehub.RTSL.Interface
             return project.Save(new[] { folder }, new[] { preview }, new[] { obj }, new[] { name });
         }
 
+        public static ProjectAsyncOperation<AssetItem[]> Save(this IProject project, string[] path, object[] objects, byte[][] previews = null)
+        {
+            if (!project.IsOpened)
+            {
+                throw new InvalidOperationException("OpenProject first");
+            }
+
+            if (previews == null)
+            {
+                previews = new byte[objects.Length][];
+            }
+
+            List<AssetItem> existingAssetItems = new List<AssetItem>();
+            List<ProjectItem> folders = new List<ProjectItem>();
+            List<string> names = new List<string>();
+            for (int i = 0; i < objects.Length; ++i)
+            {
+                string name = Path.GetFileName(path[i]);
+                path[i] = Path.GetDirectoryName(path[i]).Replace(@"\", "/");
+                path[i] = !string.IsNullOrEmpty(path[i]) ? string.Format("{0}/{1}", project.Root.Name, path[i]) : project.Root.Name;
+
+                object obj = objects[i];
+                string ext = project.GetExt(obj.GetType());
+                ProjectItem item = project.Root.Get(path[i] + "/" + name + ext);
+                if (item is AssetItem)
+                {
+                    AssetItem assetItem = (AssetItem)item;
+                    existingAssetItems.Add(assetItem);
+                }
+                else
+                {
+                    ProjectItem folder = project.Root.Get(path[i]);
+                    if (folder == null || !folder.IsFolder)
+                    {
+                        throw new ArgumentException("directory cannot be found", "path");
+                    }
+
+                    if (previews[i] == null)
+                    {
+                        previews[i] = new byte[0];
+                    }
+                    folders.Add(folder);
+                    names.Add(name);
+                }
+            }
+
+            if (existingAssetItems.Count > 0)
+            {
+                if (existingAssetItems.Count != objects.Length)
+                {
+                    throw new InvalidOperationException("You are trying to save mixed collection of new and existing objects. This is not supported");
+                }
+
+                return project.Save(existingAssetItems.ToArray(), objects);
+            }
+
+            return project.Save(folders.ToArray(), previews, objects, names.ToArray());
+        }
+
         public static ProjectAsyncOperation<UnityObject[]> Load<T>(this IProject project, string path)
         {
             Type type = typeof(T);

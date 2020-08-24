@@ -9,9 +9,10 @@ using Battlehub.RTCommon;
 using System.Linq;
 using System.Threading;
 using Battlehub.Utils;
-using System.IO.Compression;
-using ICSharpCode.SharpZipLib.Zip;
 using ProtoBuf;
+using ICSharpCode.SharpZipLib.Zip;
+using ICSharpCode.SharpZipLib.Zip.Compression;
+using Battlehub.RTSL.Battlehub.SL2;
 
 namespace Battlehub.RTSL
 {
@@ -40,7 +41,7 @@ namespace Battlehub.RTSL
         void GetPreviews(string projectPath, string[] folderPath, string searchPattern, StorageEventHandler<Preview[][]> callback);
         void Save(string projectPath, string[] folderPaths, AssetItem[] assetItems, PersistentObject[] persistentObjects, ProjectInfo projectInfo, bool previewOnly, StorageEventHandler callback);
         void Save(string projectPath, AssetBundleInfo assetBundleInfo, ProjectInfo project, StorageEventHandler callback);
-        void Load(string projectPath, string[] assetPaths, Type[] types, StorageEventHandler<PersistentObject[]> callback);
+        void Load(string projectPath, AssetItem[] assetItems, Type[] types, StorageEventHandler<PersistentObject[]> callback);
         void Load(string projectPath, string bundleName, StorageEventHandler<AssetBundleInfo> callback);
         void Delete(string projectPath, string[] paths, StorageEventHandler callback);
         void Move(string projectPath, string[] paths, string[] names, string targetPath, StorageEventHandler callback);
@@ -59,7 +60,7 @@ namespace Battlehub.RTSL
         private const string KeyValueStorage = "Values";
         private const string TempFolder = "Temp";
         private const string AssetsRootFolder = "Assets";
-
+     
         public string RootPath
         {
             get;
@@ -81,7 +82,7 @@ namespace Battlehub.RTSL
             RootPath = Application.persistentDataPath + "/";
 
             string tempPath = RootPath + "/" + TempFolder;
-            if(Directory.Exists(tempPath))
+            if (Directory.Exists(tempPath))
             {
                 Directory.Delete(tempPath, true);
             }
@@ -173,57 +174,76 @@ namespace Battlehub.RTSL
 
         public void ExportProject(string projectPath, string targetPath, StorageEventHandler callback)
         {
-            try
+            QueueUserWorkItem(() =>
             {
-                string projectFullPath = FullPath(projectPath);
+                try
+                {
+                    string projectFullPath = FullPath(projectPath);
 
-                FastZip fastZip = new FastZip();
-                fastZip.CreateZip(targetPath, projectFullPath, true, null);
+                    FastZip fastZip = new FastZip();
+                    fastZip.CompressionLevel = Deflater.CompressionLevel.NO_COMPRESSION;
+                    fastZip.CreateZip(targetPath, projectFullPath, true, null);
 
-                callback(new Error(Error.OK));
-            }
-            catch (Exception e)
-            {
-                callback(new Error(Error.E_Exception) { ErrorText = e.ToString() });
-            }            
+                    Callback(() =>
+                    {
+                        callback(new Error(Error.OK));
+                    });
+                }
+                catch (Exception e)
+                {
+                    Callback(() =>
+                    {
+                        callback(new Error(Error.E_Exception) { ErrorText = e.ToString() });
+                    });
+                }
+            });
         }
 
         public void ImportProject(string projectPath, string sourcePath, StorageEventHandler callback)
         {
-            try
+            QueueUserWorkItem(() =>
             {
-                string projectFullPath = FullPath(projectPath);
-                if(Directory.Exists(projectFullPath))
+                try
                 {
-                    callback(new Error(Error.E_AlreadyExist) { ErrorText = string.Format("Project {0} already exist", projectPath) });
-                }
-                else
-                {
-                    FastZip fastZip = new FastZip();
-                    fastZip.ExtractZip(sourcePath, projectFullPath, null);
-
-                    ProjectInfo projectInfo;
-                    using (FileStream fs = File.OpenRead(projectFullPath + "/Project.rtmeta"))
+                    string projectFullPath = FullPath(projectPath);
+                    if (Directory.Exists(projectFullPath))
                     {
-                        projectInfo = Serializer.Deserialize<ProjectInfo>(fs);
+                        callback(new Error(Error.E_AlreadyExist) { ErrorText = string.Format("Project {0} already exist", projectPath) });
+                    }
+                    else
+                    {
+                        FastZip fastZip = new FastZip();
+                        fastZip.ExtractZip(sourcePath, projectFullPath, null);
+
+                        ProjectInfo projectInfo;
+                        using (FileStream fs = File.OpenRead(projectFullPath + "/Project.rtmeta"))
+                        {
+                            projectInfo = Serializer.Deserialize<ProjectInfo>(fs);
+                        }
+
+                        projectInfo.Name = Path.GetFileNameWithoutExtension(projectPath);
+                        projectInfo.LastWriteTime = File.GetLastWriteTimeUtc(projectFullPath + "/Project.rtmeta");
+
+                        using (FileStream fs = File.OpenWrite(projectFullPath + "/Project.rtmeta"))
+                        {
+                            Serializer.Serialize(fs, projectInfo);
+                        }
+
+                        Callback(() =>
+                        {
+                            callback(new Error(Error.OK));
+                        });
                     }
 
-                    projectInfo.Name = Path.GetFileNameWithoutExtension(projectPath);
-                    projectInfo.LastWriteTime = File.GetLastWriteTimeUtc(projectFullPath + "/Project.rtmeta");
-
-                    using (FileStream fs = File.OpenWrite(projectFullPath + "/Project.rtmeta"))
-                    {
-                        Serializer.Serialize(fs, projectInfo);
-                    }
-
-                    callback(new Error(Error.OK));
                 }
-
-            }
-            catch (Exception e)
-            {
-                callback(new Error(Error.E_Exception) { ErrorText = e.ToString() });
-            }
+                catch (Exception e)
+                {
+                    Callback(() =>
+                    {
+                        callback(new Error(Error.E_Exception) { ErrorText = e.ToString() });
+                    });
+                }
+            });
         }
 
         public void DeleteProject(string projectPath, StorageEventHandler callback)
@@ -240,7 +260,7 @@ namespace Battlehub.RTSL
                     callback(new Error(Error.OK));
                 });
             });
-  
+
         }
 
         public void GetProjects(StorageEventHandler<ProjectInfo[]> callback)
@@ -252,7 +272,7 @@ namespace Battlehub.RTSL
             for (int i = 0; i < projectDirs.Length; ++i)
             {
                 string projectDir = projectDirs[i];
-                if(File.Exists(projectDir + "/Project.rtmeta"))
+                if (File.Exists(projectDir + "/Project.rtmeta"))
                 {
                     ProjectInfo projectInfo;
                     using (FileStream fs = File.OpenRead(projectDir + "/Project.rtmeta"))
@@ -325,7 +345,7 @@ namespace Battlehub.RTSL
         public void GetProjectTree(string projectPath, StorageEventHandler<ProjectItem> callback)
         {
             projectPath = AssetsFolderPath(projectPath);
-            if(!Directory.Exists(projectPath))
+            if (!Directory.Exists(projectPath))
             {
                 Directory.CreateDirectory(projectPath);
             }
@@ -349,7 +369,7 @@ namespace Battlehub.RTSL
 
             return item;
         }
-       
+
         private static T Load<T>(ISerializer serializer, string path) where T : new()
         {
             string metaFile = path;
@@ -373,13 +393,13 @@ namespace Battlehub.RTSL
             {
                 item = new T();
             }
-         
+
             return item;
         }
 
         private void GetProjectTree(string path, ProjectItem parent)
         {
-            if(!Directory.Exists(path))
+            if (!Directory.Exists(path))
             {
                 return;
             }
@@ -399,15 +419,15 @@ namespace Battlehub.RTSL
             }
 
             string[] files = Directory.GetFiles(path, "*" + MetaExt);
-            for(int i = 0; i < files.Length; ++i)
+            for (int i = 0; i < files.Length; ++i)
             {
                 string file = files[i];
-                if(!File.Exists(file.Replace(MetaExt, string.Empty)))
+                if (!File.Exists(file.Replace(MetaExt, string.Empty)))
                 {
                     continue;
                 }
 
-                AssetItem assetItem =  LoadItem<AssetItem>(serializer, file);
+                AssetItem assetItem = LoadItem<AssetItem>(serializer, file);
                 assetItem.Parent = parent;
                 parent.Children.Add(assetItem);
             }
@@ -419,10 +439,10 @@ namespace Battlehub.RTSL
 
             ISerializer serializer = IOC.Resolve<ISerializer>();
             Preview[] result = new Preview[assetPath.Length];
-            for(int i = 0; i < assetPath.Length; ++i)
+            for (int i = 0; i < assetPath.Length; ++i)
             {
                 string path = projectPath + assetPath[i] + PreviewExt;
-                if(File.Exists(path))
+                if (File.Exists(path))
                 {
                     result[i] = Load<Preview>(serializer, path);
                 }
@@ -450,7 +470,7 @@ namespace Battlehub.RTSL
                     continue;
                 }
 
-                if(searchPattern == null)
+                if (searchPattern == null)
                 {
                     searchPattern = string.Empty;
                 }
@@ -461,7 +481,7 @@ namespace Battlehub.RTSL
 
                 string[] files = Directory.GetFiles(path, string.Format("*{0}*{1}", searchPattern, PreviewExt));
                 Preview[] previews = new Preview[files.Length];
-                for(int j = 0; j < files.Length; ++j)
+                for (int j = 0; j < files.Length; ++j)
                 {
                     previews[j] = Load<Preview>(serializer, files[j]);
                 }
@@ -533,20 +553,15 @@ namespace Battlehub.RTSL
                         if (!previewOnly)
                         {
                             PersistentObject persistentObject = persistentObjects[i];
-                            File.Delete(path + "/" + assetItem.NameExt + MetaExt);
-                            using (FileStream fs = File.Create(path + "/" + assetItem.NameExt + MetaExt))
-                            {
-                                serializer.Serialize(assetItem, fs);
-                            }
-
+                          
                             File.Delete(path + "/" + assetItem.NameExt);
 
-                            if(persistentObject is PersistentRuntimeTextAsset)
+                            if (persistentObject is PersistentRuntimeTextAsset)
                             {
                                 PersistentRuntimeTextAsset textAsset = (PersistentRuntimeTextAsset)persistentObject;
                                 File.WriteAllText(path + "/" + assetItem.NameExt, textAsset.Text);
                             }
-                            else if(persistentObject is PersistentRuntimeBinaryAsset)
+                            else if (persistentObject is PersistentRuntimeBinaryAsset)
                             {
                                 PersistentRuntimeBinaryAsset binAsset = (PersistentRuntimeBinaryAsset)persistentObject;
                                 File.WriteAllBytes(path + "/" + assetItem.NameExt, binAsset.Data);
@@ -555,8 +570,32 @@ namespace Battlehub.RTSL
                             {
                                 using (FileStream fs = File.Create(path + "/" + assetItem.NameExt))
                                 {
-                                    serializer.Serialize(persistentObject, fs);
+                                    if (RTSLSettings.IsCustomSerializationEnabled && persistentObject is ICustomSerialization)
+                                    {
+                                        ICustomSerialization customSerialization = (ICustomSerialization)persistentObject;
+                                        if(customSerialization.AllowStandardSerialization)
+                                        {
+                                            serializer.Serialize(persistentObject, fs);
+                                        }
+                                        assetItem.CustomDataOffset = fs.Position;
+                                        using (BinaryWriter writer = new BinaryWriter(fs))
+                                        {
+                                            writer.Write(CustomSerializationHeader.Default);
+                                            customSerialization.Serialize(fs, writer);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        serializer.Serialize(persistentObject, fs);
+                                        assetItem.CustomDataOffset = fs.Position;
+                                    }   
                                 }
+                            }
+
+                            File.Delete(path + "/" + assetItem.NameExt + MetaExt);
+                            using (FileStream fs = File.Create(path + "/" + assetItem.NameExt + MetaExt))
+                            {
+                                serializer.Serialize(assetItem, fs);
                             }
                         }
                     }
@@ -606,8 +645,10 @@ namespace Battlehub.RTSL
             });
         }
 
-        public void Load(string projectPath, string[] assetPaths, Type[] types, StorageEventHandler<PersistentObject[]> callback)
+        public void Load(string projectPath, AssetItem[] assetItems, Type[] types, StorageEventHandler<PersistentObject[]> callback)
         {
+            string[] assetPaths = assetItems.Select(item => item.ToString()).ToArray();
+            long[] customDataOffsets = assetItems.Select(item => item.CustomDataOffset).ToArray();
             QueueUserWorkItem(() =>
             {
                 PersistentObject[] result = new PersistentObject[assetPaths.Length];
@@ -628,7 +669,7 @@ namespace Battlehub.RTSL
                                 textAsset.Ext = Path.GetExtension(assetPath);
                                 result[i] = textAsset;
                             }
-                            else if(types[i] == typeof(PersistentRuntimeBinaryAsset))
+                            else if (types[i] == typeof(PersistentRuntimeBinaryAsset))
                             {
                                 PersistentRuntimeBinaryAsset binAsset = new PersistentRuntimeBinaryAsset();
                                 binAsset.name = Path.GetFileName(assetPath);
@@ -640,17 +681,44 @@ namespace Battlehub.RTSL
                             {
                                 using (FileStream fs = File.OpenRead(assetPath))
                                 {
-                                    result[i] = (PersistentObject)serializer.Deserialize(fs, types[i]);
+                                    long customDataOffset = customDataOffsets[i];
+                                    if(customDataOffset == -1)
+                                    {
+                                        result[i] = (PersistentObject)serializer.Deserialize(fs, types[i]);
+                                    }
+                                    else
+                                    {
+                                        if(customDataOffset > 0)
+                                        {
+                                            result[i] = (PersistentObject)serializer.Deserialize(fs, types[i], customDataOffset);
+                                        }
+                                        else
+                                        {
+                                            result[i] = (PersistentObject)Activator.CreateInstance(types[i]);
+                                        }
+
+                                        if(fs.Position < fs.Length)
+                                        {
+                                            using (BinaryReader reader = new BinaryReader(fs))
+                                            {
+                                                CustomSerializationHeader header = reader.ReadHeader();
+                                                if (header.IsValid)
+                                                {
+                                                    ICustomSerialization customSerialization = (ICustomSerialization)result[i];
+                                                    customSerialization.Deserialize(fs, reader);
+                                                }
+                                            }
+                                        }
+                                     
+                                    }
                                 }
                             }
-                            
                         }
                         else
                         {
                             Callback(() => callback(new Error(Error.E_NotFound), new PersistentObject[0]));
                             return;
                         }
-
                     }
                     catch (Exception e)
                     {
@@ -662,7 +730,6 @@ namespace Battlehub.RTSL
 
                 Callback(() => callback(new Error(Error.OK), result));
             });
-           
         }
 
         public void Load(string projectPath, string bundleName, StorageEventHandler<AssetBundleInfo> callback)
@@ -691,27 +758,25 @@ namespace Battlehub.RTSL
             });
         }
 
-
-
         public void Delete(string projectPath, string[] paths, StorageEventHandler callback)
         {
             string fullPath = FullPath(projectPath);
-            for(int i = 0; i < paths.Length; ++i)
+            for (int i = 0; i < paths.Length; ++i)
             {
                 string path = fullPath + paths[i];
-                if(File.Exists(path))
+                if (File.Exists(path))
                 {
                     File.Delete(path);
-                    if(File.Exists(path + MetaExt))
+                    if (File.Exists(path + MetaExt))
                     {
                         File.Delete(path + MetaExt);
                     }
-                    if(File.Exists(path + PreviewExt))
+                    if (File.Exists(path + PreviewExt))
                     {
                         File.Delete(path + PreviewExt);
                     }
                 }
-                else if(Directory.Exists(path))
+                else if (Directory.Exists(path))
                 {
                     Directory.Delete(path, true);
                 }
@@ -740,7 +805,7 @@ namespace Battlehub.RTSL
                 }
                 else if (Directory.Exists(path))
                 {
-                    if(string.Equals(Path.GetFullPath(path), Path.GetFullPath(fullPath + paths[i] + "/" + names[i]), StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(Path.GetFullPath(path), Path.GetFullPath(fullPath + paths[i] + "/" + names[i]), StringComparison.OrdinalIgnoreCase))
                     {
                         string tempDirName = Guid.NewGuid().ToString();
 
@@ -751,7 +816,7 @@ namespace Battlehub.RTSL
                     else
                     {
                         Directory.Move(path, fullPath + paths[i] + "/" + names[i]);
-                    }   
+                    }
                 }
             }
 
@@ -799,7 +864,7 @@ namespace Battlehub.RTSL
             callback(new Error(Error.OK));
         }
 
-        
+
         public void GetValue(string projectPath, string key, Type type, StorageEventHandler<PersistentObject> callback)
         {
             string fullPath = FullPath(projectPath);
@@ -821,7 +886,7 @@ namespace Battlehub.RTSL
                     textAsset.Ext = Path.GetExtension(path);
                     result = textAsset;
                 }
-                else if(type == typeof(PersistentRuntimeBinaryAsset))
+                else if (type == typeof(PersistentRuntimeBinaryAsset))
                 {
                     PersistentRuntimeBinaryAsset binaryAsset = new PersistentRuntimeBinaryAsset();
                     binaryAsset.name = Path.GetFileName(path);
@@ -872,7 +937,7 @@ namespace Battlehub.RTSL
                         textAsset.Ext = Path.GetExtension(files[i]);
                         result[i] = textAsset;
                     }
-                    else if(type == typeof(PersistentRuntimeBinaryAsset))
+                    else if (type == typeof(PersistentRuntimeBinaryAsset))
                     {
                         PersistentRuntimeBinaryAsset binaryAsset = new PersistentRuntimeBinaryAsset();
                         binaryAsset.name = Path.GetFileName(files[i]);
@@ -886,7 +951,7 @@ namespace Battlehub.RTSL
                         {
                             result[i] = (PersistentObject)serializer.Deserialize(fs, type);
                         }
-                    }   
+                    }
                 }
 
                 Callback(() => callback(Error.NoError, result));
@@ -913,7 +978,7 @@ namespace Battlehub.RTSL
                 PersistentRuntimeTextAsset textAsset = (PersistentRuntimeTextAsset)persistentObject;
                 File.WriteAllText(path, textAsset.Text);
             }
-            else if(persistentObject is PersistentRuntimeBinaryAsset)
+            else if (persistentObject is PersistentRuntimeBinaryAsset)
             {
                 PersistentRuntimeBinaryAsset binaryAsset = (PersistentRuntimeBinaryAsset)persistentObject;
                 File.WriteAllBytes(path, binaryAsset.Data);
@@ -927,7 +992,7 @@ namespace Battlehub.RTSL
                 }
                 serializer.Serialize(persistentObject);
             }
-            
+
             callback(new Error(Error.OK));
         }
 
@@ -1049,11 +1114,11 @@ namespace Battlehub.RTSL
                     {
                         action();
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         Dispatcher.BeginInvoke(() => Debug.LogError(e));
                     }
-                    
+
                 });
             }
             else

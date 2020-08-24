@@ -479,6 +479,7 @@
     <Compile Include="Assets\Battlehub\RTSL\Interface\ProjectItem.cs" />
     <Compile Include="Assets\Battlehub\RTSL\Interface\RTSLAdditive.cs" />
     <Compile Include="Assets\Battlehub\RTSL\Interface\RTSLIgnore.cs" />
+    <Compile Include="Assets\Battlehub\RTSL\Interface\RTSLSettings.cs" />
     <Compile Include="Assets\Battlehub\RTSL\Interface\RTSLVersion.cs" />
     <Compile Include="Assets\Battlehub\RTSL\Interface\RuntimeBinaryAsset.cs" />
     <Compile Include="Assets\Battlehub\RTSL\Interface\RuntimeScene.cs" />

@@ -16,6 +16,7 @@ namespace Battlehub.RTSL
     public class PersistentTemplateInfo
     {
         public string Usings;
+        public string Interfaces;
         public string Body;
         public HashSet<string> FieldNames;
         public HashSet<Type> RequiredTypes;
@@ -2402,14 +2403,17 @@ namespace Battlehub.RTSL
                     }
                     string contents = monoScript.text;
                     string usings = contents.ToString();
+                    string interfaces = contents.ToString();
                     if (CodeGen.TryGetTemplateBody(contents, out contents) && CodeGen.TryGetTemplateUsings(usings, out usings))
                     {
+                        CodeGen.TryGetTemplateInterfaces(interfaces, out interfaces);
                         PersistentTemplateInfo templateInfo = new PersistentTemplateInfo
                         {
                             Body = contents,
                             FieldNames = new HashSet<string>(),
                             RequiredTypes = new HashSet<Type>(),
                             Usings = usings,
+                            Interfaces = interfaces,
                             Path = AssetDatabase.GetAssetPath(monoScript),
                         };
 
