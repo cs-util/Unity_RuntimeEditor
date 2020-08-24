@@ -94474,7 +94474,7 @@ MonoBehaviour:
     UseSurrogate2: 1
     HasDependenciesOrIsDependencyItself: 0
     IsNonPublic: 0
-    HasPropertyInTemplate: 0
+    HasPropertyInTemplate: 1
   - IsEnabled: 0
     IsProperty: 1
     PersistentTag: 13
@@ -94489,7 +94489,7 @@ MonoBehaviour:
     UseSurrogate2: 1
     HasDependenciesOrIsDependencyItself: 0
     IsNonPublic: 0
-    HasPropertyInTemplate: 0
+    HasPropertyInTemplate: 1
   - IsEnabled: 0
     IsProperty: 1
     PersistentTag: 14
@@ -94504,7 +94504,7 @@ MonoBehaviour:
     UseSurrogate2: 1
     HasDependenciesOrIsDependencyItself: 0
     IsNonPublic: 0
-    HasPropertyInTemplate: 0
+    HasPropertyInTemplate: 1
   - IsEnabled: 0
     IsProperty: 1
     PersistentTag: 15
@@ -94534,7 +94534,7 @@ MonoBehaviour:
     UseSurrogate2: 1
     HasDependenciesOrIsDependencyItself: 0
     IsNonPublic: 0
-    HasPropertyInTemplate: 0
+    HasPropertyInTemplate: 1
   - IsEnabled: 0
     IsProperty: 1
     PersistentTag: 17
@@ -94549,7 +94549,7 @@ MonoBehaviour:
     UseSurrogate2: 1
     HasDependenciesOrIsDependencyItself: 0
     IsNonPublic: 0
-    HasPropertyInTemplate: 0
+    HasPropertyInTemplate: 1
   - IsEnabled: 1
     IsProperty: 1
     PersistentTag: 18
