@@ -8,6 +8,7 @@ using Battlehub.RTSL.Interface;
 using TMPro;
 using System.Collections.Generic;
 using Battlehub.RTGizmos;
+using System.Security.Cryptography;
 
 namespace Battlehub.RTEditor
 {
@@ -632,17 +633,24 @@ namespace Battlehub.RTEditor
             }
             if (descriptor.Range != null)
             {
-                if(descriptor.Range is RangeInt)
+                if (descriptor.Range is RangeInt)
                 {
                     RangeIntEditor rangeEditor = editor as RangeIntEditor;
                     rangeEditor.Min = (int)descriptor.Range.Min;
                     rangeEditor.Max = (int)descriptor.Range.Max;
                 }
-                else if(descriptor.Range is RangeOptions)
+                else if (descriptor.Range is RangeFlags)
+                {
+                    RangeFlags range = (RangeFlags)descriptor.Range;
+                    FlagsIntEditor flagsIntEditor = editor as FlagsIntEditor;
+                    flagsIntEditor.Options = range.Options;
+                }
+                else if (descriptor.Range is RangeOptions)
                 {
                     RangeOptions range = (RangeOptions)descriptor.Range;
                     OptionsEditor optionsEditor = editor as OptionsEditor;
                     optionsEditor.Options = range.Options;
+
                 }
                 else
                 {

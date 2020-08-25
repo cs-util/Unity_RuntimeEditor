@@ -111,6 +111,7 @@
 		<StringResource id="ID_RTEditor_CD_Camera_Projection" value="Projection"/>
 		<StringResource id="ID_RTEditor_CD_Camera_Fov" value="Field Of View"/>
 		<StringResource id="ID_RTEditor_CD_Camera_Size" value="Size"/>
+    <StringResource id="ID_RTEditor_CD_Camera_CullingMask" value="Culling Mask"/>
 		
 		<StringResource id="ID_RTEditor_CD_CapsuleCollider" value="Capsule Collider"/>
 		<StringResource id="ID_RTEditor_CD_CapsuleCollider_IsTrigger" value="Is Trigger"/>

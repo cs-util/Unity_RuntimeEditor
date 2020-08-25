@@ -216,6 +216,7 @@
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\PropertyEditors\DragField.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\PropertyEditors\EnumEditor.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\PropertyEditors\Expander.cs" />
+    <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\PropertyEditors\FlagsIntEditor.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\PropertyEditors\FloatEditor.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\PropertyEditors\FloatValidator.cs" />
     <Compile Include="Assets\Battlehub\RTEditor\Scripts\Editors\PropertyEditors\FourFloatEditor.cs" />
@@ -535,6 +536,7 @@
     <Compile Include="Assets\Battlehub\UIControls\MultiToggle\Scripts\MultiToggle.cs" />
     <Compile Include="Assets\Battlehub\UIControls\MultiToggle\Scripts\MultiToggleLayer.cs" />
     <Compile Include="Assets\Battlehub\UIControls\MultiToggle\Scripts\MultiTogglePanel.cs" />
+    <Compile Include="Assets\Battlehub\UIControls\MultiselectDropDown\Scripts\MultiselectDropdown.cs" />
     <Compile Include="Assets\Battlehub\UIControls\Tooltip\Scripts\ToggleTooltip.cs" />
     <Compile Include="Assets\Battlehub\UIControls\Tooltip\Scripts\Tooltip.cs" />
     <Compile Include="Assets\Battlehub\UIControls\Tooltip\Scripts\TooltipLayer.cs" />

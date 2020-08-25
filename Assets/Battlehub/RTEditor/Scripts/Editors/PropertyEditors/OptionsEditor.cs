@@ -8,6 +8,14 @@ using System.Linq;
 
 namespace Battlehub.RTEditor
 {
+    public class RangeFlags : RangeOptions
+    {
+        public RangeFlags(Option[] options) : base(options)
+        {
+            Options = options;
+        }
+    }
+
     public class RangeOptions : Range
     {
         public Option[] Options;
@@ -46,9 +54,16 @@ namespace Battlehub.RTEditor
             }
             else
             {
-                int index = ToIndex(value);
-                m_input.value = index;
-                m_mixedValuesIndicator.text = m_input.options[index].text;
+                int index;
+                if (TryGetIndex(value, out index))
+                {
+                    m_input.value = index;
+                    m_mixedValuesIndicator.text = m_input.options[index].text;
+                }
+                else
+                {
+                    m_mixedValuesIndicator.text = "";
+                }
             }
         }
 
@@ -107,9 +122,9 @@ namespace Battlehub.RTEditor
             }
         }
 
-        protected int ToIndex(T value)
+        protected bool TryGetIndex(T value, out int index)
         {
-            return m_valueToIndex[value];
+            return m_valueToIndex.TryGetValue(value, out index);
         }
 
         protected T ToValue(int index)

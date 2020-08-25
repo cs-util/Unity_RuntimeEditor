@@ -60,17 +60,9 @@ namespace Battlehub.RTEditor
             m_selectedGameObjects = m_editor.Selection.gameObjects.Select(go => new GameObjectWrapper(go)).ToArray();
             IsActiveEditor.Init(m_selectedGameObjects, Strong.PropertyInfo((GameObjectWrapper x) => x.IsActive), string.Empty);
 
-            List<List<Component>> groups = GetComponentGroups(selectedObjects);
-            for (int i = 0; i < groups.Count; ++i)
-            {
-                List<Component> group = groups[i];
-                CreateComponentEditor(group);
-            }
-
-            UnityEventHelper.AddListener(EditLayersButton, btn => btn.onClick, OnEditLayersClick);
-
+   
             m_editor.IsBusy = true;
-            LayersEditor.GetLayers(layersInfo =>
+            LayersEditor.LoadLayers(layersInfo =>
             {
                 m_editor.IsBusy = false;
                 List<RangeOptions.Option> layers = new List<RangeOptions.Option>();
@@ -85,6 +77,15 @@ namespace Battlehub.RTEditor
 
                 LayerEditor.Options = layers.ToArray();
                 LayerEditor.Init(m_editor.Selection.gameObjects, Strong.PropertyInfo((GameObject x) => x.layer), string.Empty);
+
+                List<List<Component>> groups = GetComponentGroups(selectedObjects);
+                for (int i = 0; i < groups.Count; ++i)
+                {
+                    List<Component> group = groups[i];
+                    CreateComponentEditor(group);
+                }
+
+                UnityEventHelper.AddListener(EditLayersButton, btn => btn.onClick, OnEditLayersClick);
             });
         }
 

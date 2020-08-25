@@ -67,10 +67,15 @@ namespace Battlehub.RTEditor
             m_isDirty = false;
         }
 
-        private static LayersInfo m_loadedLayers;
         private static string m_currentProject;
 
-        public static void GetLayers(Action<LayersInfo> callback)
+        private static LayersInfo m_loadedLayers;
+        public static LayersInfo LoadedLayers
+        {
+            get { return m_loadedLayers; }
+        }
+
+        public static void LoadLayers(Action<LayersInfo> callback)
         {
             IRTE editor = IOC.Resolve<IRTE>();
             editor.StartCoroutine(CoLoadLayer(callback));
@@ -115,12 +120,12 @@ namespace Battlehub.RTEditor
 
                     for (int i = 10; i <= 15; ++i)
                     {
-                        m_loadedLayers.Layers.Add(new LayersInfo.Layer(string.Empty, i));
+                        m_loadedLayers.Layers.Add(new LayersInfo.Layer(LayerMask.LayerToName(i), i));
                     }
 
                     for (int i = 25; i <= 30; ++i)
                     {
-                        m_loadedLayers.Layers.Add(new LayersInfo.Layer(string.Empty, i));
+                        m_loadedLayers.Layers.Add(new LayersInfo.Layer(LayerMask.LayerToName(i), i));
                     }
 
                     RuntimeTextAsset layersTextAsset = ScriptableObject.CreateInstance<RuntimeTextAsset>();
@@ -138,6 +143,14 @@ namespace Battlehub.RTEditor
                 {
                     m_loadedLayers = ScriptableObject.CreateInstance<LayersInfo>();
                     JsonUtility.FromJsonOverwrite(getLayersInfoAo.Result.Text, m_loadedLayers);
+
+                    foreach (LayersInfo.Layer layer in m_loadedLayers.Layers)
+                    {
+                        if(string.IsNullOrEmpty(layer.Name))
+                        {
+                            layer.Name = LayerMask.LayerToName(layer.Index);
+                        }
+                    }
                 }
             }
 

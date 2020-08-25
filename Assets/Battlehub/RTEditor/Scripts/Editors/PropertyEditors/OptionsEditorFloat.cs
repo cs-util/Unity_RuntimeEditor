@@ -14,8 +14,18 @@ namespace Battlehub.RTEditor
             }
             else
             {
-                m_input.value = Mathf.RoundToInt(value); 
-                m_mixedValuesIndicator.text = m_input.options[Mathf.RoundToInt(ToIndex(value))].text;
+                m_input.value = Mathf.RoundToInt(value);
+
+                int index;
+                if (TryGetIndex(value, out index))
+                {
+                    m_input.value = index;
+                    m_mixedValuesIndicator.text = m_input.options[index].text;
+                }
+                else
+                {
+                    m_mixedValuesIndicator.text = "";
+                }
             }
         }
 

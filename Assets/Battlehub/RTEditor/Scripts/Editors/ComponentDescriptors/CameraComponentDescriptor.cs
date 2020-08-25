@@ -64,6 +64,7 @@ namespace Battlehub.RTEditor
             MemberInfo orthographic = Strong.PropertyInfo((Camera x) => x.orthographic, "orthographic");
             MemberInfo fov = Strong.PropertyInfo((Camera x) => x.fieldOfView, "fieldOfView");
             MemberInfo orthographicSize = Strong.PropertyInfo((Camera x) => x.orthographicSize, "orthographicSize");
+            MemberInfo cullingMask = Strong.PropertyInfo((Camera x) => x.cullingMask, "cullingMask");
 
             List<PropertyDescriptor> descriptors = new List<PropertyDescriptor>();
             descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTEditor_CD_Camera_Projection", "Projection"), converters, projection, orthographic, valueChanged));
@@ -88,6 +89,22 @@ namespace Battlehub.RTEditor
                 {
                     descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTEditor_CD_Camera_Size", "Size"), editor.Components, orthographicSize, "orthographic size"));
                 }
+
+                List<RangeOptions.Option> flags = new List<RangeOptions.Option>();
+                LayersInfo layersInfo = LayersEditor.LoadedLayers;
+                foreach(LayersInfo.Layer layer in layersInfo.Layers)
+                {
+                    if(!string.IsNullOrEmpty(layer.Name))
+                    {
+                        flags.Add(new RangeOptions.Option(layer.Name, layer.Index));
+                    }
+                }
+
+
+                descriptors.Add(new PropertyDescriptor(lc.GetString("ID_RTEditor_CD_Camera_CullingMask", "Culling Mask"), editor.Components, cullingMask)
+                {
+                    Range = new RangeFlags(flags.ToArray())
+                });
             }
             
             return descriptors.ToArray();

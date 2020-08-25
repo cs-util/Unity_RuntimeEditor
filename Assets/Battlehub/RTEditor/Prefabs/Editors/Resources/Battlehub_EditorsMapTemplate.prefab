@@ -69,6 +69,7 @@ MonoBehaviour:
   - {fileID: 1000013256475392, guid: b3869b72d165b1a4bbc0a2af36147707, type: 3}
   - {fileID: 1000013256475392, guid: 2291aaf81204cc74ebdc34c552e56fa6, type: 3}
   - {fileID: 1000012655383494, guid: 02b5b5fe664ee234e9996bd254faa847, type: 3}
+  - {fileID: 1000013331282784, guid: c73d1951017304f4484c8278f3962694, type: 3}
   IsDefaultMaterialEditorEnabled: 1
   DefaultMaterialEditor: {fileID: 1000013302785078, guid: e271b6853f0d680408d9527a996e88ce,
     type: 3}
