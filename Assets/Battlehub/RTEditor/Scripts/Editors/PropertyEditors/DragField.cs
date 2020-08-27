@@ -70,7 +70,7 @@ namespace Battlehub.RTEditor
             if (float.TryParse(Field.text, NumberStyles.Any, CultureInfo.InvariantCulture, out d))
             {
                 d += IncrementFactor * eventData.delta.x;
-                Field.text = d.ToString();
+                Field.text = d.ToString(CultureInfo.InvariantCulture);
             }
             else if(string.IsNullOrEmpty(Field.text))
             {
