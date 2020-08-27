@@ -37,8 +37,8 @@ namespace Battlehub.RTSL.Internal
                 return;
             }
             Gradient uo = (Gradient)obj;
-            colorKeys = Assign(colorKeys, v_ => (PersistentGradientColorKey)v_);
-            alphaKeys = Assign(alphaKeys, v_ => (PersistentGradientAlphaKey)v_);   
+            colorKeys = Assign(uo.colorKeys, v_ => (PersistentGradientColorKey)v_);
+            alphaKeys = Assign(uo.alphaKeys, v_ => (PersistentGradientAlphaKey)v_);   
         }
 
         public override object WriteTo(object obj)
