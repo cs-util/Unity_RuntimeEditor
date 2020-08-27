@@ -531,18 +531,39 @@ namespace Battlehub.RTCommon
                     m_isPlayModeStateChanging = true;
                     m_isPlaying = value;
 
-                    if (PlaymodeStateChanging != null)
+                    //Wait for possible cleanup performed in BeforePlaymodeStateChange handler
+                    if (gameObject.activeInHierarchy)
                     {
-                        PlaymodeStateChanging();
+                        StartCoroutine(CoIsPlayingChanged());
+                    }
+                    else
+                    {
+                        RaisePlaymodeStateChangeEvents();
                     }
 
-                    if (PlaymodeStateChanged != null)
-                    {
-                        PlaymodeStateChanged();
-                    }
-                    m_isPlayModeStateChanging = false;
                 }
             }
+        }
+
+        private IEnumerator CoIsPlayingChanged()
+        {
+            yield return new WaitForEndOfFrame();
+
+            RaisePlaymodeStateChangeEvents();
+        }
+
+        private void RaisePlaymodeStateChangeEvents()
+        {
+            if (PlaymodeStateChanging != null)
+            {
+                PlaymodeStateChanging();
+            }
+
+            if (PlaymodeStateChanged != null)
+            {
+                PlaymodeStateChanged();
+            }
+            m_isPlayModeStateChanging = false;
         }
 
         public virtual Transform Root

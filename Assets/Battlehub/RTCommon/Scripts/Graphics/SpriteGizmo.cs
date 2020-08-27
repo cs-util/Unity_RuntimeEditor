@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Battlehub.RTCommon
 {
@@ -10,6 +11,9 @@ namespace Battlehub.RTCommon
         private SphereCollider m_collider;
         private SphereCollider m_destroyedCollider;
 
+        public event Action<SpriteGizmo> ComponentDestroyed;
+        public Component Component;
+        
         [SerializeField]
         private float m_scale = 1.0f;
         public float Scale
@@ -63,6 +67,19 @@ namespace Battlehub.RTCommon
             if(m_collider != null)
             {
                 m_collider.radius = 0.25f * m_scale;
+            }
+        }
+
+        private void Update()
+        {
+            if(Component == null)
+            {
+                if(ComponentDestroyed != null)
+                {
+                    ComponentDestroyed(this);
+                }
+                
+                enabled = false;
             }
         }
     }

@@ -7,8 +7,7 @@ using Battlehub.RTCommon;
 using Battlehub.RTSL.Interface;
 using TMPro;
 using System.Collections.Generic;
-using Battlehub.RTGizmos;
-using System.Security.Cryptography;
+
 
 namespace Battlehub.RTEditor
 {
@@ -267,24 +266,16 @@ namespace Battlehub.RTEditor
                     {
                         EnabledEditor.gameObject.SetActive(true);
                         EnabledEditor.Init(Components, Components, enabledProperty, null, string.Empty, () => { },
-                            () =>
-                            {
-                                if (IsComponentEnabled)
-                                {
-                                    TryCreateGizmos(componentDescriptor);
-                                }
-                                else
-                                {
-                                    DestroyGizmos();
-                                }
-                            },
+                            () => CreateOrDestroyGizmos(componentDescriptor),
                             () =>
                             {
                                 if (EndEditCallback != null)
                                 {
                                     EndEditCallback();
                                 }
-                            });
+                            }, 
+                            true, null, null, null,
+                            () => CreateOrDestroyGizmos(componentDescriptor), () => CreateOrDestroyGizmos(componentDescriptor));
                     }
                     else
                     {
@@ -408,7 +399,8 @@ namespace Battlehub.RTEditor
             m_editor.Undo.RedoCompleted += OnRedoCompleted;
             m_editor.WindowRegistered += OnWindowRegistered;
             m_editor.WindowUnregistered += OnWindowUnregistered;
-
+            m_editor.BeforePlaymodeStateChange += OnBeforePlayModeStateChange;
+            
 #pragma warning disable CS0612
             StartOverride();
 #pragma warning restore CS0612
@@ -422,6 +414,7 @@ namespace Battlehub.RTEditor
                 m_editor.Undo.RedoCompleted -= OnRedoCompleted;
                 m_editor.WindowRegistered -= OnWindowRegistered;
                 m_editor.WindowUnregistered -= OnWindowUnregistered;
+                m_editor.BeforePlaymodeStateChange -= OnBeforePlayModeStateChange;
 
                 if (m_editor.Object != null)
                 {
@@ -720,6 +713,24 @@ namespace Battlehub.RTEditor
             }
         }
 
+
+        private void OnBeforePlayModeStateChange()
+        {
+            DestroyGizmos();
+        }
+
+        private void CreateOrDestroyGizmos(IComponentDescriptor componentDescriptor)
+        {
+            if (IsComponentEnabled)
+            {
+                TryCreateGizmos(componentDescriptor);
+            }
+            else
+            {
+                DestroyGizmos();
+            }
+        }
+
         protected virtual void TryCreateGizmos(IComponentDescriptor componentDescriptor)
         {
             if (componentDescriptor != null && componentDescriptor.GizmoType != null && IsComponentEnabled)
@@ -741,7 +752,7 @@ namespace Battlehub.RTEditor
 
         protected virtual void TryCreateGizmos(IComponentDescriptor componentDescriptor, List<Component> gizmos, RuntimeWindow window)
         {
-            if (componentDescriptor != null && componentDescriptor.GizmoType != null && IsComponentEnabled)
+            if (componentDescriptor != null && componentDescriptor.GizmoType != null && IsComponentEnabled && Expander.isOn)
             {
                 for (int j = 0; j < Components.Length; ++j)
                 {

@@ -1,4 +1,4 @@
-﻿//#define RTSL_COMPILE_TEMPLATES
+﻿#define RTSL_COMPILE_TEMPLATES
 #if RTSL_COMPILE_TEMPLATES
 //<TEMPLATE_USINGS_START>
 using System;
@@ -37,12 +37,16 @@ namespace Battlehub.RTSL.Internal
             }
 
             AudioClip o = (AudioClip)obj;
-            o.SetData(m_data, 0);
-            if(!o.preloadAudioData)
-            {
-                o.LoadAudioData();
+            if (!m_assetDB.IsStaticResourceID(m_assetDB.ToID(o)))
+            {   
+                o.SetData(m_data, 0);
+                if (!o.preloadAudioData)
+                {
+                    o.LoadAudioData();
+                }
             }
-            return  base.WriteTo(obj); 
+
+            return base.WriteTo(obj);
         }
 
         public override void ReadFrom(object obj)
@@ -52,13 +56,18 @@ namespace Battlehub.RTSL.Internal
             {
                 return;
             }
+
             AudioClip o = (AudioClip)obj;
-            m_name = o.name;
-            m_lengthSamples = o.samples;
-            m_channels = o.channels;
-            m_frequency = o.frequency;
-            m_data = new float[o.samples * o.channels];
-            o.GetData(m_data, 0);
+            if (!m_assetDB.IsStaticResourceID(m_assetDB.ToID(o)))
+            {
+                m_name = o.name;
+                m_lengthSamples = o.samples;
+                m_channels = o.channels;
+                m_frequency = o.frequency;
+
+                m_data = new float[o.samples * o.channels];
+                o.GetData(m_data, 0);
+            }
         }
 
         public override bool CanInstantiate(Type type)

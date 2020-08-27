@@ -1,4 +1,4 @@
-﻿#define RTSL_COMPILE_TEMPLATES
+﻿//#define RTSL_COMPILE_TEMPLATES
 #if RTSL_COMPILE_TEMPLATES
 //<TEMPLATE_USINGS_START>
 using ProtoBuf;
@@ -89,55 +89,58 @@ namespace Battlehub.RTSL.Internal
             }
 
             Mesh o = (Mesh)obj;
-            o.indexFormat = indexFormat;
-            if (vertices != null)
+            if (!m_assetDB.IsStaticResourceID(m_assetDB.ToID(o)))
             {
-                o.vertices = vertices;
-            }
-
-            o.subMeshCount = subMeshCount;
-            if (m_tris != null)
-            {
-                if (m_topology != null && m_topology.Length == subMeshCount)
+                o.indexFormat = indexFormat;
+                if (vertices != null)
                 {
-                    for (int i = 0; i < subMeshCount; ++i)
+                    o.vertices = vertices;
+                }
+
+                o.subMeshCount = subMeshCount;
+                if (m_tris != null)
+                {
+                    if (m_topology != null && m_topology.Length == subMeshCount)
                     {
-                        MeshTopology topology = m_topology[i];
-                        switch (topology)
+                        for (int i = 0; i < subMeshCount; ++i)
                         {
-                            case MeshTopology.Points:
-                            case MeshTopology.Lines:
-                                o.SetIndices(m_tris[i].Array, topology, i);
-                                break;
-                            case MeshTopology.Triangles:
-                                o.SetTriangles(m_tris[i].Array, i);
-                                break;
+                            MeshTopology topology = m_topology[i];
+                            switch (topology)
+                            {
+                                case MeshTopology.Points:
+                                case MeshTopology.Lines:
+                                    o.SetIndices(m_tris[i].Array, topology, i);
+                                    break;
+                                case MeshTopology.Triangles:
+                                    o.SetTriangles(m_tris[i].Array, i);
+                                    break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < subMeshCount; ++i)
+                        {
+                            o.SetTriangles(m_tris[i].Array, i);
                         }
                     }
                 }
-                else
-                {
-                    for (int i = 0; i < subMeshCount; ++i)
-                    {
-                        o.SetTriangles(m_tris[i].Array, i);
-                    }
-                }
-            }
 
-            o.boneWeights = boneWeights;
-            o.bindposes = bindposes;
-            o.bounds = bounds;
-            o.normals = normals;
-            o.tangents = tangents;
-            o.uv = uv;
-            o.uv2 = uv2;
-            o.uv3 = uv3;
-            o.uv4 = uv4;
-            o.uv5 = uv5;
-            o.uv6 = uv6;
-            o.uv7 = uv7;
-            o.uv8 = uv8;
-            o.colors = colors;
+                o.boneWeights = boneWeights;
+                o.bindposes = bindposes;
+                o.bounds = bounds;
+                o.normals = normals;
+                o.tangents = tangents;
+                o.uv = uv;
+                o.uv2 = uv2;
+                o.uv3 = uv3;
+                o.uv4 = uv4;
+                o.uv5 = uv5;
+                o.uv6 = uv6;
+                o.uv7 = uv7;
+                o.uv8 = uv8;
+                o.colors = colors;
+            }
 
             return base.WriteTo(obj);
         }
@@ -150,49 +153,51 @@ namespace Battlehub.RTSL.Internal
                 return;
             }
             Mesh o = (Mesh)obj;
-
-            boneWeights = o.boneWeights;
-            bindposes = o.bindposes;
-            bounds = o.bounds;
-            normals = o.normals;
-            tangents = o.tangents;
-            uv = o.uv;
-            uv2 = o.uv2;
-            uv3 = o.uv3;
-            uv4 = o.uv4;
-            uv5 = o.uv5;
-            uv6 = o.uv6;
-            uv7 = o.uv7;
-            uv8 = o.uv8;
-            colors = o.colors;
-
-            indexFormat = o.indexFormat;
-            subMeshCount = o.subMeshCount;
-            if (o.vertices != null)
+            if (!m_assetDB.IsStaticResourceID(m_assetDB.ToID(o)))
             {
-                vertices = o.vertices;
-            }
+                boneWeights = o.boneWeights;
+                bindposes = o.bindposes;
+                bounds = o.bounds;
+                normals = o.normals;
+                tangents = o.tangents;
+                uv = o.uv;
+                uv2 = o.uv2;
+                uv3 = o.uv3;
+                uv4 = o.uv4;
+                uv5 = o.uv5;
+                uv6 = o.uv6;
+                uv7 = o.uv7;
+                uv8 = o.uv8;
+                colors = o.colors;
 
-            m_tris = new IntArray[subMeshCount];
-            m_topology = new MeshTopology[subMeshCount];
-            for (int i = 0; i < subMeshCount; ++i)
-            {
-                MeshTopology topology = o.GetTopology(i);
-                m_topology[i] = topology;
-                switch (topology)
+                indexFormat = o.indexFormat;
+                subMeshCount = o.subMeshCount;
+                if (o.vertices != null)
                 {
-                    case MeshTopology.Points:
-                        m_tris[i] = new IntArray();
-                        m_tris[i].Array = o.GetIndices(i);
-                        break;
-                    case MeshTopology.Lines:
-                        m_tris[i] = new IntArray();
-                        m_tris[i].Array = o.GetIndices(i);
-                        break;
-                    case MeshTopology.Triangles:
-                        m_tris[i] = new IntArray();
-                        m_tris[i].Array = o.GetTriangles(i);
-                        break;
+                    vertices = o.vertices;
+                }
+
+                m_tris = new IntArray[subMeshCount];
+                m_topology = new MeshTopology[subMeshCount];
+                for (int i = 0; i < subMeshCount; ++i)
+                {
+                    MeshTopology topology = o.GetTopology(i);
+                    m_topology[i] = topology;
+                    switch (topology)
+                    {
+                        case MeshTopology.Points:
+                            m_tris[i] = new IntArray();
+                            m_tris[i].Array = o.GetIndices(i);
+                            break;
+                        case MeshTopology.Lines:
+                            m_tris[i] = new IntArray();
+                            m_tris[i].Array = o.GetIndices(i);
+                            break;
+                        case MeshTopology.Triangles:
+                            m_tris[i] = new IntArray();
+                            m_tris[i].Array = o.GetTriangles(i);
+                            break;
+                    }
                 }
             }
         }

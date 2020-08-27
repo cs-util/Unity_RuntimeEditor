@@ -32,7 +32,15 @@ namespace Battlehub.RTEditor
 
             public bool IsActive
             {
-                get { return m_gameObject.activeSelf; }
+                get 
+                {
+                    if(!m_gameObject)
+                    {
+                        return false;
+                    }
+
+                    return m_gameObject.activeSelf; 
+                }
                 set { m_gameObject.SetActive(value); }
             }
 

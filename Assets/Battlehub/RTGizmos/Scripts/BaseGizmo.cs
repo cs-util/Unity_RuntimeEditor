@@ -478,6 +478,11 @@ namespace Battlehub.RTGizmos
                 return;
             }
 
+            if(Target == null)
+            {
+                return;
+            }
+
             Vector2 pointer = Window.Pointer.ScreenPoint;
             m_dragIndex = Hit(pointer, HandlesPositions, HandlesNormals);
             if (m_dragIndex >= 0 && OnBeginDrag(m_dragIndex))

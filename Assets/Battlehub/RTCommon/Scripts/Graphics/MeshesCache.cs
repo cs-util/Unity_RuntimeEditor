@@ -158,14 +158,17 @@ namespace Battlehub.RTCommon
                 for (int i = 0; i < m_transforms.Count; ++i)
                 {
                     Transform t = m_transforms[i];
-                    PRS prs = m_prs[i];
-                    if (prs.Position != t.position || prs.Rotation != t.rotation || prs.LocalScale != t.localScale)
+                    if(t != null)
                     {
-                        prs.Position = t.position;
-                        prs.Rotation = t.rotation;
-                        prs.LocalScale = t.localScale;
-                        Refresh(true);
-                        break;
+                        PRS prs = m_prs[i];
+                        if (prs.Position != t.position || prs.Rotation != t.rotation || prs.LocalScale != t.localScale)
+                        {
+                            prs.Position = t.position;
+                            prs.Rotation = t.rotation;
+                            prs.LocalScale = t.localScale;
+                            Refresh(true);
+                            break;
+                        }
                     }
                 }
             }

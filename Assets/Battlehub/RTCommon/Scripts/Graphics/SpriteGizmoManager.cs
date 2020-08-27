@@ -133,7 +133,7 @@ namespace Battlehub.RTCommon
             Initialize();
         }
 
-        protected virtual void GreateGizmo(GameObject go, Type type)
+        protected virtual void GreateGizmo(GameObject go,  Component component, Type type)
         {
             Tuple<Mesh, Material> tuple;
             if (m_typeToMeshAndMaterial.TryGetValue(type, out tuple))
@@ -142,6 +142,8 @@ namespace Battlehub.RTCommon
                 if (!gizmo)
                 {
                     gizmo = go.AddComponent<SpriteGizmo>();
+                    gizmo.Component = component;
+                    gizmo.ComponentDestroyed += OnComponentDestroyed;
                 }
 
                 gizmo.Mesh = tuple.Item1;
@@ -158,6 +160,14 @@ namespace Battlehub.RTCommon
                 Destroy(gizmo);
                 m_meshesCache.Remove(gizmo.Mesh, gizmo.transform);
             }
+        }
+
+        private void OnComponentDestroyed(SpriteGizmo gizmo)
+        {
+            gizmo.ComponentDestroyed -= OnComponentDestroyed;
+            Destroy(gizmo);
+            m_meshesCache.Remove(gizmo.Mesh, gizmo.transform);
+            m_meshesCache.Refresh();
         }
 
         private void Initialize()
@@ -255,10 +265,14 @@ namespace Battlehub.RTCommon
 
                 for (int i = 0; i < m_types.Length; ++i)
                 {
-                    IEnumerable<ExposeToEditor> objectsOfType = objects.Where(o => o.GetComponent(m_types[i]) != null);
+                    IEnumerable<ExposeToEditor> objectsOfType = objects;
                     foreach (ExposeToEditor obj in objectsOfType)
                     {
-                        GreateGizmo(obj.gameObject, m_types[i]);
+                        Component component = obj.GetComponent(m_types[i]);
+                        if(component != null)
+                        {
+                            GreateGizmo(obj.gameObject, component, m_types[i]);
+                        }
                     }
                 }
 
@@ -295,7 +309,7 @@ namespace Battlehub.RTCommon
                 Component component = obj.GetComponent(m_types[i]);
                 if (component != null)
                 {
-                    GreateGizmo(obj.gameObject, m_types[i]);
+                    GreateGizmo(obj.gameObject, component, m_types[i]);
                 }
             }
             m_meshesCache.Refresh();
@@ -305,7 +319,7 @@ namespace Battlehub.RTCommon
         {
             if (Array.IndexOf(m_types, component.GetType()) >= 0)
             {
-                GreateGizmo(obj.gameObject, component.GetType());
+                GreateGizmo(obj.gameObject, component, component.GetType());
             }
 
             m_meshesCache.Refresh();

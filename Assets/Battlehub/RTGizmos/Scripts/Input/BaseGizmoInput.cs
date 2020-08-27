@@ -22,22 +22,33 @@ namespace Battlehub.RTGizmos
                 m_gizmo = GetComponent<BaseGizmo>();
             }
 
-            m_editor = m_gizmo.Editor;
-
-            if (m_editor != null)
+            if(m_gizmo != null)
             {
-                if (BeginDragAction())
+                m_editor = m_gizmo.Editor;
+                if (m_editor != null)
                 {
-                    m_gizmo.BeginDrag();
+                    if (BeginDragAction())
+                    {
+                        m_gizmo.BeginDrag();
+                    }
                 }
             }
         }
 
         protected virtual void Start()
         {
+            if (m_gizmo == null)
+            {
+                m_gizmo = GetComponent<BaseGizmo>();
+            }
+
             if (m_editor == null)
             {
-                m_editor = m_gizmo.Editor;
+                if(m_gizmo != null)
+                {
+                    m_editor = m_gizmo.Editor;
+                }
+
             }
         }
 

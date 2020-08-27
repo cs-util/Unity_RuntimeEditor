@@ -5,6 +5,7 @@ using ProtoBuf;
 using System;
 using Battlehub.Utils;
 using UnityEngine;
+using UnityEngine.UI;
 //<TEMPLATE_USINGS_END>
 #else
 using UnityEngine;
@@ -33,6 +34,11 @@ namespace Battlehub.RTSL.Internal
 
             Texture2D texture = (Texture2D)obj;
             if (texture == null)
+            {
+                return;
+            }
+
+            if (m_assetDB.IsStaticResourceID(m_assetDB.ToID(texture)))
             {
                 return;
             }
@@ -89,12 +95,16 @@ namespace Battlehub.RTSL.Internal
                 return null;
             }
 
+            if (m_assetDB.IsStaticResourceID(m_assetDB.ToID(texture)))
+            {
+                return texture;
+            }
+
             if (m_isReadable)
             {
                 texture.LoadImage(m_bytes, false);
             }
             return texture;
-
         }
 
         public override void GetDeps(GetDepsContext context)
