@@ -51,6 +51,10 @@ namespace Battlehub.RTSL
         void GetValues(string projectPath, string searchPattern, Type type, StorageEventHandler<PersistentObject[]> callback);
         void SetValue(string projectPath, string key, PersistentObject persistentObject, StorageEventHandler callback);
         void DeleteValue(string projectPath, string key, StorageEventHandler callback);
+
+        //void CreatePackage(string projectPath, string[] assetsPath, string packagePath, StorageEventHandler callback);
+        //void OpenPackage(string projectPath, string packagePath, StorageEventHandler<AssetItem[]> callback);
+        
     }
 
     public class FileSystemStorage : IStorage
@@ -1041,19 +1045,20 @@ namespace Battlehub.RTSL
                     }
 
                     FastZip fastZip = new FastZip();
+                    fastZip.CompressionLevel = Deflater.CompressionLevel.NO_COMPRESSION;
                     fastZip.CreateZip(packagePath, tempPath, true, null);
                     Directory.Delete(tempPath, true);
 
                     Callback(() => callback(Error.NoError));
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Callback(() => callback(new Error(Error.E_Exception) { ErrorText = e.ToString() }));
                 }
-            });                
+            });
         }
-        */
-        /*
+        
+        
         public void OpenPackage(string projectPath, string packagePath, StorageEventHandler<AssetItem[]> callback)
         {
             QueueUserWorkItem(() =>
@@ -1065,8 +1070,6 @@ namespace Battlehub.RTSL
                         Callback(() => callback(new Error(Error.E_NotFound) { ErrorText = "File was not found: " + packagePath }, new AssetItem[0]));
                         return;
                     }
-
-                    string fullProjectPath = FullPath(projectPath);
 
                     string tempPath = RootPath + "/" + TempFolder;
                     if (!Directory.Exists(tempPath))
@@ -1087,7 +1090,7 @@ namespace Battlehub.RTSL
                     assets.Children = new List<ProjectItem>();
                     assets.Name = "Assets";
 
-                    GetProjectTree(projectPath, assets);
+                    GetProjectTree(tempPath, assets);
 
                     AssetItem[] assetItems = assets.Flatten(true).Cast<AssetItem>().ToArray();
 
@@ -1099,8 +1102,8 @@ namespace Battlehub.RTSL
                 }
             });
         }
+        
         */
-
         public void QueueUserWorkItem(Action action)
         {
 #if UNITY_WEBGL
