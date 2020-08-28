@@ -1001,9 +1001,9 @@ namespace Battlehub.RTHandles
 
             Ray ray = Window.Pointer;
             RaycastHit[] hits = Physics.RaycastAll(ray, float.MaxValue);
+            hits = hits.Where(hit => CanSelectObject(hit.collider.gameObject)).OrderBy(hit => GetDepth(hit.transform)).ToArray();
             if (hits.Length > 0)
-            {
-                hits = hits.Where(hit => CanSelectObject(hit.collider.gameObject)).OrderBy(hit => GetDepth(hit.transform)).ToArray();
+            {                
                 bool canSelect = hits.Length > 0;
                 if (canSelect && (hits = FilterHits(hits)).Length > 0)
                 {

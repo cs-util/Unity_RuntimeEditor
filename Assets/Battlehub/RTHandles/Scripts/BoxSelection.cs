@@ -468,6 +468,14 @@ namespace Battlehub.RTHandles
             RectTransformUtility.ScreenPointToLocalPointInRectangle(sceneOutput, max, canvas.worldCamera, out max);
             max.y = sceneOutput.rect.height - max.y;
 
+            /*quick fix for ui scale issue. TODO: replace with better solution*/
+            CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
+            if(scaler != null)
+            {
+                min *= scaler.scaleFactor;
+                max *= scaler.scaleFactor;
+            }
+
             Rect rect = new Rect(new Vector2(Mathf.Min(min.x, max.x), Mathf.Min(min.y, max.y)), new Vector2(Mathf.Max(Mathf.Abs(max.x - min.x), 1), Mathf.Max(Mathf.Abs(max.y - min.y), 1)));
             rect.x += Window.Camera.pixelRect.x;
             rect.y += canvas.pixelRect.height - (Window.Camera.pixelRect.y + Window.Camera.pixelRect.height);
