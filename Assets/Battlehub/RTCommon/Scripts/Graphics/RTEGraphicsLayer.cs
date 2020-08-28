@@ -51,6 +51,11 @@ namespace Battlehub.RTCommon
                 m_window.CameraResized -= OnCameraResized;
             }
 
+            if(m_graphicsCamera != null)
+            {
+                m_graphicsCamera.Destroy();
+            }
+
             if (m_camera != null)
             {
                 Destroy(m_camera.gameObject);

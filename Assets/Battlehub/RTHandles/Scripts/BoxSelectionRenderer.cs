@@ -1,5 +1,6 @@
 ﻿using Battlehub.RTCommon;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityObject = UnityEngine.Object;
@@ -263,6 +264,8 @@ namespace Battlehub.RTHandles
 
             UnityObject.DestroyImmediate(go);
             UnityObject.Destroy(replacementMaterial);
+
+            rteCamera.Destroy();
             //System.IO.File.WriteAllBytes("Assets/box_selection.png", img.EncodeToPNG());
 
             return img;

@@ -128,19 +128,15 @@ namespace Battlehub.RTCommon
 
             if (createMeshesCache)
             {
-                MeshesCache meshesCache = gameObject.AddComponent<MeshesCache>();
-                meshesCache.RefreshMode = CacheRefreshMode.Manual;
-                rteCamera.MeshesCache = meshesCache;
+                rteCamera.CreateMeshesCache();
             }
 
             if (createRenderersCache)
             {
-                RenderersCache renderersCache = gameObject.AddComponent<RenderersCache>();
-                rteCamera.RenderersCache = renderersCache;
+                rteCamera.CreateRenderersCache();
             }
 
             camera.gameObject.SetActive(wasActive);
-
             return rteCamera;
         }
 
@@ -239,6 +235,8 @@ namespace Battlehub.RTCommon
 
             camera.SetActive(wasActive);
         }
+
+
     }
 
 }

@@ -101,24 +101,31 @@ namespace Battlehub.RTCommon
         }
 
         private IRenderersCache m_renderersCache;
+        private bool m_destroyRenderersCache;
+
         private IMeshesCache m_meshesCache;
+        private bool m_destroyMeshesCache;
 
         public IRenderersCache RenderersCache
         {
             get { return m_renderersCache; }
-            set { m_renderersCache = value; }
+            set 
+            {
+                DestroyRenderersCache();
+                m_renderersCache = value; 
+            }
         }
 
         public IMeshesCache MeshesCache
         {
             get { return m_meshesCache; }
-            set { m_meshesCache = value; }
+            set 
+            {
+                DestroyMeshesCache();
+                m_meshesCache = value; 
+            }
         }
 
-        public void Destroy()
-        {
-            Destroy(this);
-        }
 
         private void Awake()
         {
@@ -148,43 +155,18 @@ namespace Battlehub.RTCommon
         }
 
 
-        /*
-        private void Start()
-        {
-            if(m_commandBufferOverride == null)
-            {
-                CreateCommandBuffer();
-            }
-            
-            RefreshCommandBuffer();
-
-            if(m_renderersCache != null)
-            {
-                m_renderersCache.Refreshed += OnRefresh;
-            }
-
-            if(m_meshesCache != null)
-            {
-                m_meshesCache.Refreshing += OnRefresh;
-            }
-
-            if (Created != null)
-            {
-                Created(this);
-            }
-        }
-        */
-
         private void OnDestroy()
         {
             if (m_renderersCache != null)
-            {
-                m_renderersCache.Refreshed -= OnRefresh; 
+            {    
+                m_renderersCache.Refreshed -= OnRefresh;
+                DestroyRenderersCache();
             }
 
             if (m_meshesCache != null)
             {
                 m_meshesCache.Refreshing -= OnRefresh;
+                DestroyMeshesCache();
             }
 
             if (m_camera != null)
@@ -196,6 +178,45 @@ namespace Battlehub.RTCommon
             {
                 Destroyed(this);
             }
+        }
+
+        public void CreateRenderersCache()
+        {
+            DestroyRenderersCache();
+            m_renderersCache = gameObject.AddComponent<RenderersCache>();
+            m_destroyRenderersCache = true;
+        }
+
+        public void CreateMeshesCache()
+        {
+            DestroyMeshesCache();
+            m_meshesCache = gameObject.AddComponent<MeshesCache>();
+            m_destroyMeshesCache = true;
+        }
+
+        private void DestroyRenderersCache()
+        {
+            if (m_destroyRenderersCache && m_renderersCache != null)
+            {
+                m_renderersCache.Destroy();
+                m_renderersCache = null;
+            }
+        }
+
+        private void DestroyMeshesCache()
+        {
+            if (m_destroyMeshesCache && m_meshesCache != null)
+            {
+                m_meshesCache.Destroy();
+                m_meshesCache = null;
+            }
+        }
+
+        public void Destroy()
+        {
+            DestroyMeshesCache();
+            DestroyRenderersCache();
+            Destroy(this);
         }
 
         private void OnRefresh()

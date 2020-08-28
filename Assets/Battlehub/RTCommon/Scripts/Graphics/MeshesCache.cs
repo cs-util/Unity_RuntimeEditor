@@ -43,6 +43,8 @@ namespace Battlehub.RTCommon
 
         void Refresh(bool batchesOnly = false, int maxBatchSize = 128);
         void Clear();
+
+        void Destroy();
     }
 
     public class RenderMeshesBatch
@@ -233,6 +235,11 @@ namespace Battlehub.RTCommon
         {
             m_meshToData.Clear();
             m_batches.Clear();
+        }
+
+        public void Destroy()
+        {
+            Destroy(this);
         }
 
         public void Refresh(bool batchesOnly = false, int maxBatchSize = 128)

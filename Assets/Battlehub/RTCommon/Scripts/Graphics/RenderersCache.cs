@@ -31,6 +31,7 @@ namespace Battlehub.RTCommon
         void Remove(Renderer renderer);
         void Refresh();
         void Clear();
+        void Destroy();
     }
 
     public class RenderersCache : MonoBehaviour, IRenderersCache
@@ -142,6 +143,11 @@ namespace Battlehub.RTCommon
         {
             m_renderers.Clear();
             m_settingsBackup.Clear();
+        }
+
+        public void Destroy()
+        {
+            Destroy(this);
         }
     }
 }
